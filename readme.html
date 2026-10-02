@@ -255,12 +255,12 @@
         <tr>
           <td>하단 1단</td>
           <td>본부별 인원수(세로 누적) | 직책자(남좌·여우)</td>
-          <td>본부별: 수치를 오른쪽 콜아웃으로 표시</td>
+          <td>본부별: 오른쪽 위 대각선 콜아웃, 수치는 세로 한 줄 정렬<br>직책자 샘플: 본부장·실장·팀장·파트장 (사장 제외)</td>
         </tr>
         <tr>
           <td>하단 2단</td>
           <td>직급별 인원수 <span style="color:#94a3b8">(3개년 추이)</span> | 성별&amp;연령대</td>
-          <td>직급별: 수치를 하단 콜아웃으로 표시<br>직책자·성별연령은 막대 안 라벨 유지</td>
+          <td>직급별: 오른쪽 아래 대각선 콜아웃, 수치는 같은 높이 가로선 정렬<br>직책자·성별연령은 막대 안 라벨 유지</td>
         </tr>
       </tbody>
     </table>
@@ -386,10 +386,14 @@ HrDashboard02.render({
         CSS 변수 <code>--hr-dash-it</code> 등과 맞춤.
       </li>
       <li>
-        <strong>01 콜아웃</strong>:
-        본부별·직급별 누적은 구간 수치를 선으로 밖으로 표시
-        (본부별→오른쪽, 직급별→하단, regular weight).
+        <strong>01 콜아웃</strong> (<code>hrBarCount</code>, <code>calloutStyle:'diagonal'</code>):
+        본부별·직급별 누적 구간 수치를 대각선으로 밖으로 표시(regular weight).
+        본부별은 오른쪽 위·숫자 세로 정렬, 직급별은 오른쪽 아래·숫자 가로선 정렬(차트 영역 내 클램프).
         직책자·성별&amp;연령대는 막대 안 라벨(어두운 배경이면 흰 글자).
+      </li>
+      <li>
+        <strong>01 직책자</strong> 샘플 라벨:
+        <code>본부장, 실장, 팀장, 파트장</code> (사장 미포함).
       </li>
       <li>
         <strong>02 팔레트</strong>:

@@ -110,9 +110,9 @@
       }
     },
     jikchak: {
-      labels: ['사장', '본부장', '실장', '팀장', '파트장'],
-      male: [1, 8, 12, 42, 28],
-      female: [0, 2, 4, 18, 15]
+      labels: ['본부장', '실장', '팀장', '파트장'],
+      male: [8, 12, 42, 28],
+      female: [2, 4, 18, 15]
     },
     gradeYear: {
       labels: ['2026', '2025', '2024'],
@@ -253,51 +253,42 @@
           if (!list || !list.length) return;
 
           if (horiz) {
-            /* 가로 막대: 하단 콜아웃 (기본 직교 / diagonal=오른쪽 아래, 차트 영역 내 클램프) */
+            /* 가로 막대: 하단 콜아웃 — 숫자는 같은 높이(가로선)에 정렬 */
             var hDiag = opt.calloutStyle === 'diagonal';
-            var minGapX = Math.max(stackGap + 4, 16);
+            var minGapX = Math.max(stackGap + 4, 18);
             var ca = chart.chartArea || {};
             var maxY = (ca.bottom != null ? ca.bottom : chart.height) - 2;
             var maxX = (ca.right != null ? ca.right : chart.width) - 4;
             var minX = (ca.left != null ? ca.left : 0) + 4;
 
             list.sort(function (a, b) { return a.cx - b.cx; });
+
+            /* 공통 baseline Y (막대 아래, 차트 영역 안) */
+            var deepest = -Infinity;
+            list.forEach(function (it) {
+              var ey = it.cy + it.halfThick;
+              if (ey > deepest) deepest = ey;
+            });
+            var rowY = deepest + arm + 4;
+            if (rowY > maxY - fontSize) rowY = maxY - fontSize;
+
             var prevLabelX = -Infinity;
-            list.forEach(function (item, i) {
+            list.forEach(function (item) {
               item.labelX = item.cx;
+              var tw = ctx.measureText(String(item.val)).width + 4;
               if (item.labelX - prevLabelX < minGapX) {
                 item.labelX = prevLabelX + minGapX;
               }
+              if (item.labelX + tw / 2 > maxX) item.labelX = maxX - tw / 2;
+              if (item.labelX < minX) item.labelX = minX;
               prevLabelX = item.labelX;
-              item._i = i;
             });
-
-            /* 대각선 스텝을 차트 영역 잔여 공간에 맞게 축소 */
-            var stepY = 0;
-            var stepXd = 0;
-            if (hDiag && list.length > 1) {
-              var deepest = -Infinity;
-              list.forEach(function (it) {
-                var ey = it.cy + it.halfThick;
-                if (ey > deepest) deepest = ey;
-              });
-              var roomY = Math.max(0, maxY - fontSize - deepest - arm);
-              var roomX = Math.max(0, maxX - 24 - list[0].labelX);
-              stepY = Math.min(9, roomY / (list.length - 1));
-              stepXd = Math.min(8, roomX / (list.length - 1));
-            }
 
             list.forEach(function (item) {
               var dir = item.side; /* 1 = 아래 */
               var edgeY = item.cy + dir * item.halfThick;
-              var textY = edgeY + dir * (arm + 2 + item._i * stepY);
-              var textX = hDiag ? item.labelX + item._i * stepXd : item.labelX;
-              var tw = ctx.measureText(String(item.val)).width + (hDiag ? 8 : 0);
-
-              if (textY > maxY - fontSize) textY = maxY - fontSize;
-              if (textX + tw > maxX) textX = maxX - tw;
-              if (textX < minX) textX = minX;
-              if (textY < edgeY + dir * 4) textY = edgeY + dir * 4;
+              var textX = item.labelX;
+              var textY = rowY;
 
               ctx.strokeStyle = lineColor;
               ctx.lineWidth = 1;
@@ -305,9 +296,8 @@
               ctx.moveTo(item.cx, edgeY);
               if (hDiag) {
                 ctx.lineTo(textX, textY);
-                ctx.lineTo(Math.min(textX + 4, maxX), textY);
               } else {
-                var elbowY = Math.min(edgeY + dir * arm, maxY - fontSize);
+                var elbowY = Math.min(edgeY + dir * arm, textY);
                 ctx.lineTo(item.cx, elbowY);
                 if (Math.abs(textX - item.cx) > 0.5) {
                   ctx.lineTo(textX, elbowY);
@@ -322,55 +312,58 @@
               ctx.fill();
 
               ctx.fillStyle = labelColor;
-              ctx.textAlign = hDiag ? 'left' : 'center';
-              ctx.textBaseline = dir > 0 ? 'top' : 'bottom';
-              ctx.fillText(String(item.val), textX + (hDiag ? 6 : 0), textY + dir * 1);
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'top';
+              ctx.fillText(String(item.val), textX, textY + 1);
             });
           } else {
-            /* 세로 막대: 오른쪽 콜아웃 (기본 직교 / diagonal=대각선·위쪽) */
+            /* 세로 막대: 오른쪽 콜아웃 (diagonal=대각선·위쪽, 숫자는 세로 한 줄 정렬) */
             var diag = opt.calloutStyle === 'diagonal';
-            var stepX = diag ? 10 : 0;
             var areaTop = (chart.chartArea && chart.chartArea.top != null)
               ? chart.chartArea.top + fontSize
               : fontSize;
+            var colX = -Infinity;
+            list.forEach(function (item) {
+              var ex = item.cx + item.side * item.halfThick;
+              if (ex > colX) colX = ex;
+            });
+            colX = colX + arm + 6; /* 모든 수치 공통 X (세로 정렬) */
 
             if (diag) {
               /* 아래 구간부터 배치 → 겹치면 위로 밀어 항목명 영역 침범 방지 */
               list.sort(function (a, b) { return b.cy - a.cy; });
               var prevUp = Infinity;
-              list.forEach(function (item, i) {
+              list.forEach(function (item) {
                 item.labelY = item.cy;
                 if (prevUp - item.labelY < stackGap) {
                   item.labelY = prevUp - stackGap;
                 }
                 if (item.labelY < areaTop) item.labelY = areaTop;
                 prevUp = item.labelY;
-                item._i = i;
               });
             } else {
               list.sort(function (a, b) { return a.cy - b.cy; });
               var prevLabelY = -Infinity;
-              list.forEach(function (item, i) {
+              list.forEach(function (item) {
                 item.labelY = item.cy;
                 if (item.labelY - prevLabelY < stackGap) {
                   item.labelY = prevLabelY + stackGap;
                 }
                 prevLabelY = item.labelY;
-                item._i = i;
               });
             }
 
             list.forEach(function (item) {
               var dir = item.side;
               var edgeX = item.cx + dir * item.halfThick;
-              var textX = edgeX + dir * (arm + 2 + item._i * stepX);
+              var textX = colX;
 
               ctx.strokeStyle = lineColor;
               ctx.lineWidth = 1;
               ctx.beginPath();
               ctx.moveTo(edgeX, item.cy);
               if (diag) {
-                /* 오른쪽·위쪽 대각선 → 짧은 수평 스텁 */
+                /* 대각선 → 세로 정렬된 숫자 열 */
                 ctx.lineTo(textX, item.labelY);
                 ctx.lineTo(textX + dir * 4, item.labelY);
               } else {
@@ -391,7 +384,7 @@
               ctx.fillStyle = labelColor;
               ctx.textAlign = dir > 0 ? 'left' : 'right';
               ctx.textBaseline = 'middle';
-              ctx.fillText(String(item.val), textX + dir * (diag ? 6 : 2), item.labelY);
+              ctx.fillText(String(item.val), textX + dir * 6, item.labelY);
             });
           }
         });
@@ -544,8 +537,8 @@
     var xMax = maxStackedTotal(datasets);
     var ds = datasets.map(function (d) {
       return $.extend({}, d, {
-        barPercentage: 0.42,
-        categoryPercentage: 0.55
+        barPercentage: 0.62,
+        categoryPercentage: 0.72
       });
     });
     createChart(canvasId, {
