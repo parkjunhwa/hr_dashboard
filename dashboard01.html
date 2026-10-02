@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>인력현황 - e-HR Dashboard</title>
+
+  <!-- Font Awesome Free 5.3.1 (DashBoard.html과 동일: AdminLTE보다 선행) -->
+  <link rel="stylesheet" type="text/css" media="screen" href="./e-HR_files/fontawesome-all.css" crossorigin="anonymous">
+  <!-- Bootstrap 4.6.1 (AdminLTE 3.2 번들) -->
+  <link rel="stylesheet" type="text/css" href="./e-HR_files/adminlte.min.css">
+  <!-- 페이지 전용 (EIS dashboard.css 패턴, .hr-dash 네임스페이스) -->
+  <link rel="stylesheet" type="text/css" href="./css/dashboard.css">
+</head>
+<body>
+  <div class="hr-dash" id="hrDashRoot">
+    <nav class="hr-dash__nav" aria-label="대시보드 탭">
+      <a href="./dashboard01.html" class="on">인력현황</a>
+      <a href="./dashboard02.html">인력확보 및 유지</a>
+      <a href="./dashboard03.html">인재육성</a>
+      <a href="./dashboard04.html">조직문화</a>
+      <a href="./dashboard05.html">조직건강 및 리스크 관리</a>
+    </nav>
+
+    <!-- KPI 5카드 -->
+    <div class="hr-dash__kpi-row">
+      <div class="hr-dash__card hr-dash__card--work">
+        <h2 class="hr-dash__card-title">재직자</h2>
+        <div class="hr-dash__kpi-main">
+          <div class="hr-dash__kpi-main-num">
+            <span class="hr-dash__kpi-num" id="kpiWork">0</span><span class="hr-dash__kpi-unit">명</span>
+          </div>
+          <div class="hr-dash__kpi-main-side">
+            <div class="hr-dash__work-chart">
+              <canvas id="chartItCs"></canvas>
+            </div>
+            <div class="hr-dash__work-legend">
+              <div class="hr-dash__work-item hr-dash__work-item--it">
+                <span class="lab">IT</span>
+                <span class="val" id="cntIt">0</span>
+              </div>
+              <div class="hr-dash__work-item hr-dash__work-item--cs">
+                <span class="lab">CS</span>
+                <span class="val" id="cntCs">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hr-dash__card hr-dash__card--simple">
+        <h2 class="hr-dash__card-title">휴직자</h2>
+        <div class="hr-dash__kpi-main">
+          <div class="hr-dash__kpi-main-num">
+            <span class="hr-dash__kpi-num" id="kpiLeave">0</span><span class="hr-dash__kpi-unit">명</span>
+          </div>
+          <div class="hr-dash__kpi-main-icon hr-dash__kpi-main-icon--leave" aria-hidden="true">
+            <i class="fas fa-bed"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="hr-dash__card hr-dash__card--simple">
+        <h2 class="hr-dash__card-title">입사자</h2>
+        <div class="hr-dash__kpi-main">
+          <div class="hr-dash__kpi-main-num">
+            <span class="hr-dash__kpi-num" id="kpiJoin">0</span><span class="hr-dash__kpi-unit">명</span>
+          </div>
+          <div class="hr-dash__kpi-main-icon hr-dash__kpi-main-icon--join" aria-hidden="true">
+            <i class="fas fa-user-plus"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="hr-dash__card hr-dash__card--simple">
+        <h2 class="hr-dash__card-title">퇴사자</h2>
+        <div class="hr-dash__kpi-main">
+          <div class="hr-dash__kpi-main-num">
+            <span class="hr-dash__kpi-num" id="kpiRetire">0</span><span class="hr-dash__kpi-unit">명</span>
+          </div>
+          <div class="hr-dash__kpi-main-icon hr-dash__kpi-main-icon--retire" aria-hidden="true">
+            <i class="fas fa-user-minus"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="hr-dash__card">
+        <h2 class="hr-dash__card-title">인력 다양성</h2>
+        <div class="hr-dash__div3">
+          <div class="hr-dash__div3-item">
+            <div class="lab">장애인</div>
+            <span class="num" id="cntDisabil">0</span><span class="hr-dash__kpi-unit">명</span>
+          </div>
+          <div class="hr-dash__div3-item">
+            <div class="lab">보훈대상자</div>
+            <span class="num" id="cntBohun">0</span><span class="hr-dash__kpi-unit">명</span>
+          </div>
+          <div class="hr-dash__div3-item">
+            <div class="lab">외국인</div>
+            <span class="num" id="cntForeign">0</span><span class="hr-dash__kpi-unit">명</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 하단 차트 2단: 남은 높이 균등 분배 -->
+    <div class="hr-dash__charts">
+      <!-- 본부별 / 직책자 -->
+      <div class="hr-dash__row">
+        <div class="hr-dash__col hr-dash__col--wide">
+          <div class="hr-dash__card">
+            <div class="hr-dash__card-head">
+              <h2 class="hr-dash__card-title">본부별 인원수</h2>
+            </div>
+            <div class="hr-dash__chart">
+              <canvas id="chartHq"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="hr-dash__col hr-dash__col--narrow">
+          <div class="hr-dash__card">
+            <div class="hr-dash__card-head">
+              <h2 class="hr-dash__card-title">직책자 인원수</h2>
+            </div>
+            <div class="hr-dash__gender-wrap">
+              <div class="hr-dash__gender-rate">
+                <div class="hr-dash__gender-item hr-dash__gender-item--m">
+                  <i class="fas fa-male" aria-hidden="true"></i>
+                  <div class="hr-dash__gender-meta">
+                    <span class="num" id="cntJikchakMale">0명</span>
+                    <span class="pct" id="rateJikchakMale">(0%)</span>
+                  </div>
+                </div>
+                <div class="hr-dash__gender-item hr-dash__gender-item--f">
+                  <i class="fas fa-female" aria-hidden="true"></i>
+                  <div class="hr-dash__gender-meta">
+                    <span class="num" id="cntJikchakFemale">0명</span>
+                    <span class="pct" id="rateJikchakFemale">(0%)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="hr-dash__chart">
+                <canvas id="chartJikchak"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 직급 3개년 / 성별·연령 -->
+      <div class="hr-dash__row">
+        <div class="hr-dash__col hr-dash__col--wide">
+          <div class="hr-dash__card">
+            <div class="hr-dash__card-head">
+              <h2 class="hr-dash__card-title">직급별 인원수 <span class="hr-dash__title-sub">(3개년 추이)</span></h2>
+            </div>
+            <div class="hr-dash__chart">
+              <canvas id="chartGradeYear"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="hr-dash__col hr-dash__col--narrow">
+          <div class="hr-dash__card">
+            <div class="hr-dash__card-head">
+              <h2 class="hr-dash__card-title">성별&amp;연령대별 인원수</h2>
+            </div>
+            <div class="hr-dash__gender-wrap">
+              <div class="hr-dash__gender-rate">
+                <div class="hr-dash__gender-item hr-dash__gender-item--m">
+                  <i class="fas fa-male" aria-hidden="true"></i>
+                  <div class="hr-dash__gender-meta">
+                    <span class="num" id="cntMale">0명</span>
+                    <span class="pct" id="rateMale">(0%)</span>
+                  </div>
+                </div>
+                <div class="hr-dash__gender-item hr-dash__gender-item--f">
+                  <i class="fas fa-female" aria-hidden="true"></i>
+                  <div class="hr-dash__gender-meta">
+                    <span class="num" id="cntFemale">0명</span>
+                    <span class="pct" id="rateFemale">(0%)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="hr-dash__chart">
+                <canvas id="chartAge"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- jQuery 1.11.2 + Migrate 1.4.1 (e-HR main/DashBoard와 동일) -->
+  <script src="./e-HR_files/jquery-1.11.2.min.js"></script>
+  <script src="./e-HR_files/jquery-migrate-1.4.1.min.js"></script>
+  <!-- Chart.js 4.5.x -->
+  <script src="./e-HR_files/chartjs-4.5.0.js"></script>
+  <script src="./e-HR_files/chartjs-plugin-datalabels.js"></script>
+  <script src="./js/dashboard.js"></script>
+</body>
+</html>

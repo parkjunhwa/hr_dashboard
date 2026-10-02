@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HR Dashboard 적용 가이드 — e-HR</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #fff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --muted: #64748b;
+      --accent: #2563eb;
+      --code-bg: #f1f5f9;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text);
+      background: var(--bg);
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 32px 20px 64px; }
+    h1 { font-size: 26px; margin: 0 0 8px; letter-spacing: -0.5px; }
+    h2 {
+      font-size: 18px;
+      margin: 36px 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 { font-size: 15px; margin: 20px 0 8px; }
+    p, li { color: var(--text); }
+    .lead { color: var(--muted); margin: 0 0 24px; }
+    .meta {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-bottom: 28px;
+    }
+    .chip {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin: 12px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th { background: #f8fafc; font-size: 13px; color: var(--muted); font-weight: 700; }
+    tr:last-child td { border-bottom: none; }
+    code, kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12.5px;
+      background: var(--code-bg);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 14px 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 12.5px;
+      line-height: 1.5;
+    }
+    pre code { background: none; color: inherit; padding: 0; }
+    ul { padding-left: 1.25rem; }
+    .warn {
+      border-left: 4px solid #f59e0b;
+      background: #fffbeb;
+      padding: 12px 14px;
+      border-radius: 0 8px 8px 0;
+      margin: 12px 0;
+    }
+    .ok {
+      border-left: 4px solid #10b981;
+      background: #ecfdf5;
+      padding: 12px 14px;
+      border-radius: 0 8px 8px 0;
+      margin: 12px 0;
+    }
+    a { color: var(--accent); }
+    .toc a { text-decoration: none; }
+    .toc li { margin: 4px 0; }
+    footer { margin-top: 48px; color: var(--muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>e-HR Dashboard — 적용 가이드</h1>
+    <p class="lead">
+      본 문서는 <strong>hr_dashboard</strong> 시안을 웅진 e-HR(기존 MAINFW / DashBoard)에
+      이식할 때 개발자가 참조할 적용 가이드입니다.
+    </p>
+    <div class="meta">
+      <span class="chip">탭: dashboard01 ~ 05</span>
+      <span class="chip">진입: index.html → dashboard01</span>
+      <span class="chip">라이브러리: 기존 e-HR JS/CSS</span>
+      <span class="chip">버전 일치 필수</span>
+    </div>
+
+    <div class="card toc">
+      <strong>목차</strong>
+      <ol>
+        <li><a href="#overview">개요</a></li>
+        <li><a href="#structure">폴더 구조</a></li>
+        <li><a href="#libs">라이브러리 버전</a></li>
+        <li><a href="#pages">화면 구성</a></li>
+        <li><a href="#data">데이터 모델 · API 연동</a></li>
+        <li><a href="#apply">기존 시스템 적용 절차</a></li>
+        <li><a href="#style">스타일 · 색상 · 차트 규칙</a></li>
+        <li><a href="#checklist">체크리스트</a></li>
+      </ol>
+    </div>
+
+    <h2 id="overview">1. 개요</h2>
+    <ul>
+      <li>인력현황·확보·육성·조직문화·조직건강 등 <strong>5개 탭</strong>으로 구성된 정적 시안입니다.</li>
+      <li>레이아웃은 EIS 메인 대시보드의 카드/행 패턴을 참고하며, 선택자는 <code>.hr-dash</code>로 격리했습니다.</li>
+      <li>
+        <strong>구현 완료:</strong> <code>dashboard01.html</code>(인력현황), <code>dashboard02.html</code>(인력확보 및 유지).<br>
+        <strong>준비 중:</strong> <code>dashboard03~05.html</code>(작업중 안내 화면).
+      </li>
+      <li>시안은 각 페이지 JS의 <code>SAMPLE</code> 데이터로 렌더링됩니다. 운영 적용 시 XFWebService / 패키지 조회 결과로 교체합니다.</li>
+      <li>
+        jQuery / Chart.js / Font Awesome 등은 <strong>새로 추가한 라이브러리가 아닙니다.</strong>
+        기존 e-HR 자산을 연결하며, <strong>운영 서버 버전과 반드시 일치</strong>해야 합니다.
+      </li>
+    </ul>
+
+    <h2 id="structure">2. 폴더 구조</h2>
+    <pre><code>hr_dashboard/                   ← ★ 신규 작업 패키지
+├── readme.html                 ← 본 가이드
+├── index.html                  ← 진입점 (dashboard01로 이동)
+├── dashboard01.html            ← 인력현황
+├── dashboard02.html            ← 인력확보 및 유지
+├── dashboard03.html            ← 인재육성 (작업중)
+├── dashboard04.html            ← 조직문화 (작업중)
+├── dashboard05.html            ← 조직건강 및 리스크 관리 (작업중)
+├── css/dashboard.css           ← 공통 스타일 (.hr-dash*)
+├── js/
+│   ├── dashboard.js            ← 01 Chart 렌더 · SAMPLE · HrDashboard
+│   └── dashboard02.js          ← 02 Chart 렌더 · SAMPLE · HrDashboard02
+└── e-HR_files/                 ← 기존 e-HR JS/CSS 연결용 (신규 라이브러리 아님)
+    ├── adminlte.min.css
+    ├── fontawesome-all.css
+    ├── webfonts/
+    ├── jquery-1.11.2.min.js
+    ├── jquery-migrate-1.4.1.min.js
+    ├── chartjs-4.5.0.js
+    └── chartjs-plugin-datalabels.js</code></pre>
+
+    <div class="card">
+      <strong>폴더 역할</strong>
+      <ul>
+        <li>
+          <code>dashboard01~05.html</code> / <code>css/</code> / <code>js/</code> —
+          <strong>이번 작업에서 신규로 만든 대시보드</strong>입니다.
+        </li>
+        <li>
+          <code>e-HR_files/</code> —
+          시안 미리보기용 기존 라이브러리 연결입니다.
+          운영 적용 시 서버에 이미 있는 <em>동일 버전 경로</em>로
+          <code>src</code>/<code>href</code>를 바꾸어 연결하세요.
+        </li>
+      </ul>
+    </div>
+
+    <div class="warn">
+      <strong>중요:</strong> 공통 라이브러리는 기존 시스템 자산을 재사용합니다.
+      CDN·신규 패키지로 교체하지 말고, 아래 표 버전과 운영 파일이 일치하는지 확인하세요.
+    </div>
+
+    <h2 id="libs">3. 라이브러리 버전 (기존 e-HR 사용분 · 버전 일치 필수)</h2>
+    <table>
+      <thead>
+        <tr><th>라이브러리</th><th>기존 e-HR 버전</th><th>비고</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>jQuery</td><td>1.11.2</td><td>Migrate 1.4.1 병행</td></tr>
+        <tr><td>Bootstrap</td><td>4.6.1</td><td>AdminLTE 3.2 CSS에 포함</td></tr>
+        <tr><td>Font Awesome</td><td>Free 5.3.1</td><td><code>fontawesome-all.css</code>를 AdminLTE보다 먼저 로드</td></tr>
+        <tr><td>Chart.js</td><td>4.5.x</td><td>가로 막대: <code>type:'bar' + indexAxis:'y'</code></td></tr>
+        <tr><td>chartjs-plugin-datalabels</td><td>2.x</td><td>로드만 하며, 막대 숫자는 커스텀 plugin</td></tr>
+      </tbody>
+    </table>
+
+    <h3>권장 로드 순서 (01 기준)</h3>
+    <pre><code>&lt;!-- CSS --&gt;
+./e-HR_files/fontawesome-all.css
+./e-HR_files/adminlte.min.css
+./css/dashboard.css
+
+&lt;!-- JS --&gt;
+./e-HR_files/jquery-1.11.2.min.js
+./e-HR_files/jquery-migrate-1.4.1.min.js
+./e-HR_files/chartjs-4.5.0.js
+./e-HR_files/chartjs-plugin-datalabels.js
+./js/dashboard.js          ※ 02 페이지는 dashboard02.js
+
+※ 운영 적용 시 ./e-HR_files/... → 기존 서버 동일 버전 경로</code></pre>
+
+    <h2 id="pages">4. 화면 구성</h2>
+    <p>공통: 상단 탭 네비 <code>.hr-dash__nav</code> + 루트 <code>&lt;div class="hr-dash" id="hrDashRoot"&gt;</code></p>
+
+    <h3>4-1. dashboard01 — 인력현황</h3>
+    <table>
+      <thead>
+        <tr><th>영역</th><th>구성</th><th>비고</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>상단 KPI</td>
+          <td>재직자 / 휴직자 / 입사자 / 퇴사자 / 인력 다양성</td>
+          <td>5카드 동일 높이</td>
+        </tr>
+        <tr>
+          <td>재직자</td>
+          <td>총원 + IT/CS <strong>원형 솔리드(파이)</strong> + 우측 라벨</td>
+          <td><code>#chartItCs</code></td>
+        </tr>
+        <tr>
+          <td>휴직·입사·퇴사</td>
+          <td>수치 + 우측 원형 FA 아이콘</td>
+          <td>fa-bed / fa-user-plus / fa-user-minus</td>
+        </tr>
+        <tr>
+          <td>인력 다양성</td>
+          <td>장애인·보훈·외국인</td>
+          <td>3칸 박스</td>
+        </tr>
+        <tr>
+          <td>하단 1단</td>
+          <td>본부별 인원수(세로 누적) | 직책자(남좌·여우)</td>
+          <td>본부별: 수치를 오른쪽 콜아웃으로 표시</td>
+        </tr>
+        <tr>
+          <td>하단 2단</td>
+          <td>직급별 인원수 <span style="color:#94a3b8">(3개년 추이)</span> | 성별&amp;연령대</td>
+          <td>직급별: 수치를 하단 콜아웃으로 표시<br>직책자·성별연령은 막대 안 라벨 유지</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="ok">
+      API: <code>HrDashboard.render(data)</code> · 샘플: <code>HrDashboard.sample</code>
+    </div>
+
+    <h3>4-2. dashboard02 — 인력확보 및 유지</h3>
+    <table>
+      <thead>
+        <tr><th>영역</th><th>구성</th><th>비고</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>상단 3카드</td>
+          <td>신규채용 / 핵심기술인재 / Successor</td>
+          <td>그리드 높이 절반</td>
+        </tr>
+        <tr>
+          <td>중단</td>
+          <td>퇴직률(파이+하단 수치) / 직급별 퇴직 / 퇴직 사유(도넛+하단 범례)</td>
+          <td>퇴직 사유 카드 row-span 2</td>
+        </tr>
+        <tr>
+          <td>하단</td>
+          <td>본부별 퇴직 / 근속년수별 퇴직</td>
+          <td>상단 제외 나머지 높이 배분</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="ok">
+      API: <code>HrDashboard02.render(data)</code> · 샘플: <code>HrDashboard02.sample</code>
+    </div>
+
+    <h3>4-3. dashboard03 ~ 05</h3>
+    <p>탭 셸 + 「작업중」 안내. 차트/데이터 연동 전 상태입니다.</p>
+
+    <h2 id="data">5. 데이터 모델 · API 연동</h2>
+    <h3>01 — HrDashboard</h3>
+    <pre><code>HrDashboard.render(HrDashboard.sample);
+
+HrDashboard.render({
+  kpi: { work, it, cs, leave, join, retire, disabil, bohun, foreign },
+  gender: { male, female },
+  hq: { labels: [...], grades: { '임원':[...], ... } },
+  jikchak: { labels: [...], male: [...], female: [...] },
+  gradeYear: { labels: ['2026','2025','2024'], grades: { ... } },
+  age: { labels: ['50이상','40~49','30~39','20~29'], male: [...], female: [...] }
+});</code></pre>
+
+    <h3>01 — 기존 패키지 Gubun 참고</h3>
+    <table>
+      <thead>
+        <tr><th>Gubun</th><th>용도</th><th>시안 필드</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>W01</td><td>재직 TOTAL / IT / CS</td><td><code>kpi.work, it, cs</code></td></tr>
+        <tr><td>W02</td><td>휴직</td><td><code>kpi.leave</code></td></tr>
+        <tr><td>W03</td><td>입사</td><td><code>kpi.join</code></td></tr>
+        <tr><td>W04</td><td>퇴사</td><td><code>kpi.retire</code></td></tr>
+        <tr><td>W05</td><td>다양성</td><td><code>kpi.disabil, bohun, foreign</code></td></tr>
+        <tr><td>W06</td><td>본부 × 직급</td><td><code>hq</code></td></tr>
+        <tr><td>W07</td><td>직책 × 성별</td><td><code>jikchak</code></td></tr>
+        <tr><td>W08</td><td>직급 3개년</td><td><code>gradeYear</code></td></tr>
+        <tr><td>W09</td><td>성별 합계</td><td><code>gender</code></td></tr>
+        <tr><td>W10</td><td>연령 × 성별</td><td><code>age</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>02 — HrDashboard02</h3>
+    <pre><code>HrDashboard02.render(HrDashboard02.sample);
+
+HrDashboard02.render({
+  hire: { labels, newbie, career },
+  core: { labels, data },
+  successor: { labels, external, internal },
+  retireRate: { rate, count },
+  gradeRetire: { labels, data },
+  reason: { center, items: [{ pct, label }, ...] },
+  deptRetire: { labels, data },
+  tenureRetire: { labels, data }
+});</code></pre>
+
+    <h2 id="apply">6. 기존 시스템 적용 절차</h2>
+    <ol>
+      <li>
+        <strong>신규 파일 배치</strong><br>
+        <code>index.html</code>, <code>dashboard01~05.html</code>, <code>css/</code>, <code>js/</code>를
+        서버 정적 경로에 복사합니다. <code>e-HR_files/</code>는 운영에 동일 버전이 있으면 생략 가능합니다.
+      </li>
+      <li>
+        <strong>기존 JS/CSS 경로 연결</strong><br>
+        각 HTML의 <code>./e-HR_files/...</code>를 운영 기존 라이브러리 경로로 교체합니다.
+      </li>
+      <li>
+        <strong>탭 / iframe 연결</strong><br>
+        기존 DashBoard 탭 <code>src</code>를 본 패키지 URL로 교체합니다.
+        기본 진입은 <code>index.html</code> 또는 <code>dashboard01.html</code>.
+      </li>
+      <li>
+        <strong>데이터 연동</strong><br>
+        01: <code>HrDashboard.render(data)</code> ·
+        02: <code>HrDashboard02.render(data)</code>.
+        각 JS의 <code>$(function(){...})</code>에서 SAMPLE 대신 실데이터를 주입합니다.
+      </li>
+      <li>
+        <strong>리사이즈</strong><br>
+        각 페이지가 <code>window.resize</code>에서 <code>chart.resize()</code>를 호출합니다.
+        iframe 높이 변경 시 resize 이벤트 전달을 확인하세요.
+      </li>
+    </ol>
+
+    <h2 id="style">7. 스타일 · 색상 · 차트 규칙</h2>
+    <ul>
+      <li>커스텀 CSS는 <code>.hr-dash</code> 하위로만 작성.</li>
+      <li>
+        <strong>01 직급 팔레트</strong> (<code>GRADE_PALETTE</code>):
+        Tailwind 400 — blue / orange / slate / amber / sky / emerald / violet.
+      </li>
+      <li>
+        <strong>01 IT/CS·성별</strong>:
+        IT sky-400, CS orange-400 / 남 blue-400, 여 red-400.
+        CSS 변수 <code>--hr-dash-it</code> 등과 맞춤.
+      </li>
+      <li>
+        <strong>01 콜아웃</strong>:
+        본부별·직급별 누적은 구간 수치를 선으로 밖으로 표시
+        (본부별→오른쪽, 직급별→하단, regular weight).
+        직책자·성별&amp;연령대는 막대 안 라벨(어두운 배경이면 흰 글자).
+      </li>
+      <li>
+        <strong>02 팔레트</strong>:
+        Tailwind 400 시리즈(<code>SERIES</code>).
+        퇴직률은 red-400, 직급별 퇴직은 시리즈 랜덤 배정.
+      </li>
+      <li>KPI 아이콘 원: 바이올렛·에메랄드·주황 배경 + 흰 아이콘 20px (원 60px).</li>
+      <li>제목 보조 문구 <code>.hr-dash__title-sub</code>: 그레이·작은 글자 — 예: (3개년 추이).</li>
+    </ul>
+
+    <h2 id="checklist">8. 적용 체크리스트</h2>
+    <div class="card">
+      <ul>
+        <li>□ 공통 라이브러리를 신규 추가하지 않고 기존 e-HR 경로로 연결했는가</li>
+        <li>□ jQuery / Chart.js / FA / AdminLTE 버전이 운영과 일치하는가</li>
+        <li>□ FA <code>webfonts</code> 404가 아닌가</li>
+        <li>□ 탭 네비(01~05) 링크·활성(<code>.on</code>)이 올바른가</li>
+        <li>□ 01: W01~W10 → <code>HrDashboard.render</code> 매핑 완료</li>
+        <li>□ 02: 채용·퇴직 등 → <code>HrDashboard02.render</code> 매핑 완료</li>
+        <li>□ <code>GRADE_ORDER</code> 직급명이 마스터와 일치하는가</li>
+        <li>□ iframe 높이·리사이즈 후 차트 깨짐이 없는가</li>
+        <li>□ <code>.hr-dash</code>와 글로벌 CSS 충돌이 없는가</li>
+      </ul>
+    </div>
+
+    <footer>
+      HR Dashboard 적용 가이드 · 디자이너/퍼블리셔 박준화 수석 (26.10.02) · HP:010-9479-3188
+    </footer>
+  </div>
+</body>
+</html>

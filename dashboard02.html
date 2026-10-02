@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>인력확보 및 유지 - e-HR Dashboard</title>
+  <link rel="stylesheet" type="text/css" media="screen" href="./e-HR_files/fontawesome-all.css" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="./e-HR_files/adminlte.min.css">
+  <link rel="stylesheet" type="text/css" href="./css/dashboard.css">
+</head>
+<body>
+  <div class="hr-dash" id="hrDashRoot">
+    <nav class="hr-dash__nav" aria-label="대시보드 탭">
+      <a href="./dashboard01.html">인력현황</a>
+      <a href="./dashboard02.html" class="on">인력확보 및 유지</a>
+      <a href="./dashboard03.html">인재육성</a>
+      <a href="./dashboard04.html">조직문화</a>
+      <a href="./dashboard05.html">조직건강 및 리스크 관리</a>
+    </nav>
+
+    <div class="hr-dash__grid-d02">
+      <div class="hr-dash__card">
+        <div class="hr-dash__card-head">
+          <h2 class="hr-dash__card-title">신규채용 현황</h2>
+        </div>
+        <div class="hr-dash__chart"><canvas id="chartHire"></canvas></div>
+      </div>
+
+      <div class="hr-dash__card">
+        <div class="hr-dash__card-head">
+          <h2 class="hr-dash__card-title">핵심기술인재 현황</h2>
+        </div>
+        <div class="hr-dash__chart"><canvas id="chartCore"></canvas></div>
+      </div>
+
+      <div class="hr-dash__card">
+        <div class="hr-dash__card-head">
+          <h2 class="hr-dash__card-title">Successor 현황</h2>
+        </div>
+        <div class="hr-dash__chart"><canvas id="chartSuccessor"></canvas></div>
+      </div>
+
+      <div class="hr-dash__card">
+        <div class="hr-dash__card-head">
+          <h2 class="hr-dash__card-title">퇴직률</h2>
+        </div>
+        <div class="hr-dash__rate-wrap">
+          <div class="hr-dash__rate-chart"><canvas id="chartRetireRate"></canvas></div>
+          <div class="hr-dash__rate-text" id="retireRateText">0% <span class="hr-dash__rate-sub">(0명)</span></div>
+        </div>
+      </div>
+
+      <div class="hr-dash__card">
+        <div class="hr-dash__card-head">
+          <h2 class="hr-dash__card-title">직급별 퇴직자 수</h2>
+        </div>
+        <div class="hr-dash__chart"><canvas id="chartGradeRetire"></canvas></div>
+      </div>
+
+      <div class="hr-dash__card hr-dash__card--span2">
+        <div class="hr-dash__card-head">
+          <h2 class="hr-dash__card-title">퇴직 사유</h2>
+        </div>
+        <div class="hr-dash__reason-wrap">
+          <div class="hr-dash__reason-chart"><canvas id="chartReason"></canvas></div>
+          <div class="hr-dash__reason-legend" id="reasonLegend"></div>
+        </div>
+        <div class="hr-dash__card-note">※ 퇴사 시 설문조사, 심층면접을 근거로 작성된 것임</div>
+      </div>
+
+      <div class="hr-dash__card">
+        <div class="hr-dash__card-head">
+          <h2 class="hr-dash__card-title">본부별 퇴직자 수</h2>
+        </div>
+        <div class="hr-dash__chart"><canvas id="chartDeptRetire"></canvas></div>
+      </div>
+
+      <div class="hr-dash__card">
+        <div class="hr-dash__card-head">
+          <h2 class="hr-dash__card-title">근속년수별 퇴직자 수</h2>
+        </div>
+        <div class="hr-dash__chart"><canvas id="chartTenureRetire"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./e-HR_files/jquery-1.11.2.min.js"></script>
+  <script src="./e-HR_files/jquery-migrate-1.4.1.min.js"></script>
+  <script src="./e-HR_files/chartjs-4.5.0.js"></script>
+  <script src="./e-HR_files/chartjs-plugin-datalabels.js"></script>
+  <script src="./js/dashboard02.js"></script>
+</body>
+</html>

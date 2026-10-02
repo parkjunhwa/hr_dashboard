@@ -1,0 +1,645 @@
+/**
+ * HR Dashboard page-only styles
+ * EIS 메인(.eis-dash) 레이아웃 패턴을 참조. 선택자는 .hr-dash 하위로 격리.
+ *
+ * WORK LOG
+ * [2026-10-02] 초기 작성 — KPI / Chart.js 카드 레이아웃
+ * [2026-10-02] KPI=컨텐츠 동일높이, 하단 2단 차트=남은 영역 flex 채움
+ */
+
+html,
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 100%;
+  overflow: hidden;
+  background: #f4f5f7;
+}
+
+.hr-dash {
+  --hr-dash-bg: #f4f5f7;
+  --hr-dash-card-bg: #ffffff;
+  --hr-dash-border: #dce0e2;
+  --hr-dash-muted: #888888;
+  --hr-dash-label: #4a4f57;
+  --hr-dash-text: #2f3338;
+  /* Tailwind 연한 톤 참조 (라이브러리 미사용) */
+  --hr-dash-it: #38bdf8;      /* sky-400 */
+  --hr-dash-cs: #fb923c;      /* orange-400 */
+  --hr-dash-male: #60a5fa;    /* blue-400 */
+  --hr-dash-female: #f87171;  /* red-400 */
+
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 0;
+  padding: 12px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: var(--hr-dash-bg);
+  color: var(--hr-dash-text);
+  font-family: "Pretendard GOV", "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+}
+
+/* ----- 상단 탭 (임시 네비) ----- */
+.hr-dash__nav {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 18px;
+  padding: 0 2px 10px;
+  border-bottom: 1px solid var(--hr-dash-border);
+  margin-bottom: 0;
+}
+
+.hr-dash__nav a {
+  color: var(--hr-dash-muted);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: -0.3px;
+  padding: 4px 0;
+  border-bottom: 2px solid transparent;
+}
+
+.hr-dash__nav a:hover {
+  color: var(--hr-dash-label);
+}
+
+.hr-dash__nav a.on {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+}
+
+/* ----- dashboard02 그리드 ----- */
+.hr-dash__grid-d02 {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  /* 상단 3카드(신규채용·핵심기술·Successor) = 절반, 하단 2행이 나머지 절반 배분 */
+  grid-template-rows: 1fr 0.5fr 0.5fr;
+  gap: 12px;
+}
+
+.hr-dash__grid-d02 > .hr-dash__card {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.hr-dash__grid-d02 > .hr-dash__card--span2 {
+  grid-row: span 2;
+}
+
+.hr-dash__rate-wrap {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 4px 8px 8px;
+}
+
+.hr-dash__rate-chart {
+  flex: 0 0 auto;
+  width: 140px;
+  height: 140px;
+  max-width: 70%;
+  max-height: calc(100% - 48px);
+  min-height: 0;
+  position: relative;
+}
+
+.hr-dash__rate-text {
+  flex: 0 0 auto;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--hr-dash-text);
+  line-height: 1.15;
+  text-align: center;
+}
+
+.hr-dash__rate-sub {
+  color: #94a3b8; /* slate-400 */
+  font-size: 0.62em;
+  font-weight: 700;
+}
+
+.hr-dash__reason-wrap {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.hr-dash__reason-chart {
+  flex: 1 1 0;
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.hr-dash__reason-chart canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.hr-dash__reason-legend {
+  flex: 0 0 auto;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  font-size: 12px;
+  color: #444;
+  padding: 2px 4px 0;
+  min-width: 0;
+  max-height: 42%;
+  overflow: auto;
+}
+
+.hr-dash__reason-legend .item {
+  display: grid;
+  grid-template-columns: 10px 38px minmax(0, 1fr);
+  gap: 6px;
+  align-items: start;
+  margin: 5px 0;
+  line-height: 1.35;
+}
+
+.hr-dash__reason-legend .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.hr-dash__reason-legend .pct {
+  font-weight: 700;
+  color: #2f3338;
+}
+
+.hr-dash__card-note {
+  font-size: 11px;
+  color: #888;
+  padding: 0 2px 2px;
+  flex: 0 0 auto;
+  text-align: center;
+}
+
+/* ----- 작업중 빈 페이지 ----- */
+.hr-dash__ready {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: #fff;
+  border: 1px solid var(--hr-dash-border);
+  border-radius: 10px;
+}
+
+.hr-dash__ready small {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #aaa;
+}
+
+.hr-dash *,
+.hr-dash *::before,
+.hr-dash *::after {
+  box-sizing: border-box;
+}
+
+/* ----- KPI: 컨텐츠 높이, 5카드 동일 높이 ----- */
+.hr-dash__kpi-row {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr 1.4fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.hr-dash__kpi-row > .hr-dash__card {
+  height: auto;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ----- 하단 차트 영역: 남은 높이 전부 ----- */
+.hr-dash__charts {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hr-dash__row {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  gap: 12px;
+  flex-wrap: nowrap;
+  margin: 0;
+}
+
+.hr-dash__col {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+}
+
+.hr-dash__col--wide {
+  flex: 1.7 1 0;
+}
+
+.hr-dash__col--narrow {
+  flex: 1 1 0;
+}
+
+/* ----- Card ----- */
+.hr-dash__card {
+  background-color: var(--hr-dash-card-bg);
+  padding: 14px 16px 16px;
+  border: 1px solid var(--hr-dash-border);
+  border-radius: 10px;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.04);
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.hr-dash__charts .hr-dash__card {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.hr-dash__title-sub {
+  color: #94a3b8; /* slate-400 */
+  font-size: 0.72em;
+  font-weight: 600;
+}
+
+.hr-dash__card-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: #c60c70;
+  background: rgba(198, 12, 112, 0.08);
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+.hr-dash__card-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 10px;
+  line-height: 1.3;
+  color: var(--hr-dash-label);
+  letter-spacing: -0.5px;
+}
+
+.hr-dash__card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+}
+
+.hr-dash__card-head .hr-dash__card-title {
+  margin-bottom: 0;
+}
+
+.hr-dash__unit {
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--hr-dash-muted);
+  margin-left: 4px;
+}
+
+/* ----- KPI ----- */
+.hr-dash__kpi-num {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--hr-dash-text);
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+.hr-dash__kpi-unit {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--hr-dash-muted);
+  margin-left: 4px;
+}
+
+/* KPI 본문: 왼쪽 수치 + 오른쪽 차트/아이콘 */
+.hr-dash__kpi-main {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 0;
+}
+
+.hr-dash__kpi-main-num {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.hr-dash__kpi-main-side {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 72px;
+}
+
+.hr-dash__work-chart {
+  width: 64px;
+  min-width: 64px;
+  height: 64px;
+  position: relative;
+}
+
+.hr-dash__work-chart canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.hr-dash__work-legend {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 8px;
+  text-align: right;
+  min-width: 44px;
+}
+
+.hr-dash__work-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.15;
+}
+
+.hr-dash__work-item .lab {
+  font-size: 13px;
+  font-weight: 700;
+  color: #555;
+}
+
+.hr-dash__work-item .val {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--hr-dash-text);
+}
+
+.hr-dash__work-item--it .lab {
+  color: var(--hr-dash-it);
+}
+
+.hr-dash__work-item--cs .lab {
+  color: var(--hr-dash-cs);
+}
+
+/* 휴직/입사/퇴사: 밝은 원형 배경 + 흰 아이콘 20px */
+.hr-dash__kpi-main-icon {
+  flex: 0 0 auto;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.hr-dash__kpi-main-icon i {
+  font-size: 20px;
+  line-height: 1;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hr-dash__kpi-main-icon--leave {
+  background-color: #7c3aed; /* violet-600 */
+}
+
+.hr-dash__kpi-main-icon--join {
+  background-color: #059669; /* emerald-600 */
+}
+
+.hr-dash__kpi-main-icon--retire {
+  background-color: #ea580c; /* orange-600 */
+}
+
+.hr-dash__div3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  text-align: center;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.hr-dash__div3-item {
+  background-color: #f1f5f9; /* slate-100 */
+  border-radius: 8px;
+  padding: 10px 6px 8px;
+  min-width: 0;
+}
+
+.hr-dash__div3 .lab {
+  font-size: 15px;
+  font-weight: 600;
+  color: #64748b; /* slate-500 */
+  margin-bottom: 6px;
+}
+
+.hr-dash__div3 .num {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--hr-dash-text);
+}
+
+/* ----- Charts: 카드 안에서 남은 높이 채움 ----- */
+.hr-dash__chart {
+  width: 100%;
+  flex: 1 1 0;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.hr-dash__chart canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.hr-dash__gender-wrap {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 10px;
+}
+
+.hr-dash__gender-rate {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 8px 0;
+  min-height: 0;
+}
+
+/* 위: 큰 아이콘 / 아래: 인원수(%) */
+.hr-dash__gender-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.hr-dash__gender-item > i {
+  font-size: 42px;
+  line-height: 1;
+}
+
+.hr-dash__gender-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--hr-dash-text);
+}
+
+.hr-dash__gender-meta .num {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+}
+
+.hr-dash__gender-meta .pct {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--hr-dash-muted);
+  line-height: 1.2;
+}
+
+.hr-dash__gender-item--m > i {
+  color: var(--hr-dash-male);
+}
+
+.hr-dash__gender-item--f > i {
+  color: var(--hr-dash-female);
+}
+
+@media (max-width: 1400px) {
+  .hr-dash__kpi-row {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .hr-dash__kpi-num {
+    font-size: 34px;
+  }
+}
+
+@media (max-width: 1100px) {
+  html,
+  body {
+    overflow: auto;
+  }
+
+  .hr-dash {
+    height: auto;
+    min-height: 100%;
+  }
+
+  .hr-dash__kpi-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hr-dash__charts {
+    flex: none;
+  }
+
+  .hr-dash__row {
+    flex: none;
+    flex-wrap: wrap;
+    min-height: 280px;
+  }
+
+  .hr-dash__col--wide,
+  .hr-dash__col--narrow {
+    flex: 1 1 100%;
+    min-height: 260px;
+  }
+
+  .hr-dash__chart {
+    min-height: 220px;
+  }
+
+  .hr-dash__gender-wrap {
+    grid-template-columns: 1fr;
+    min-height: 260px;
+  }
+
+  .hr-dash__gender-rate {
+    flex-direction: row;
+    gap: 24px;
+    padding-bottom: 8px;
+  }
+
+  .hr-dash__grid-d02 {
+    display: flex;
+    flex-direction: column;
+    flex: none;
+  }
+
+  .hr-dash__grid-d02 > .hr-dash__card {
+    min-height: 280px;
+  }
+
+  .hr-dash__grid-d02 > .hr-dash__card--span2 {
+    min-height: 420px;
+  }
+}
