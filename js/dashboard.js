@@ -4,6 +4,7 @@
  *
  * WORK LOG
  * [2026-10-02] 초기 작성 — KPI / 본부·직책·직급3개년·연령피라미드
+ * [2026-10-06] SAMPLE을 시안 스크린샷 명칭·수치로 교체 (차트 형태는 기존 유지)
  */
 (function (window, $) {
   'use strict';
@@ -31,7 +32,7 @@
     TW.blue400, TW.orange400, TW.slate400, TW.amber400,
     TW.sky400, TW.emerald400, TW.violet400
   ];
-  /** dashboard01_ 다른 안 — 사원·계약 violet/fuchsia */
+  /** dashboard01_ 다른 안 — 사원·계약직 violet/fuchsia */
   var GRADE_PALETTE_ALT = [
     '#f87171', /* 임원 red-400 */
     '#fb923c', /* 부장 orange-400 */
@@ -39,10 +40,10 @@
     '#a3e635', /* 과장 lime-400 */
     '#34d399', /* 대리 emerald-400 */
     '#a78bfa', /* 사원 violet-400 */
-    '#e879f9'  /* 계약 fuchsia-400 */
+    '#e879f9'  /* 계약직(무기) fuchsia-400 */
   ];
   var GRADE_PALETTE = GRADE_PALETTE_DEFAULT;
-  var GRADE_ORDER = ['임원', '부장', '차장', '과장', '대리', '사원', '계약'];
+  var GRADE_ORDER = ['임원', '부장', '차장', '과장', '대리', '사원', '계약직(무기)'];
   var COLOR_MALE = TW.blue400;
   var COLOR_FEMALE = TW.red400;
   var COLOR_IT = TW.sky400;
@@ -54,7 +55,7 @@
     tickSize: 13,
     legendSize: 13,
     barLabelSize: 12,
-    barTotalSize: 13,
+    barTotalSize: 15,
     legendBox: 14,
     legendPad: 18,
     tickPad: 12, /* 항목 라벨 ↔ 막대 간격 */
@@ -90,46 +91,53 @@
     }, ds || {});
   }
 
-  /** 스크린샷 기준 샘플 데이터 (백엔드 연동 전 로컬 미리보기) */
+  /**
+   * 시안 스크린샷 기준 샘플 데이터 (백엔드 연동 전 로컬 미리보기)
+   * 본부·직책 명칭/수치, 직급 3개년·연령대는 시안과 동일
+   */
   var SAMPLE = {
     kpi: { work: 945, it: 513, cs: 432, leave: 6, join: 37, retire: 39, disabil: 12, bohun: 0, foreign: 0 },
     gender: { male: 292, female: 179 },
     hq: {
       labels: [
-        '전략기획실', 'IT기획부', '디지털혁신부', '클라우드사업부',
-        '시스템운영부', '고객서비스본부', '영업본부', '경영지원본부', '연구소'
+        'ERP1사업본부', 'ERP2사업본부', 'ERP3사업본부', 'WRMS사업본부',
+        '모빌리티사업본부', '클라우드사업본부', 'CIT사업본부', 'VC사업본부',
+        '엔터프라이즈담당', 'CEO직속'
       ],
+      /* 행 합계: 34, 42, 93, 92, 41, 43, 77, 10, 20, 19 */
       grades: {
-        '임원': [2, 1, 1, 2, 1, 2, 3, 2, 1],
-        '부장': [4, 6, 5, 8, 7, 9, 10, 6, 4],
-        '차장': [6, 10, 12, 14, 11, 15, 12, 8, 7],
-        '과장': [8, 18, 22, 28, 20, 30, 24, 14, 12],
-        '대리': [10, 24, 28, 36, 30, 40, 32, 18, 16],
-        '사원': [12, 40, 48, 55, 50, 70, 45, 22, 20],
-        '계약': [2, 6, 8, 10, 9, 12, 8, 4, 3]
+        '임원': [1, 0, 1, 1, 0, 1, 0, 1, 0, 1],
+        '부장': [5, 11, 26, 25, 9, 4, 11, 3, 3, 2],
+        '차장': [4, 4, 20, 14, 7, 3, 19, 6, 8, 5],
+        '과장': [1, 3, 20, 17, 9, 8, 16, 0, 2, 3],
+        '대리': [8, 8, 18, 17, 8, 15, 12, 0, 0, 2],
+        '사원': [13, 13, 7, 15, 8, 10, 17, 0, 0, 2],
+        '계약직(무기)': [2, 3, 1, 3, 0, 2, 2, 0, 7, 4]
       }
     },
     jikchak: {
-      labels: ['본부장', '실장', '팀장', '파트장'],
-      male: [8, 12, 42, 28],
-      female: [2, 4, 18, 15]
+      labels: ['본부장', '부본부장', '담당', '팀장', '센터장', '연구소장'],
+      male: [7, 1, 3, 31, 2, 9],
+      female: [1, 0, 3, 8, 0, 0]
     },
     gradeYear: {
       labels: ['2026', '2025', '2024'],
+      /* 시안 수치 — 행 합계: 463, 338, 372 */
       grades: {
-        '임원': [15, 14, 13],
-        '부장': [58, 55, 52],
-        '차장': [95, 90, 88],
-        '과장': [176, 168, 160],
-        '대리': [234, 220, 210],
-        '사원': [327, 310, 295],
-        '계약': [40, 38, 36]
+        '임원': [6, 5, 4],
+        '부장': [91, 68, 73],
+        '차장': [88, 58, 72],
+        '과장': [77, 56, 57],
+        '대리': [76, 60, 62],
+        '사원': [100, 79, 86],
+        '계약직(무기)': [25, 12, 18]
       }
     },
     age: {
       labels: ['50이상', '40~49', '30~39', '20~29'],
-      male: [38, 92, 110, 52],
-      female: [18, 48, 67, 46]
+      /* 합계 남 292 / 여 179 — 시안: 81·91·99·21 / 13·54·67·45 */
+      male: [81, 91, 99, 21],
+      female: [13, 54, 67, 45]
     }
   };
 
@@ -187,8 +195,10 @@
 
   /**
    * Chart.js afterDatasetsDraw — 막대 안 건수 / 행 총원
-   * opt.callout: 모든 구간 수치를 선으로 밖으로 빼서 표시 (세로·가로 누적)
-   * 직책자·성별연령 등은 callout 없이 막대 안 표시 유지
+   * opt.callout: 구간 수치를 선으로 밖으로 빼서 표시 (세로·가로 누적)
+   * opt.calloutMaxValue: 절대 수치 이하만 콜아웃 (우선)
+   * opt.calloutMaxRatio: 해당 막대 합 대비 이 비율 이하만 콜아웃 (calloutMaxValue 없을 때)
+   * 직책자·성별연령: 막대 안 성별 수치 + 항목명 옆 총계(n) (총계는 barTotalSize bold)
    */
   var barCountPlugin = {
     id: 'hrBarCount',
@@ -202,7 +212,24 @@
       var lineColor = opt.lineColor || '#cbd5e1'; /* slate-300 — 흐린 콜아웃 선 */
       var fontSize = CHART_UI.barLabelSize;
       var calloutOn = !!opt.callout;
+      var calloutMaxValue = opt.calloutMaxValue != null ? Number(opt.calloutMaxValue) : null;
+      var calloutMaxRatio = opt.calloutMaxRatio != null ? Number(opt.calloutMaxRatio) : null;
+      var useAbsThreshold = calloutMaxValue != null && isFinite(calloutMaxValue);
+      var useRatioThreshold = !useAbsThreshold && calloutMaxRatio != null && isFinite(calloutMaxRatio);
       var calloutsByIdx = {};
+      var colTotals = null;
+
+      if (calloutOn && useRatioThreshold) {
+        colTotals = [];
+        for (var ci = 0; ci < n; ci++) {
+          var sum = 0;
+          chart.data.datasets.forEach(function (ds, di) {
+            if (!chart.isDatasetVisible(di)) return;
+            sum += Math.abs(num(ds.data[ci]));
+          });
+          colTotals[ci] = sum;
+        }
+      }
 
       ctx.save();
       ctx.font = 'bold ' + fontSize + 'px ' + CHART_FONT;
@@ -222,21 +249,30 @@
             : ((p.width != null ? p.width : 24) / 2);
 
           if (calloutOn) {
-            if (!calloutsByIdx[idx]) calloutsByIdx[idx] = [];
-            calloutsByIdx[idx].push({
-              val: val,
-              seg: seg,
-              cx: x,
-              cy: y,
-              halfThick: halfThick,
-              /* 세로 막대: 오른쪽(1) / 가로 막대: 아래(1) 로 통일 */
-              side: 1
-            });
-            return;
+            var useCallout = true;
+            if (useAbsThreshold) {
+              useCallout = val <= calloutMaxValue;
+            } else if (useRatioThreshold && colTotals && colTotals[idx] > 0) {
+              useCallout = val / colTotals[idx] <= calloutMaxRatio;
+            }
+            if (useCallout) {
+              if (!calloutsByIdx[idx]) calloutsByIdx[idx] = [];
+              calloutsByIdx[idx].push({
+                val: val,
+                seg: seg,
+                cx: x,
+                cy: y,
+                halfThick: halfThick,
+                /* 세로 막대: 오른쪽(1) / 가로 막대: 아래(1) 로 통일 */
+                side: 1
+              });
+              return;
+            }
+            /* 임계값 초과 → 막대 안 표시로 진행 */
           }
 
-          /* 막대 안: 어두운 배경이면 흰 글자 */
-          ctx.fillStyle = contrastLabelColor(datasetFillAt(ds, idx), '#ffffff', labelColor);
+          /* 막대 안: 흰색 */
+          ctx.fillStyle = '#ffffff';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillText(String(val), x, y);
@@ -272,17 +308,32 @@
             var rowY = deepest + arm + 4;
             if (rowY > maxY - fontSize) rowY = maxY - fontSize;
 
+            /* 왼쪽부터 밀기 → 오른쪽에 안 들어가면 가용 폭에 균등 분배 (겹침 방지) */
             var prevLabelX = -Infinity;
+            var overflow = false;
             list.forEach(function (item) {
               item.labelX = item.cx;
               var tw = ctx.measureText(String(item.val)).width + 4;
               if (item.labelX - prevLabelX < minGapX) {
                 item.labelX = prevLabelX + minGapX;
               }
-              if (item.labelX + tw / 2 > maxX) item.labelX = maxX - tw / 2;
+              if (item.labelX + tw / 2 > maxX) overflow = true;
               if (item.labelX < minX) item.labelX = minX;
               prevLabelX = item.labelX;
             });
+            if (overflow && list.length > 1) {
+              var span = Math.max(maxX - minX, minGapX);
+              var step = span / (list.length - 1);
+              list.forEach(function (item, i) {
+                item.labelX = minX + step * i;
+              });
+            } else {
+              list.forEach(function (item) {
+                var tw = ctx.measureText(String(item.val)).width + 4;
+                if (item.labelX + tw / 2 > maxX) item.labelX = maxX - tw / 2;
+                if (item.labelX < minX) item.labelX = minX;
+              });
+            }
 
             list.forEach(function (item) {
               var dir = item.side; /* 1 = 아래 */
@@ -393,32 +444,38 @@
       ctx.restore();
 
       if (!opt.total) return;
+      /* 양방향(남 음수) 차트: 합은 절대값, 총원은 중앙선 오른쪽에 표시 */
+      var xScale = chart.scales && chart.scales.x;
+      var zeroX = (horiz && xScale) ? xScale.getPixelForValue(0) : null;
       for (var idx = 0; idx < n; idx++) {
         var total = 0;
         var end = horiz ? -Infinity : Infinity;
         var px = 0;
-        var py = 0;
+        var py = null;
         chart.data.datasets.forEach(function (ds, di) {
           if (!chart.isDatasetVisible(di)) return;
-          total += num(ds.data[idx]);
+          total += Math.abs(num(ds.data[idx]));
           var bar = chart.getDatasetMeta(di).data[idx];
           if (!bar) return;
           var p = barProps(bar);
           if (horiz) {
             if (p.x > end) { end = p.x; py = p.y; }
+            else if (py == null) py = p.y;
           } else if (p.y < end) {
             end = p.y;
             px = p.x;
           }
         });
-        if (total <= 0) continue;
+        if (total <= 0 || (horiz && py == null)) continue;
         ctx.save();
         ctx.fillStyle = '#334155'; /* slate-700 */
         ctx.font = 'bold ' + CHART_UI.barTotalSize + 'px ' + CHART_FONT;
         if (horiz) {
+          var tx = end;
+          if (zeroX != null && tx < zeroX) tx = zeroX;
           ctx.textAlign = 'left';
           ctx.textBaseline = 'middle';
-          ctx.fillText(String(total), end + 8, py);
+          ctx.fillText(String(total), tx + 8, py);
         } else {
           ctx.textAlign = 'center';
           ctx.textBaseline = 'bottom';
@@ -532,8 +589,8 @@
     };
   }
 
-  /** 가로 누적 (직급 3개년 — 오른쪽 아래 대각선 콜아웃, 차트 영역 내) */
-  function stackedHorizontal(canvasId, labels, datasets) {
+  /** 가로 누적 — 오른쪽 아래 대각선 콜아웃 (opt로 hrBarCount 덮어쓰기) */
+  function stackedHorizontal(canvasId, labels, datasets, opt) {
     var xMax = maxStackedTotal(datasets);
     var ds = datasets.map(function (d) {
       return $.extend({}, d, {
@@ -573,13 +630,13 @@
           legend: legendOpts(),
           tooltip: { mode: 'nearest', intersect: true, callbacks: stackedTooltipCallbacks() },
           datalabels: { display: false },
-          hrBarCount: {
+          hrBarCount: $.extend({
             total: true,
             color: '#475569',
             callout: true,
             lineColor: '#cbd5e1',
             calloutStyle: 'diagonal'
-          }
+          }, opt || {})
         }
       }
     });
@@ -637,6 +694,7 @@
             total: true,
             color: '#475569',
             callout: true,
+            calloutMaxValue: 15, /* 절대 수치 15 이하만 밖, 초과는 안 */
             lineColor: '#cbd5e1',
             calloutStyle: 'diagonal'
           }
@@ -707,6 +765,7 @@
   }
 
   function renderHqChart(data) {
+    /* 본부별 = 세로 누적 (20% 초과는 막대 안) */
     stackedVertical('chartHq', data.labels, gradeDatasets(data.grades, data.labels));
   }
 
@@ -719,14 +778,17 @@
     var maxVal = 1;
     var mSum = 0;
     var fSum = 0;
+    var rowTotals = [];
     for (var i = 0; i < data.labels.length; i++) {
       var m = num(data.male[i]);
       var f = num(data.female[i]);
       maxVal = Math.max(maxVal, m, f);
       mSum += m;
       fSum += f;
+      rowTotals.push(m + f);
     }
     var xPad = Math.ceil(maxVal * 1.15);
+    var tickColor = '#64748b'; /* slate-500 — 항목 라벨 */
     createChart(canvasId, {
       type: 'bar',
       plugins: [{
@@ -735,15 +797,39 @@
           var xScale = chart.scales.x;
           var yScale = chart.scales.y;
           if (!xScale || !yScale) return;
-          var x = xScale.getPixelForValue(0);
           var ctx = chart.ctx;
+          var x0 = xScale.getPixelForValue(0);
+
+          /* 중앙 분할선 */
           ctx.save();
           ctx.strokeStyle = AXIS_LINE.color;
           ctx.lineWidth = AXIS_LINE.width;
           ctx.beginPath();
-          ctx.moveTo(x, yScale.top);
-          ctx.lineTo(x, yScale.bottom);
+          ctx.moveTo(x0, yScale.top);
+          ctx.lineTo(x0, yScale.bottom);
           ctx.stroke();
+          ctx.restore();
+
+          /* 항목명(일반) + 총계(n)(#333 · 더 큰 bold) — 오른쪽 정렬 */
+          var xEnd = chart.chartArea.left - CHART_UI.tickPad;
+          ctx.save();
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'middle';
+          for (var ti = 0; ti < data.labels.length; ti++) {
+            var py = yScale.getPixelForTick(ti);
+            if (!isFinite(py)) continue;
+            var totStr = '(' + rowTotals[ti] + ')';
+            var lab = String(data.labels[ti]);
+
+            ctx.fillStyle = '#333333';
+            ctx.font = 'bold ' + CHART_UI.barTotalSize + 'px ' + CHART_FONT;
+            var totW = ctx.measureText(totStr).width;
+            ctx.fillText(totStr, xEnd, py);
+
+            ctx.fillStyle = tickColor;
+            ctx.font = '500 ' + CHART_UI.tickSize + 'px ' + CHART_FONT;
+            ctx.fillText(lab + ' ', xEnd - totW, py);
+          }
           ctx.restore();
         }
       }],
@@ -776,7 +862,24 @@
           },
           y: {
             stacked: true,
-            ticks: { font: tickFont(), padding: CHART_UI.tickPad },
+            /* 기본 tick 숨기고 afterDraw에서 항목+총계 직접 그림 — 폭만 확보 */
+            afterFit: function (scale) {
+              var ctx = scale.ctx || (scale.chart && scale.chart.ctx);
+              if (!ctx) return;
+              var maxW = 0;
+              for (var i = 0; i < data.labels.length; i++) {
+                ctx.font = '500 ' + CHART_UI.tickSize + 'px ' + CHART_FONT;
+                var w = ctx.measureText(String(data.labels[i]) + ' ').width;
+                ctx.font = 'bold ' + CHART_UI.barTotalSize + 'px ' + CHART_FONT;
+                w += ctx.measureText('(' + rowTotals[i] + ')').width;
+                if (w > maxW) maxW = w;
+              }
+              scale.width = Math.ceil(maxW + CHART_UI.tickPad);
+            },
+            ticks: {
+              display: false,
+              padding: CHART_UI.tickPad
+            },
             grid: { display: false, drawTicks: false },
             border: { display: false }
           }
@@ -789,8 +892,9 @@
             callbacks: {
               title: function (items) {
                 if (!items.length) return '';
-                if (typeof tooltipTitleFn === 'function') return tooltipTitleFn(items[0].label);
-                return items[0].label;
+                var lab = items[0].label;
+                if (typeof tooltipTitleFn === 'function') return tooltipTitleFn(lab);
+                return lab;
               },
               label: function (ctx) {
                 var val = Math.abs(num(ctx.raw));
@@ -808,6 +912,7 @@
   }
 
   function renderJikchakChart(data) {
+    /* 직책자 = 성별&연령대와 동일 좌(남)·우(여) 양방향 */
     var sums = renderBidirectionalGenderChart('chartJikchak', data);
     var tot = sums.male + sums.female;
     var mRate = tot ? Math.round(sums.male / tot * 100) : 0;
@@ -848,8 +953,10 @@
   }
 
   $(function () {
-    /* dashboard01_ 만 다른 안 팔레트, dashboard01 은 기본 유지 */
-    if (window.HR_GRADE_PALETTE === 'alt' || /dashboard01_/i.test(location.pathname || '')) {
+    /* 페이지별 직급 팔레트 — 배열 지정 시 우선, dashboard01_ 는 alt */
+    if (Array.isArray(window.HR_GRADE_PALETTE) && window.HR_GRADE_PALETTE.length) {
+      GRADE_PALETTE = window.HR_GRADE_PALETTE.slice();
+    } else if (window.HR_GRADE_PALETTE === 'alt' || /dashboard01_\.html/i.test(location.pathname || '')) {
       GRADE_PALETTE = GRADE_PALETTE_ALT;
     } else {
       GRADE_PALETTE = GRADE_PALETTE_DEFAULT;

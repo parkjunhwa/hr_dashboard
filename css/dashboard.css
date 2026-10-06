@@ -5,6 +5,7 @@
  * WORK LOG
  * [2026-10-02] 초기 작성 — KPI / Chart.js 카드 레이아웃
  * [2026-10-02] KPI=컨텐츠 동일높이, 하단 2단 차트=남은 영역 flex 채움
+ * [2026-10-06] 하단 차트 단일 그리드화 — 상·하 행 세로 경계 서브픽셀 어긋남 수정
  */
 
 html,
@@ -72,25 +73,22 @@ body {
   border-bottom-color: #2563eb;
 }
 
-/* ----- dashboard02 그리드 ----- */
+/* ----- dashboard02 그리드: 카드 폭 동일 3등분 ----- */
 .hr-dash__grid-d02 {
   flex: 1 1 0;
   min-height: 0;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  /* 상단 3카드(신규채용·핵심기술·Successor) = 절반, 하단 2행이 나머지 절반 배분 */
-  grid-template-rows: 1fr 0.5fr 0.5fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
 
 .hr-dash__grid-d02 > .hr-dash__card {
+  min-width: 0;
   min-height: 0;
+  width: 100%;
   display: flex;
   flex-direction: column;
-}
-
-.hr-dash__grid-d02 > .hr-dash__card--span2 {
-  grid-row: span 2;
 }
 
 .hr-dash__rate-wrap {
@@ -230,7 +228,7 @@ body {
 .hr-dash__kpi-row {
   flex: 0 0 auto;
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1fr 1.4fr;
+  grid-template-columns: repeat(5, 1fr); /* 데스크탑: 5항목 각 20% */
   gap: 12px;
   align-items: stretch;
 }
@@ -243,36 +241,32 @@ body {
 }
 
 /* ----- 하단 차트 영역: 남은 높이 전부 ----- */
+/* 단일 그리드 — 행마다 따로 fr 계산하면 서브픽셀로 세로 경계가 어긋남 */
 .hr-dash__charts {
   flex: 1 1 0;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* KPI 5등분과 동일 트랙 */
+  grid-template-rows: 1fr 1fr;
   gap: 12px;
 }
 
 .hr-dash__row {
-  flex: 1 1 0;
-  min-height: 0;
-  display: flex;
-  gap: 12px;
-  flex-wrap: nowrap;
-  margin: 0;
+  display: contents;
 }
 
 .hr-dash__col {
-  flex: 1 1 0;
   min-width: 0;
   min-height: 0;
   display: flex;
 }
 
 .hr-dash__col--wide {
-  flex: 1.7 1 0;
+  grid-column: span 3;
 }
 
 .hr-dash__col--narrow {
-  flex: 1 1 0;
+  grid-column: span 2;
 }
 
 /* ----- Card ----- */
@@ -575,9 +569,6 @@ body {
 }
 
 @media (max-width: 1400px) {
-  .hr-dash__kpi-row {
-    grid-template-columns: repeat(5, 1fr);
-  }
   .hr-dash__kpi-num {
     font-size: 34px;
   }
@@ -600,17 +591,13 @@ body {
 
   .hr-dash__charts {
     flex: none;
-  }
-
-  .hr-dash__row {
-    flex: none;
-    flex-wrap: wrap;
-    min-height: 280px;
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
   }
 
   .hr-dash__col--wide,
   .hr-dash__col--narrow {
-    flex: 1 1 100%;
+    grid-column: auto;
     min-height: 260px;
   }
 
@@ -637,9 +624,5 @@ body {
 
   .hr-dash__grid-d02 > .hr-dash__card {
     min-height: 280px;
-  }
-
-  .hr-dash__grid-d02 > .hr-dash__card--span2 {
-    min-height: 420px;
   }
 }

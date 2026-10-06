@@ -255,7 +255,7 @@
         <tr>
           <td>하단 1단</td>
           <td>본부별 인원수(세로 누적) | 직책자(남좌·여우)</td>
-          <td>본부별: 오른쪽 위 대각선 콜아웃, 수치는 세로 한 줄 정렬<br>직책자 샘플: 본부장·실장·팀장·파트장 (사장 제외)</td>
+          <td>본부별: 오른쪽 위 대각선 콜아웃(절대값 15 이하는 밖)<br>직책자: 성별&amp;연령대와 동일 양방향 · 본부장·부본부장·담당·팀장·센터장·연구소장</td>
         </tr>
         <tr>
           <td>하단 2단</td>
@@ -275,19 +275,24 @@
       </thead>
       <tbody>
         <tr>
-          <td>상단 3카드</td>
+          <td>전체</td>
+          <td>3열 × 3행 동일 폭 그리드</td>
+          <td><code>repeat(3, minmax(0, 1fr))</code> — 카드 폭 균등 3등분</td>
+        </tr>
+        <tr>
+          <td>1행</td>
           <td>신규채용 / 핵심기술인재 / Successor</td>
-          <td>그리드 높이 절반</td>
+          <td></td>
         </tr>
         <tr>
-          <td>중단</td>
-          <td>퇴직률(파이+하단 수치) / 직급별 퇴직 / 퇴직 사유(도넛+하단 범례)</td>
-          <td>퇴직 사유 카드 row-span 2</td>
+          <td>2행</td>
+          <td>퇴직률 / 직급별 퇴직 / 퇴직 사유</td>
+          <td></td>
         </tr>
         <tr>
-          <td>하단</td>
+          <td>3행</td>
           <td>본부별 퇴직 / 근속년수별 퇴직</td>
-          <td>상단 제외 나머지 높이 배분</td>
+          <td>마지막 칸 비움</td>
         </tr>
       </tbody>
     </table>
@@ -307,7 +312,7 @@ HrDashboard.render({
   gender: { male, female },
   hq: { labels: [...], grades: { '임원':[...], ... } },
   jikchak: { labels: [...], male: [...], female: [...] },
-  gradeYear: { labels: ['2026','2025','2024'], grades: { ... } },
+  gradeYear: { labels: ['2026','2025','2024'], grades: { '임원':[...], ... } },
   age: { labels: ['50이상','40~49','30~39','20~29'], male: [...], female: [...] }
 });</code></pre>
 
@@ -388,12 +393,12 @@ HrDashboard02.render({
       <li>
         <strong>01 콜아웃</strong> (<code>hrBarCount</code>, <code>calloutStyle:'diagonal'</code>):
         본부별·직급별 누적 구간 수치를 대각선으로 밖으로 표시(regular weight).
-        본부별은 오른쪽 위·숫자 세로 정렬, 직급별은 오른쪽 아래·숫자 가로선 정렬(차트 영역 내 클램프).
+        본부별은 오른쪽 위·숫자 세로 정렬(절대값 15 이하는 밖), 직급별은 오른쪽 아래·숫자 가로선 정렬.
         직책자·성별&amp;연령대는 막대 안 라벨(어두운 배경이면 흰 글자).
       </li>
       <li>
         <strong>01 직책자</strong> 샘플 라벨:
-        <code>본부장, 실장, 팀장, 파트장</code> (사장 미포함).
+        <code>본부장, 부본부장, 담당, 팀장, 센터장, 연구소장</code>.
       </li>
       <li>
         <strong>02 팔레트</strong>:
