@@ -116,7 +116,7 @@
           if (val <= 0 || !bar) return;
           ctx.save();
           ctx.fillStyle = '#475569';
-          ctx.font = 'bold 12px ' + CHART_FONT;
+          ctx.font = 'bold 15px ' + CHART_FONT;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'bottom';
           ctx.fillText(String(val), bar.x, bar.y - 4);
@@ -340,9 +340,11 @@
         var cx = meta.data[0].x;
         var cy = meta.data[0].y;
         var ctx = chart.ctx;
+        /* 모바일(≤1100): 조금 작게 */
+        var fontSize = window.matchMedia('(max-width: 1100px)').matches ? 14 : 22;
         ctx.save();
         ctx.fillStyle = '#334155';
-        ctx.font = 'bold 22px ' + CHART_FONT;
+        ctx.font = 'bold ' + fontSize + 'px ' + CHART_FONT;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(d.center, cx, cy);
