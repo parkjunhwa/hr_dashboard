@@ -694,7 +694,7 @@
             total: true,
             color: '#475569',
             callout: true,
-            calloutMaxValue: 15, /* 절대 수치 15 이하만 밖, 초과는 안 */
+            calloutMaxValue: 9, /* 9 이하만 밖, 10 이상은 안 */
             lineColor: '#cbd5e1',
             calloutStyle: 'diagonal'
           }
