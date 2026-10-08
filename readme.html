@@ -116,7 +116,7 @@
       이식할 때 참조하는 적용 가이드입니다.
     </p>
     <div class="meta">
-      <span class="chip">탭: 01(3안) · 02~05</span>
+      <span class="chip">탭: 01 · 02~05</span>
       <span class="chip">진입: index.html → dashboard01</span>
       <span class="chip">기존 e-HR 라이브러리 재사용</span>
       <span class="chip">버전 일치 필수</span>
@@ -143,9 +143,7 @@
       <li>
         <strong>구현 완료</strong>
         <ul>
-          <li><code>dashboard01.html</code> — 인력현황 1안</li>
-          <li><code>dashboard01_.html</code> — 인력현황 2안 (직급 팔레트: Tailwind 300)</li>
-          <li><code>dashboard01_2.html</code> — 인력현황 3안 (직급 팔레트: alt)</li>
+          <li><code>dashboard01.html</code> — 인력현황</li>
           <li><code>dashboard02.html</code> — 인력확보 및 유지</li>
         </ul>
       </li>
@@ -158,9 +156,7 @@
     <pre><code>hr_dashboard/
 ├── readme.html                 ← 본 가이드
 ├── index.html                  ← 진입점 → dashboard01
-├── dashboard01.html            ← 인력현황 1안
-├── dashboard01_.html           ← 인력현황 2안
-├── dashboard01_2.html          ← 인력현황 3안
+├── dashboard01.html            ← 인력현황
 ├── dashboard02.html            ← 인력확보 및 유지
 ├── dashboard03.html ~ 05.html  ← 작업중
 ├── css/dashboard.css           ← 공통 스타일 (.hr-dash*)
@@ -212,7 +208,7 @@
     <h2 id="pages">4. 화면 구성</h2>
     <p>공통: 상단 탭 <code>.hr-dash__nav</code> + 루트 <code>&lt;div class="hr-dash" id="hrDashRoot"&gt;</code></p>
 
-    <h3>4-1. dashboard01 — 인력현황 (1·2·3안 공통 레이아웃)</h3>
+    <h3>4-1. dashboard01 — 인력현황</h3>
     <table>
       <thead>
         <tr><th>영역</th><th>구성</th><th>비고</th></tr>
@@ -220,8 +216,8 @@
       <tbody>
         <tr>
           <td>상단 KPI</td>
-          <td>재직자 / 휴직자 / 입사자 / 퇴사자 / 인력 다양성</td>
-          <td>5카드 동일 높이</td>
+          <td>좌50%: 재직·휴직·입사·퇴사 / 우50%: 인력 다양성</td>
+          <td></td>
         </tr>
         <tr>
           <td>재직자</td>
@@ -230,8 +226,8 @@
         </tr>
         <tr>
           <td>휴직·입사·퇴사</td>
-          <td>수치 + FA 아이콘</td>
-          <td>fa-bed / fa-user-plus / fa-user-minus</td>
+          <td>수치만</td>
+          <td></td>
         </tr>
         <tr>
           <td>인력 다양성</td>
@@ -239,26 +235,24 @@
           <td>3칸</td>
         </tr>
         <tr>
-          <td>하단 1단</td>
-          <td>본부별 인원수(세로 누적) | 직책자(남좌·여우)</td>
-          <td>
-            본부별: 대각선 콜아웃 · <strong>10 미만 밖 / 10 이상 안(흰색)</strong><br>
-            직책자: 항목명 옆 총계 <code>(n)</code> bold · <code>#333</code>
-          </td>
+          <td>하단 좌 (50%)</td>
+          <td>본부별 인원수(가로 누적 좌→우, 세로 전체)</td>
+          <td>구간 수치 막대 안(흰색) · 총계 막대 끝</td>
         </tr>
         <tr>
-          <td>하단 2단</td>
-          <td>직급별 인원수 (3개년) | 성별&amp;연령대</td>
-          <td>
-            직급별: 오른쪽 아래 대각선 콜아웃<br>
-            연령대: 직책자와 동일 양방향 · 항목명 옆 총계 <code>(n)</code>
-          </td>
+          <td>하단 우상 (각 25%)</td>
+          <td>직책자 | 성별&amp;연령대 (좌우 반반 · 동일 높이)</td>
+          <td>양방향 · 항목명 옆 총계 <code>(n)</code></td>
+        </tr>
+        <tr>
+          <td>하단 우하 (50%)</td>
+          <td>직급별 인원수 (3개년)</td>
+          <td>상단과 세로 반반 · 구간 수치 막대 안(흰색)</td>
         </tr>
       </tbody>
     </table>
     <div class="ok">
-      API: <code>HrDashboard.render(data)</code> · 샘플: <code>HrDashboard.sample</code><br>
-      안별 팔레트: HTML에서 <code>window.HR_GRADE_PALETTE</code>로 지정 (배열 또는 <code>'alt'</code>)
+      API: <code>HrDashboard.render(data)</code> · 샘플: <code>HrDashboard.sample</code>
     </div>
 
     <h3>4-2. dashboard02 — 인력확보 및 유지</h3>
@@ -379,29 +373,26 @@ HrDashboard02.render({
 
     <h2 id="style">7. 스타일 · 색상 · 차트 규칙</h2>
 
-    <h3>01 직급 팔레트</h3>
+    <h3>색상 체계</h3>
     <table>
       <thead>
-        <tr><th>안</th><th>파일</th><th>지정</th><th>톤</th></tr>
+        <tr><th>영역</th><th>톤</th><th>비고</th></tr>
       </thead>
       <tbody>
         <tr>
-          <td>1안</td>
-          <td><code>dashboard01.html</code></td>
-          <td>(기본)</td>
-          <td>Tailwind <strong>400</strong> — blue / orange / slate / amber / sky / emerald / violet</td>
+          <td>01 본부·직급 / 02 전체 차트</td>
+          <td>Blue 900~200</td>
+          <td>블루 단색 베리에이션 (진함 → 옅음)</td>
         </tr>
         <tr>
-          <td>2안</td>
-          <td><code>dashboard01_.html</code></td>
-          <td>배열 지정</td>
-          <td>Tailwind <strong>300</strong> (채도 낮은 톤)</td>
+          <td>01 재직자 IT/CS</td>
+          <td>Yellow-400 · Slate-200</td>
+          <td>밝은 옐로우 + 라이트 그레이</td>
         </tr>
         <tr>
-          <td>3안</td>
-          <td><code>dashboard01_2.html</code></td>
-          <td><code>HR_GRADE_PALETTE = 'alt'</code></td>
-          <td>red / orange / amber / lime / emerald / violet / fuchsia <strong>400</strong></td>
+          <td>01 직책자·성별&amp;연령</td>
+          <td>남 blue-400 / 여 red-400</td>
+          <td>변경하지 않음</td>
         </tr>
       </tbody>
     </table>
@@ -413,18 +404,15 @@ HrDashboard02.render({
     <h3>01 차트 라벨</h3>
     <ul>
       <li>
-        <strong>콜아웃</strong> (<code>hrBarCount</code>, <code>calloutStyle:'diagonal'</code>):
-        본부별·직급별 구간 수치를 대각선으로 밖 표시.
-        본부별은 <code>calloutMaxValue: 9</code> — <strong>10 미만 밖 / 10 이상은 막대 안(흰색)</strong>.
-        직급별은 전 구간 콜아웃 · 숫자는 같은 높이 가로선 정렬.
+        <strong>본부·직급 라벨</strong>:
+        가로 누적(좌→우) · 구간 수치는 막대 안(흰색) · 총계는 막대 끝.
       </li>
       <li>
         <strong>총계</strong>: 본부·직급은 막대 끝 · 15px bold.
         직책자·성별연령은 항목명 옆 <code>(n)</code> · 15px bold · <code>#333333</code>.
       </li>
       <li>
-        <strong>IT/CS·성별</strong>:
-        IT sky-400, CS orange-400 / 남 blue-400, 여 red-400
+        <strong>IT/CS</strong>: IT yellow-400 · CS slate-200 (라이트 그레이)
       </li>
       <li>
         <strong>직책자 라벨</strong>:
@@ -434,15 +422,15 @@ HrDashboard02.render({
 
     <h3>02</h3>
     <ul>
-      <li>팔레트: Tailwind 400 시리즈(<code>SERIES</code>). 퇴직률 red-400 · 직급별 퇴직은 시리즈 랜덤.</li>
+      <li>핵심기술인재·직급/본부 퇴직: 블루·라이트블루·밝은 퍼플 교대. 퇴직률 red-400.</li>
       <li>막대 수치: 15px bold (막대 위).</li>
-      <li>퇴직 사유 도넛: 최대 360px · 모바일 좌우 배치 · 범례 아래 주석.</li>
+      <li>퇴직 사유 도넛: 블루·라이트블루·라이트 옐로우·그레이·밝은 그레이 · 최대 360px · 모바일 좌우 배치.</li>
     </ul>
 
     <h3>공통 UI</h3>
     <ul>
       <li>커스텀 CSS는 <code>.hr-dash</code> 하위로만 작성.</li>
-      <li>KPI 아이콘 원: 바이올렛·에메랄드·주황 배경 + 흰 아이콘 20px (원 60px).</li>
+      <li>휴직·입사·퇴사 KPI: 아이콘 없음 · 수치만 표시.</li>
       <li>제목 보조 <code>.hr-dash__title-sub</code>: 예) (3개년 추이).</li>
       <li>모바일 분기: <code>@media (max-width: 1100px)</code>.</li>
     </ul>
@@ -453,11 +441,10 @@ HrDashboard02.render({
         <li>□ 공통 라이브러리를 신규 추가하지 않고 기존 e-HR 경로로 연결했는가</li>
         <li>□ jQuery / Chart.js / FA / AdminLTE 버전이 운영과 일치하는가</li>
         <li>□ FA <code>webfonts</code> 404가 아닌가</li>
-        <li>□ 탭 네비(01·01_·01_2 · 02~05) 링크·활성(<code>.on</code>)이 올바른가</li>
+        <li>□ 탭 네비(01 · 02~05) 링크·활성(<code>.on</code>)이 올바른가</li>
         <li>□ 01: W01~W10 → <code>HrDashboard.render</code> 매핑 완료</li>
         <li>□ 02: 채용·퇴직 등 → <code>HrDashboard02.render</code> 매핑 완료</li>
         <li>□ <code>GRADE_ORDER</code> 직급명(계약직(무기) 포함)이 마스터와 일치하는가</li>
-        <li>□ 안별 <code>HR_GRADE_PALETTE</code> 지정이 의도대로인가</li>
         <li>□ iframe 높이·리사이즈 후 차트 깨짐이 없는가</li>
         <li>□ <code>.hr-dash</code>와 글로벌 CSS 충돌이 없는가</li>
       </ul>
@@ -465,7 +452,7 @@ HrDashboard02.render({
 
     <footer>
       HR Dashboard 적용 가이드 · 디자이너/퍼블리셔 박준화 수석 · HP:010-9479-3188<br>
-      최초 26.10.02 · 갱신 26.10.06
+      최초 26.10.02 · 갱신 26.10.08
     </footer>
   </div>
 </body>

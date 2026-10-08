@@ -6,29 +6,30 @@
   'use strict';
 
   var CHART_FONT = '"Pretendard GOV", "Malgun Gothic", sans-serif';
-  /* Tailwind 400 계열 참조 */
-  var ACCENT_A = '#60a5fa'; /* blue-400 */
-  var ACCENT_B = '#fb923c'; /* orange-400 */
-  var ACCENT_C = '#f472b6'; /* pink-400 */
+  /* 블루 계열만 — 진함 → 옅음 베리에이션 */
+  var ACCENT_A = '#1d4ed8'; /* blue-700 */
+  var ACCENT_B = '#60a5fa'; /* blue-400 */
+  var ACCENT_C = '#93c5fd'; /* blue-300 */
   var MUTED = '#e2e8f0';    /* slate-200 (잔여) */
-  var SERIES = [
-    '#f87171', /* red-400 */
-    '#fb923c', /* orange-400 */
-    '#fbbf24', /* amber-400 */
-    '#a3e635', /* lime-400 */
-    '#34d399', /* emerald-400 */
-    '#22d3ee', /* cyan-400 */
-    '#38bdf8', /* sky-400 */
-    '#818cf8', /* indigo-400 */
-    '#a78bfa', /* violet-400 */
-    '#e879f9'  /* fuchsia-400 */
+  /* 핵심기술인재·직급별/본부별 퇴사 — 블루 · 라이트블루 · 밝은 퍼플 교대 */
+  var MIX_COLORS = [
+    '#3b82f6', /* blue-500 */
+    '#93c5fd', /* blue-300 (라이트블루) */
+    '#c4b5fd'  /* violet-300 (밝은 퍼플) */
   ];
+
+  function mixColors(n) {
+    var out = [];
+    for (var i = 0; i < n; i++) out.push(MIX_COLORS[i % MIX_COLORS.length]);
+    return out;
+  }
+  /* 퇴사 사유 도넛 — 블루 · 라이트블루 · 라이트 옐로우 · 그레이 · 밝은 그레이 */
   var REASON_COLORS = [
-    '#60a5fa', /* blue-400 */
-    '#fb923c', /* orange-400 */
-    '#fbbf24', /* amber-400 */
-    '#34d399', /* emerald-400 */
-    '#a78bfa'  /* violet-400 */
+    '#3b82f6', /* blue-500 */
+    '#93c5fd', /* blue-300 */
+    '#fbbf24', /* amber-400 (라이트 옐로우) */
+    '#94a3b8', /* slate-400 (그레이) */
+    '#e2e8f0'  /* slate-200 (밝은 그레이) */
   ];
   var charts = {};
 
@@ -192,7 +193,7 @@
         labels: d.labels,
         datasets: [
           { label: '신입', data: d.newbie, backgroundColor: ACCENT_A, borderWidth: 0, barPercentage: 0.7, categoryPercentage: 0.7 },
-          { label: '경력', data: d.career, backgroundColor: ACCENT_B, borderWidth: 0, barPercentage: 0.7, categoryPercentage: 0.7 }
+          { label: '경력', data: d.career, backgroundColor: '#94a3b8', borderWidth: 0, barPercentage: 0.7, categoryPercentage: 0.7 } /* slate-400 */
         ]
       },
       options: $.extend(true, opts, {
@@ -211,7 +212,7 @@
         labels: d.labels,
         datasets: [{
           data: d.data,
-          backgroundColor: SERIES.slice(0, d.labels.length),
+          backgroundColor: mixColors(d.labels.length),
           borderWidth: 0,
           barPercentage: 0.65,
           categoryPercentage: 0.75
@@ -236,7 +237,7 @@
         labels: d.labels,
         datasets: [
           { label: '외부후보자', data: d.external, backgroundColor: ACCENT_A, borderWidth: 0, barPercentage: 0.7, categoryPercentage: 0.7 },
-          { label: '팀원우수', data: d.internal, backgroundColor: ACCENT_C, borderWidth: 0, barPercentage: 0.7, categoryPercentage: 0.7 }
+          { label: '팀원우수', data: d.internal, backgroundColor: '#94a3b8', borderWidth: 0, barPercentage: 0.7, categoryPercentage: 0.7 } /* slate-400 */
         ]
       },
       options: $.extend(true, opts, {
@@ -255,7 +256,7 @@
     createChart('chartRetireRate', {
       type: 'pie',
       data: {
-        labels: ['퇴직', '잔여'],
+        labels: ['퇴사', '잔여'],
         datasets: [{
           data: [d.rate, Math.max(100 - d.rate, 0)],
           backgroundColor: ['#f87171', MUTED], /* red-400 + 잔여 */
@@ -278,22 +279,6 @@
     });
   }
 
-  /** 직급별 퇴직 — Tailwind 400 풀에서 중복 없이 랜덤 배정 */
-  function randomSeriesColors(n) {
-    var pool = SERIES.slice();
-    for (var i = pool.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var tmp = pool[i];
-      pool[i] = pool[j];
-      pool[j] = tmp;
-    }
-    var out = [];
-    for (var k = 0; k < n; k++) {
-      out.push(pool[k % pool.length]);
-    }
-    return out;
-  }
-
   function renderGradeRetire(d) {
     var max = maxOf(d.data) * 1.3;
     var opts = baseBarOpts();
@@ -304,7 +289,7 @@
         labels: d.labels,
         datasets: [{
           data: d.data,
-          backgroundColor: randomSeriesColors(d.labels.length),
+          backgroundColor: mixColors(d.labels.length),
           borderWidth: 0,
           barPercentage: 0.6,
           categoryPercentage: 0.75
@@ -392,7 +377,7 @@
         labels: d.labels,
         datasets: [{
           data: d.data,
-          backgroundColor: SERIES.slice(0, d.labels.length),
+          backgroundColor: mixColors(d.labels.length),
           borderWidth: 0,
           barPercentage: 0.65,
           categoryPercentage: 0.75
@@ -408,13 +393,22 @@
     var max = maxOf(d.data) * 1.25;
     var opts = baseBarOpts();
     opts.plugins.legend.display = false;
+    /* 근속기간↑ → 블루 진함 (옅음 → 진함) */
+    var tenureColors = [
+      '#bfdbfe', /* 1년미만 blue-200 */
+      '#93c5fd', /* 1~3년 blue-300 */
+      '#60a5fa', /* 3~5년 blue-400 */
+      '#3b82f6', /* 5~10년 blue-500 */
+      '#1d4ed8', /* 10~20년 blue-700 */
+      '#1e3a8a'  /* 20년이상 blue-900 */
+    ];
     createChart('chartTenureRetire', {
       type: 'bar',
       data: {
         labels: d.labels,
         datasets: [{
           data: d.data,
-          backgroundColor: SERIES.slice(0, d.labels.length),
+          backgroundColor: tenureColors.slice(0, d.labels.length),
           borderWidth: 0,
           barPercentage: 0.55,
           categoryPercentage: 0.75

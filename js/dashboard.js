@@ -10,44 +10,43 @@
   'use strict';
 
   /**
-   * Tailwind 400 계열 hex 참조 — 라이브러리 미사용
-   * 본부·직급: 01 기본 400 / 01_ 다른 안 7색
+   * 팔레트 — 기본 블루 / 포인트 옐로우 / 세컨더리 퍼플 베리에이션
+   * 직책자·성별&연령대(남·여)는 기존 유지
    */
   var TW = {
     blue400: '#60a5fa',
-    orange400: '#fb923c',
-    slate400: '#94a3b8',
-    amber400: '#fbbf24',
-    sky400: '#38bdf8',
-    emerald400: '#34d399',
+    blue500: '#3b82f6',
+    blue600: '#2563eb',
+    blue700: '#1d4ed8',
+    yellow400: '#facc15',
+    yellow500: '#eab308',
+    yellow600: '#ca8a04',
     violet400: '#a78bfa',
+    violet500: '#8b5cf6',
+    violet600: '#7c3aed',
     red400: '#f87171',
-    cyan400: '#22d3ee',
-    pink400: '#f472b6',
-    skyHover: '#0ea5e9',
-    orangeHover: '#f97316'
+    sky400: '#38bdf8',
+    blueHover: '#2563eb',
+    yellowHover: '#ca8a04'
   };
-  /** dashboard01 기본 — Tailwind 400 */
+  /** 본부·직급 누적 — 블루만, 임원(진함) → 계약직(옅음) */
   var GRADE_PALETTE_DEFAULT = [
-    TW.blue400, TW.orange400, TW.slate400, TW.amber400,
-    TW.sky400, TW.emerald400, TW.violet400
-  ];
-  /** dashboard01_ 다른 안 — 사원·계약직 violet/fuchsia */
-  var GRADE_PALETTE_ALT = [
-    '#f87171', /* 임원 red-400 */
-    '#fb923c', /* 부장 orange-400 */
-    '#fbbf24', /* 차장 amber-400 */
-    '#a3e635', /* 과장 lime-400 */
-    '#34d399', /* 대리 emerald-400 */
-    '#a78bfa', /* 사원 violet-400 */
-    '#e879f9'  /* 계약직(무기) fuchsia-400 */
+    '#1e3a8a', /* 임원 blue-900 */
+    '#1e40af', /* 부장 blue-800 */
+    '#1d4ed8', /* 차장 blue-700 */
+    '#2563eb', /* 과장 blue-600 */
+    '#3b82f6', /* 대리 blue-500 */
+    '#60a5fa', /* 사원 blue-400 */
+    '#93c5fd'  /* 계약직(무기) blue-300 */
   ];
   var GRADE_PALETTE = GRADE_PALETTE_DEFAULT;
   var GRADE_ORDER = ['임원', '부장', '차장', '과장', '대리', '사원', '계약직(무기)'];
+  /* 직책자·성별연령 — 변경하지 않음 */
   var COLOR_MALE = TW.blue400;
   var COLOR_FEMALE = TW.red400;
-  var COLOR_IT = TW.sky400;
-  var COLOR_CS = TW.orange400;
+  /* 재직자 파이: 밝은 옐로우 + 라이트 그레이 */
+  var COLOR_IT = '#60a5fa'; /* blue-400 */
+  var COLOR_CS = '#e2e8f0'; /* slate-200 */
   var CHART_FONT = '"Pretendard GOV", "Malgun Gothic", sans-serif';
   var AXIS_LINE = { display: true, color: '#e2e8f0', width: 1 }; /* slate-200 */
   /** 차트 UI 공통 — 항목 글자/범례/간격 일관 */
@@ -589,7 +588,7 @@
     };
   }
 
-  /** 가로 누적 — 오른쪽 아래 대각선 콜아웃 (opt로 hrBarCount 덮어쓰기) */
+  /** 가로 누적 — 구간 수치는 막대 안(흰색), 총계는 막대 끝 (opt로 hrBarCount 덮어쓰기) */
   function stackedHorizontal(canvasId, labels, datasets, opt) {
     var xMax = maxStackedTotal(datasets);
     var ds = datasets.map(function (d) {
@@ -605,9 +604,9 @@
         indexAxis: 'y',
         layout: {
           padding: $.extend({}, CHART_UI.layout, {
-            top: 22,
+            top: 18,
             right: 48,
-            bottom: 36
+            bottom: 8
           })
         },
         scales: {
@@ -633,9 +632,7 @@
           hrBarCount: $.extend({
             total: true,
             color: '#475569',
-            callout: true,
-            lineColor: '#cbd5e1',
-            calloutStyle: 'diagonal'
+            callout: false
           }, opt || {})
         }
       }
@@ -728,7 +725,7 @@
         datasets: [{
           data: [it, cs],
           backgroundColor: [COLOR_IT, COLOR_CS],
-          hoverBackgroundColor: [TW.skyHover, TW.orangeHover],
+          hoverBackgroundColor: ['#3b82f6', '#cbd5e1'], /* blue-500 / slate-300 */
           borderWidth: 0
         }]
       },
@@ -765,8 +762,8 @@
   }
 
   function renderHqChart(data) {
-    /* 본부별 = 세로 누적 (20% 초과는 막대 안) */
-    stackedVertical('chartHq', data.labels, gradeDatasets(data.grades, data.labels));
+    /* 본부별 = 가로 누적 (좌→우), 구간 수치는 막대 안 */
+    stackedHorizontal('chartHq', data.labels, gradeDatasets(data.grades, data.labels));
   }
 
   function renderGradeYearChart(data) {
@@ -953,11 +950,9 @@
   }
 
   $(function () {
-    /* 페이지별 직급 팔레트 — 배열 지정 시 우선, dashboard01_ 는 alt */
+    /* 직급 팔레트 — window.HR_GRADE_PALETTE 배열이 있으면 덮어씀 */
     if (Array.isArray(window.HR_GRADE_PALETTE) && window.HR_GRADE_PALETTE.length) {
       GRADE_PALETTE = window.HR_GRADE_PALETTE.slice();
-    } else if (window.HR_GRADE_PALETTE === 'alt' || /dashboard01_\.html/i.test(location.pathname || '')) {
-      GRADE_PALETTE = GRADE_PALETTE_ALT;
     } else {
       GRADE_PALETTE = GRADE_PALETTE_DEFAULT;
     }

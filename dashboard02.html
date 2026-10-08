@@ -11,9 +11,7 @@
 <body>
   <div class="hr-dash" id="hrDashRoot">
     <nav class="hr-dash__nav" aria-label="대시보드 탭">
-      <a href="./dashboard01.html">인력현황1안</a>
-      <a href="./dashboard01_.html">인력현황2안</a>
-      <a href="./dashboard01_2.html">인력현황3안</a>
+      <a href="./dashboard01.html">인력현황</a>
       <a href="./dashboard02.html" class="on">인력확보 및 유지</a>
       <a href="./dashboard03.html">인재육성</a>
       <a href="./dashboard04.html">조직문화</a>
@@ -23,28 +21,28 @@
     <div class="hr-dash__grid-d02">
       <div class="hr-dash__card">
         <div class="hr-dash__card-head">
-          <h2 class="hr-dash__card-title">신규채용 현황</h2>
+          <h2 class="hr-dash__card-title">신규채용 현황 <span class="hr-dash__title-sub">(실시간 기준)</span></h2>
         </div>
         <div class="hr-dash__chart"><canvas id="chartHire"></canvas></div>
       </div>
 
       <div class="hr-dash__card">
         <div class="hr-dash__card-head">
-          <h2 class="hr-dash__card-title">핵심기술인재 현황</h2>
+          <h2 class="hr-dash__card-title">핵심기술인재 현황 <span class="hr-dash__title-sub">(연 1회 업데이트(9월))</span></h2>
         </div>
         <div class="hr-dash__chart"><canvas id="chartCore"></canvas></div>
       </div>
 
       <div class="hr-dash__card">
         <div class="hr-dash__card-head">
-          <h2 class="hr-dash__card-title">Successor 현황</h2>
+          <h2 class="hr-dash__card-title">Successor 현황 <span class="hr-dash__title-sub">(연 1회 업데이트(4월))</span></h2>
         </div>
         <div class="hr-dash__chart"><canvas id="chartSuccessor"></canvas></div>
       </div>
 
       <div class="hr-dash__card">
         <div class="hr-dash__card-head">
-          <h2 class="hr-dash__card-title">퇴직률</h2>
+          <h2 class="hr-dash__card-title">퇴사율 <span class="hr-dash__title-sub">(2026년 누적 기준)</span></h2>
         </div>
         <div class="hr-dash__rate-wrap">
           <div class="hr-dash__rate-chart"><canvas id="chartRetireRate"></canvas></div>
@@ -54,14 +52,14 @@
 
       <div class="hr-dash__card">
         <div class="hr-dash__card-head">
-          <h2 class="hr-dash__card-title">직급별 퇴직자 수</h2>
+          <h2 class="hr-dash__card-title">직급별 퇴사자 수 <span class="hr-dash__title-sub">(2026년 누적 기준)</span></h2>
         </div>
         <div class="hr-dash__chart"><canvas id="chartGradeRetire"></canvas></div>
       </div>
 
       <div class="hr-dash__card hr-dash__card--reason">
         <div class="hr-dash__card-head">
-          <h2 class="hr-dash__card-title">퇴직 사유</h2>
+          <h2 class="hr-dash__card-title">퇴사 사유 <span class="hr-dash__title-sub">(2026년 누적 기준)</span></h2>
         </div>
         <div class="hr-dash__reason-wrap">
           <div class="hr-dash__reason-chart"><canvas id="chartReason"></canvas></div>
@@ -74,14 +72,14 @@
 
       <div class="hr-dash__card">
         <div class="hr-dash__card-head">
-          <h2 class="hr-dash__card-title">본부별 퇴직자 수</h2>
+          <h2 class="hr-dash__card-title">본부별 퇴사자 수 <span class="hr-dash__title-sub">(2026년 누적 기준)</span></h2>
         </div>
         <div class="hr-dash__chart"><canvas id="chartDeptRetire"></canvas></div>
       </div>
 
       <div class="hr-dash__card">
         <div class="hr-dash__card-head">
-          <h2 class="hr-dash__card-title">근속년수별 퇴직자 수</h2>
+          <h2 class="hr-dash__card-title">근속년수별 퇴사자 수 <span class="hr-dash__title-sub">(2026년 누적 기준)</span></h2>
         </div>
         <div class="hr-dash__chart"><canvas id="chartTenureRetire"></canvas></div>
       </div>
