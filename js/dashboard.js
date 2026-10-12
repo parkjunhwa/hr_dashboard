@@ -756,8 +756,29 @@
     $('#rateFemale').text('(' + fRate + '%)');
   }
 
+  var hqLabelCount = 0;
+
+  /** 모바일: 본부별 차트 높이를 항목 수에 맞춤 (다른 카드와 동일 높이 강제 안 함) */
+  function sizeHqChartBox(labelCount) {
+    hqLabelCount = labelCount || hqLabelCount || 0;
+    var el = document.getElementById('chartHq');
+    var box = el && el.parentElement;
+    if (!box) return;
+    var mobile = window.matchMedia('(max-width: 1100px)').matches;
+    if (mobile && hqLabelCount > 0) {
+      /* 행당 ~38px + 범례·패딩 */
+      var h = Math.max(200, hqLabelCount * 38 + 72);
+      box.style.height = h + 'px';
+      box.style.flex = '0 0 auto';
+    } else {
+      box.style.height = '';
+      box.style.flex = '';
+    }
+  }
+
   function renderHqChart(data) {
     /* 본부별 = 가로 누적 (좌→우), 구간 수치는 막대 안 */
+    sizeHqChartBox((data.labels && data.labels.length) || 0);
     stackedHorizontal('chartHq', data.labels, gradeDatasets(data.grades, data.labels));
   }
 
@@ -935,6 +956,7 @@
   function onResize() {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(function () {
+      sizeHqChartBox(hqLabelCount);
       $.each(charts, function (id, c) {
         if (!c) return;
         var el = document.getElementById(id);

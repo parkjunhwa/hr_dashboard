@@ -662,7 +662,6 @@ body {
     grid-template-rows: none;
   }
 
-  .hr-dash__col--hq,
   .hr-dash__col--jikchak,
   .hr-dash__col--age,
   .hr-dash__col--grade {
@@ -671,8 +670,32 @@ body {
     min-height: 260px;
   }
 
+  /* 본부별: 다른 카드 높이에 맞추지 않음 · 컨텐츠(항목 수)만큼 늘어남 */
+  .hr-dash__col--hq {
+    grid-column: auto;
+    grid-row: auto;
+    min-height: 0;
+    height: auto;
+    align-self: start;
+  }
+
+  .hr-dash__col--hq .hr-dash__card {
+    flex: 0 0 auto;
+    height: auto;
+  }
+
+  .hr-dash__col--hq .hr-dash__chart {
+    flex: 0 0 auto;
+    min-height: 0;
+    /* 높이는 JS에서 항목 수 기준으로 지정 */
+  }
+
   .hr-dash__chart {
     min-height: 220px;
+  }
+
+  .hr-dash__col--hq .hr-dash__chart {
+    min-height: 0;
   }
 
   .hr-dash__gender-wrap {
