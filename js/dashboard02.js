@@ -6,16 +6,17 @@
   'use strict';
 
   var CHART_FONT = '"Pretendard GOV", "Malgun Gothic", sans-serif';
-  /* 블루 계열만 — 진함 → 옅음 베리에이션 */
+  /* 메인: 블루 계열 베리에이션 / 포인트: 바이올렛(퇴사율) 1개 */
   var ACCENT_A = '#1d4ed8'; /* blue-700 */
   var ACCENT_B = '#60a5fa'; /* blue-400 */
   var ACCENT_C = '#93c5fd'; /* blue-300 */
   var MUTED = '#e2e8f0';    /* slate-200 (잔여) */
-  /* 핵심기술인재·직급별/본부별 퇴사 — 블루 · 라이트블루 · 밝은 퍼플 교대 */
+  var POINT = '#8b5cf6';    /* violet-500 — 보라빛 포인트 */
+  /* 핵심기술인재·직급별/본부별 퇴사 — 블루 진함→옅음 교대 */
   var MIX_COLORS = [
+    '#1d4ed8', /* blue-700 */
     '#3b82f6', /* blue-500 */
-    '#93c5fd', /* blue-300 (라이트블루) */
-    '#c4b5fd'  /* violet-300 (밝은 퍼플) */
+    '#93c5fd'  /* blue-300 */
   ];
 
   function mixColors(n) {
@@ -23,13 +24,14 @@
     for (var i = 0; i < n; i++) out.push(MIX_COLORS[i % MIX_COLORS.length]);
     return out;
   }
-  /* 퇴사 사유 도넛 — 블루 · 라이트블루 · 라이트 옐로우 · 그레이 · 밝은 그레이 */
+  /* 퇴사 사유 도넛 — 그린 → 스카이블루 그라데이션 톤
+   * 2번째(부적응)는 lime으로 두어 3번째(결혼·육아 teal)와 구분 */
   var REASON_COLORS = [
-    '#3b82f6', /* blue-500 */
-    '#93c5fd', /* blue-300 */
-    '#fbbf24', /* amber-400 (라이트 옐로우) */
-    '#94a3b8', /* slate-400 (그레이) */
-    '#e2e8f0'  /* slate-200 (밝은 그레이) */
+    '#22c55e', /* green-500 — [개인사정] 가정사… */
+    '#84cc16', /* lime-500  — [직무관계] 부적응 */
+    '#2dd4bf', /* teal-400  — [개인사정] 결혼 출산 및 육아 */
+    '#38bdf8', /* sky-400 */
+    '#7dd3fc'  /* sky-300 */
   ];
   var charts = {};
 
@@ -192,8 +194,8 @@
       data: {
         labels: d.labels,
         datasets: [
-          { label: '신입', data: d.newbie, backgroundColor: ACCENT_A, borderWidth: 0, barPercentage: 0.7, categoryPercentage: 0.7 },
-          { label: '경력', data: d.career, backgroundColor: '#94a3b8', borderWidth: 0, barPercentage: 0.7, categoryPercentage: 0.7 } /* slate-400 */
+          { label: '신입', data: d.newbie, backgroundColor: ACCENT_A, borderWidth: 0, barPercentage: 1, categoryPercentage: 0.55 },
+          { label: '경력', data: d.career, backgroundColor: ACCENT_C, borderWidth: 0, barPercentage: 1, categoryPercentage: 0.55 }
         ]
       },
       options: $.extend(true, opts, {
@@ -236,8 +238,8 @@
       data: {
         labels: d.labels,
         datasets: [
-          { label: '외부후보자', data: d.external, backgroundColor: ACCENT_A, borderWidth: 0, barPercentage: 0.7, categoryPercentage: 0.7 },
-          { label: '팀원우수', data: d.internal, backgroundColor: '#94a3b8', borderWidth: 0, barPercentage: 0.7, categoryPercentage: 0.7 } /* slate-400 */
+          { label: '외부후보자', data: d.external, backgroundColor: ACCENT_A, borderWidth: 0, barPercentage: 1, categoryPercentage: 0.55 },
+          { label: '팀원우수', data: d.internal, backgroundColor: ACCENT_C, borderWidth: 0, barPercentage: 1, categoryPercentage: 0.55 }
         ]
       },
       options: $.extend(true, opts, {
@@ -259,7 +261,7 @@
         labels: ['퇴사', '잔여'],
         datasets: [{
           data: [d.rate, Math.max(100 - d.rate, 0)],
-          backgroundColor: ['#f87171', MUTED], /* red-400 + 잔여 */
+          backgroundColor: [POINT, MUTED], /* 포인트 바이올렛 + 잔여 */
           borderWidth: 0
         }]
       },

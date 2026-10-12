@@ -10,43 +10,37 @@
   'use strict';
 
   /**
-   * 팔레트 — 기본 블루 / 포인트 옐로우 / 세컨더리 퍼플 베리에이션
-   * 직책자·성별&연령대(남·여)는 기존 유지
+   * 팔레트 — 메인: 블루 계열 베리에이션 / 포인트: 레드(여·강조) 1개
    */
   var TW = {
+    blue200: '#bfdbfe',
+    blue300: '#93c5fd',
     blue400: '#60a5fa',
     blue500: '#3b82f6',
     blue600: '#2563eb',
     blue700: '#1d4ed8',
-    yellow400: '#facc15',
-    yellow500: '#eab308',
-    yellow600: '#ca8a04',
-    violet400: '#a78bfa',
-    violet500: '#8b5cf6',
-    violet600: '#7c3aed',
-    red400: '#f87171',
-    sky400: '#38bdf8',
-    blueHover: '#2563eb',
-    yellowHover: '#ca8a04'
+    blue800: '#1e40af',
+    blue900: '#1e3a8a',
+    red400: '#f87171', /* 포인트 */
+    blueHover: '#2563eb'
   };
   /** 본부·직급 누적 — 블루만, 임원(진함) → 계약직(옅음) */
   var GRADE_PALETTE_DEFAULT = [
-    '#1e3a8a', /* 임원 blue-900 */
-    '#1e40af', /* 부장 blue-800 */
-    '#1d4ed8', /* 차장 blue-700 */
-    '#2563eb', /* 과장 blue-600 */
-    '#3b82f6', /* 대리 blue-500 */
-    '#60a5fa', /* 사원 blue-400 */
-    '#93c5fd'  /* 계약직(무기) blue-300 */
+    TW.blue900, /* 임원 */
+    TW.blue800, /* 부장 */
+    TW.blue700, /* 차장 */
+    TW.blue600, /* 과장 */
+    TW.blue500, /* 대리 */
+    TW.blue400, /* 사원 */
+    TW.blue300  /* 계약직(무기) */
   ];
   var GRADE_PALETTE = GRADE_PALETTE_DEFAULT;
   var GRADE_ORDER = ['임원', '부장', '차장', '과장', '대리', '사원', '계약직(무기)'];
-  /* 직책자·성별연령 — 변경하지 않음 */
   var COLOR_MALE = TW.blue400;
-  var COLOR_FEMALE = TW.red400;
-  /* 재직자 파이: 밝은 옐로우 + 라이트 그레이 */
-  var COLOR_IT = '#60a5fa'; /* blue-400 */
-  var COLOR_CS = '#e2e8f0'; /* slate-200 */
+  var COLOR_FEMALE = TW.red400; /* 포인트 */
+  /* 재직자 파이: 그린 + 밝은 그레이 */
+  var COLOR_IT = '#22c55e'; /* green-500 */
+  var COLOR_CS = '#cbd5e1'; /* slate-300 */
   var CHART_FONT = '"Pretendard GOV", "Malgun Gothic", sans-serif';
   var AXIS_LINE = { display: true, color: '#e2e8f0', width: 1 }; /* slate-200 */
   /** 차트 UI 공통 — 항목 글자/범례/간격 일관 */
@@ -115,9 +109,10 @@
       }
     },
     jikchak: {
-      labels: ['본부장', '부본부장', '담당', '팀장', '센터장', '연구소장'],
-      male: [7, 1, 3, 31, 2, 9],
-      female: [1, 0, 3, 8, 0, 0]
+      /* 시안: 본부장 8 / 법인장 1 / 담당 6 / 팀장 38 / 센터장 2 / 전문위원 9 */
+      labels: ['본부장', '법인장', '담당', '팀장', '센터장', '전문위원'],
+      male: [7, 1, 3, 30, 0, 9],
+      female: [1, 0, 3, 8, 2, 0]
     },
     gradeYear: {
       labels: ['2026', '2025', '2024'],
@@ -725,7 +720,7 @@
         datasets: [{
           data: [it, cs],
           backgroundColor: [COLOR_IT, COLOR_CS],
-          hoverBackgroundColor: ['#3b82f6', '#cbd5e1'], /* blue-500 / slate-300 */
+          hoverBackgroundColor: ['#16a34a', '#94a3b8'], /* green-600 / slate-400 */
           borderWidth: 0
         }]
       },

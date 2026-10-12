@@ -119,7 +119,7 @@
       <span class="chip">탭: 01 · 02~05</span>
       <span class="chip">진입: index.html → dashboard01</span>
       <span class="chip">기존 e-HR 라이브러리 재사용</span>
-      <span class="chip">버전 일치 필수</span>
+      <span class="chip">갱신 26.10.12</span>
     </div>
 
     <div class="card toc">
@@ -160,6 +160,8 @@
 ├── dashboard02.html            ← 인력확보 및 유지
 ├── dashboard03.html ~ 05.html  ← 작업중
 ├── css/dashboard.css           ← 공통 스타일 (.hr-dash*)
+├── images/
+│   └── people.png              ← 인력 다양성 카드 배경
 ├── js/
 │   ├── dashboard.js            ← 01 Chart · SAMPLE · HrDashboard
 │   └── dashboard02.js          ← 02 Chart · SAMPLE · HrDashboard02
@@ -217,37 +219,43 @@
         <tr>
           <td>상단 KPI</td>
           <td>좌50%: 재직·휴직·입사·퇴사 / 우50%: 인력 다양성</td>
-          <td></td>
+          <td>좌측 그리드 <code>1.4fr 1fr 1fr 1fr</code> (재직자 넓게)</td>
         </tr>
         <tr>
           <td>재직자</td>
-          <td>총원 + IT/CS 파이 + 우측 라벨</td>
-          <td><code>#chartItCs</code></td>
+          <td>총원 + IT/CS 파이 + 우측 라벨 · 소제목 <code>실시간 기준</code></td>
+          <td><code>#chartItCs</code> · IT green-500 · CS slate-300</td>
         </tr>
         <tr>
           <td>휴직·입사·퇴사</td>
-          <td>수치만</td>
+          <td>수치만 · 소제목 휴직 <code>실시간 기준</code> / 입·퇴사 <code>2026년 누적 기준</code></td>
           <td></td>
         </tr>
         <tr>
           <td>인력 다양성</td>
-          <td>장애인 · 보훈 · 외국인</td>
-          <td>3칸</td>
+          <td>장애인 · 보훈 · 외국인 3칸 · 소제목 <code>실시간 기준</code></td>
+          <td>
+            카드 <code>.hr-dash__card--diversity</code>에 <code>people.png</code> 배경<br>
+            3칸 폭 <code>calc(100% - 300px)</code> · 배경은 우측 영역 가로중앙·하단(<code>75% 100%</code>) · 크기 <code>25%</code>
+          </td>
         </tr>
         <tr>
           <td>하단 좌 (50%)</td>
-          <td>본부별 인원수(가로 누적 좌→우, 세로 전체)</td>
+          <td>본부별 인원수(가로 누적 좌→우, 세로 전체) · <code>실시간 기준</code></td>
           <td>구간 수치 막대 안(흰색) · 총계 막대 끝</td>
         </tr>
         <tr>
           <td>하단 우상 (각 25%)</td>
-          <td>직책자 | 성별&amp;연령대 (좌우 반반 · 동일 높이)</td>
+          <td>직책자 | 성별&amp;연령대 · 각 <code>실시간 기준</code></td>
           <td>양방향 · 항목명 옆 총계 <code>(n)</code></td>
         </tr>
         <tr>
           <td>하단 우하 (50%)</td>
           <td>직급별 인원수 (3개년)</td>
-          <td>상단과 세로 반반 · 구간 수치 막대 안(흰색)</td>
+          <td>
+            소제목 <code>과거 2개년은 12월말 기준, 최신년도는 실시간 기준</code><br>
+            상단과 세로 반반 · 구간 수치 막대 안(흰색)
+          </td>
         </tr>
       </tbody>
     </table>
@@ -256,6 +264,10 @@
     </div>
 
     <h3>4-2. dashboard02 — 인력확보 및 유지</h3>
+    <p class="warn" style="margin-top:0;">
+      용어: 화면·차트 라벨은 <strong>퇴직 → 퇴사</strong>로 통일
+      (퇴사율 · 직급별/본부별/근속년수별 퇴사자 수 · 퇴사 사유).
+    </p>
     <table>
       <thead>
         <tr><th>영역</th><th>구성</th><th>비고</th></tr>
@@ -268,21 +280,33 @@
         </tr>
         <tr>
           <td>1행</td>
-          <td>신규채용 / 핵심기술인재 / Successor</td>
-          <td>막대 수치 15px bold</td>
+          <td>
+            신규채용 <code>실시간 기준</code> /
+            핵심기술인재 <code>연 1회 업데이트(9월)</code> /
+            Successor <code>연 1회 업데이트(4월)</code>
+          </td>
+          <td>
+            막대 수치 15px bold<br>
+            신규채용·Successor: 비교 막대 간격 0(<code>barPercentage:1</code>) ·
+            항목 간격 넓게(<code>categoryPercentage:0.55</code>)
+          </td>
         </tr>
         <tr>
           <td>2~3행</td>
-          <td>퇴직률 / 직급별 퇴직 / <strong>퇴직 사유</strong></td>
-          <td>퇴직 사유: 오른쪽 열 2~3행 병합 · 도넛 최대 360px</td>
+          <td>퇴사율 / 직급별 퇴사자 수 / <strong>퇴사 사유</strong></td>
+          <td>
+            소제목 공통 <code>2026년 누적 기준</code><br>
+            퇴사 사유: 오른쪽 열 2~3행 병합 · 도넛 최대 360px<br>
+            도넛↔범례 간격: 데스크톱 <code>gap:16px</code> · 모바일 <code>gap:32px</code>
+          </td>
         </tr>
         <tr>
           <td>3행</td>
-          <td>본부별 퇴직 / 근속년수별 퇴직</td>
-          <td></td>
+          <td>본부별 퇴사자 수 / 근속년수별 퇴사자 수</td>
+          <td>소제목 <code>2026년 누적 기준</code></td>
         </tr>
         <tr>
-          <td>퇴직 사유 · 모바일</td>
+          <td>퇴사 사유 · 모바일</td>
           <td>도넛 좌 + 범례·주석 우</td>
           <td>
             좌우·상하 중앙 · 카드 높이 = 컨텐츠<br>
@@ -374,25 +398,29 @@ HrDashboard02.render({
     <h2 id="style">7. 스타일 · 색상 · 차트 규칙</h2>
 
     <h3>색상 체계</h3>
+    <p>
+      <strong>메인</strong>: 블루 계열 베리에이션(Blue 900~200) ·
+      <strong>포인트</strong>: 01 여 red-400(<code>#f87171</code>) · 02 퇴사율 violet-500(<code>#8b5cf6</code>).
+    </p>
     <table>
       <thead>
         <tr><th>영역</th><th>톤</th><th>비고</th></tr>
       </thead>
       <tbody>
         <tr>
-          <td>01 본부·직급 / 02 전체 차트</td>
+          <td>01 본부·직급 / 02 막대·도넛</td>
           <td>Blue 900~200</td>
           <td>블루 단색 베리에이션 (진함 → 옅음)</td>
         </tr>
         <tr>
           <td>01 재직자 IT/CS</td>
-          <td>Yellow-400 · Slate-200</td>
-          <td>밝은 옐로우 + 라이트 그레이</td>
+          <td>Green-500 · Slate-300</td>
+          <td>IT <code>#22c55e</code> · CS <code>#cbd5e1</code></td>
         </tr>
         <tr>
-          <td>01 직책자·성별&amp;연령</td>
-          <td>남 blue-400 / 여 red-400</td>
-          <td>변경하지 않음</td>
+          <td>01 직책자·성별&amp;연령 / 02 퇴사율</td>
+          <td>남 blue · 여 red-400 · 퇴사율 violet-500</td>
+          <td>포인트: 여 레드 / 퇴사율 바이올렛</td>
         </tr>
       </tbody>
     </table>
@@ -412,26 +440,48 @@ HrDashboard02.render({
         직책자·성별연령은 항목명 옆 <code>(n)</code> · 15px bold · <code>#333333</code>.
       </li>
       <li>
-        <strong>IT/CS</strong>: IT yellow-400 · CS slate-200 (라이트 그레이)
+        <strong>IT/CS</strong>: IT green-500 · CS slate-300
+      </li>
+      <li>
+        <strong>인력 다양성 배경</strong>:
+        <code>.hr-dash__card--diversity</code>에 <code>images/people.png</code>
+        · <code>background-position: 75% 100%</code>
+        · <code>background-size: 25% auto</code>
+        · 3칸 폭 <code>calc(100% - 300px)</code>
       </li>
       <li>
         <strong>직책자 라벨</strong>:
-        본부장 · 부본부장 · 담당 · 팀장 · 센터장 · 연구소장
+        본부장 · 법인장 · 담당 · 팀장 · 센터장 · 전문위원
+        (남 7·1·3·30·0·9 / 여 1·0·3·8·2·0)
       </li>
     </ul>
 
     <h3>02</h3>
     <ul>
-      <li>핵심기술인재·직급/본부 퇴직: 블루·라이트블루·밝은 퍼플 교대. 퇴직률 red-400.</li>
+      <li>핵심기술인재·직급/본부 퇴사: 블루 진함→옅음 교대. 퇴사율 포인트 violet-500(<code>#8b5cf6</code>).</li>
+      <li>
+        2시리즈 막대(신입/경력, 외부/팀원): blue-700 + blue-300 ·
+        비교 막대 간격 0 · 항목 간격 <code>categoryPercentage:0.55</code>.
+      </li>
       <li>막대 수치: 15px bold (막대 위).</li>
-      <li>퇴직 사유 도넛: 블루·라이트블루·라이트 옐로우·그레이·밝은 그레이 · 최대 360px · 모바일 좌우 배치.</li>
+      <li>
+        퇴사 사유 도넛: 그린→라임→틸→스카이 5단
+        (<code>#22c55e · #84cc16 · #2dd4bf · #38bdf8 · #7dd3fc</code>) ·
+        부적응(lime)과 결혼·육아(teal) 구분 · 최대 360px · 모바일 좌우 배치.
+        도넛·범례 간격 <code>.hr-dash__reason-wrap</code> gap 16px (모바일 32px).
+      </li>
     </ul>
 
     <h3>공통 UI</h3>
     <ul>
       <li>커스텀 CSS는 <code>.hr-dash</code> 하위로만 작성.</li>
       <li>휴직·입사·퇴사 KPI: 아이콘 없음 · 수치만 표시.</li>
-      <li>제목 보조 <code>.hr-dash__title-sub</code>: 예) (3개년 추이).</li>
+      <li>
+        제목 보조 <code>.hr-dash__title-sub</code> —
+        카드 제목 <strong>아래</strong> 작은 소제목(상하 배치, 괄호 없음).
+        예) <code>실시간 기준</code>, <code>2026년 누적 기준</code>,
+        직급별 <code>과거 2개년은 12월말 기준, 최신년도는 실시간 기준</code>.
+      </li>
       <li>모바일 분기: <code>@media (max-width: 1100px)</code>.</li>
     </ul>
 
@@ -443,7 +493,9 @@ HrDashboard02.render({
         <li>□ FA <code>webfonts</code> 404가 아닌가</li>
         <li>□ 탭 네비(01 · 02~05) 링크·활성(<code>.on</code>)이 올바른가</li>
         <li>□ 01: W01~W10 → <code>HrDashboard.render</code> 매핑 완료</li>
-        <li>□ 02: 채용·퇴직 등 → <code>HrDashboard02.render</code> 매핑 완료</li>
+        <li>□ 02: 채용·퇴사 등 → <code>HrDashboard02.render</code> 매핑 완료</li>
+        <li>□ 카드 소제목(<code>.hr-dash__title-sub</code>)이 기준표와 일치하는가</li>
+        <li>□ 01 인력 다양성 배경(<code>images/people.png</code>) 경로가 올바른가</li>
         <li>□ <code>GRADE_ORDER</code> 직급명(계약직(무기) 포함)이 마스터와 일치하는가</li>
         <li>□ iframe 높이·리사이즈 후 차트 깨짐이 없는가</li>
         <li>□ <code>.hr-dash</code>와 글로벌 CSS 충돌이 없는가</li>
@@ -452,7 +504,9 @@ HrDashboard02.render({
 
     <footer>
       HR Dashboard 적용 가이드 · 디자이너/퍼블리셔 박준화 수석 · HP:010-9479-3188<br>
-      최초 26.10.02 · 갱신 26.10.08
+      최초 26.10.02 · 갱신 26.10.12
+      (소제목 상하·괄호 제거 · 블루 메인/포인트 정리 · 재직자 그린·그레이 ·
+      퇴사 사유 그린–스카이 · 퇴사율 바이올렛 · 직책자 시안 수치 · 채용/Successor 막대 간격)
     </footer>
   </div>
 </body>
