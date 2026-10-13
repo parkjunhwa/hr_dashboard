@@ -1,6 +1,7 @@
 /**
  * dashboard02 — 인력확보 및 유지
  * Chart.js 4.x + 샘플 데이터 (첨부 시안 기준)
+ * canvas/plugin id: chart02* · d02BarCount · d02ReasonCenter · API: HrDashboard02
  */
 (function (window, $) {
   'use strict';
@@ -109,7 +110,7 @@
   var barCountPlugin = {
     id: 'd02BarCount',
     afterDatasetsDraw: function (chart) {
-      if (!chart.$labelsReady) return;
+      if (!chart.$d02LabelsReady) return;
       var ctx = chart.ctx;
       chart.data.datasets.forEach(function (ds, di) {
         if (!chart.isDatasetVisible(di)) return;
@@ -139,7 +140,7 @@
       duration: 700,
       onComplete: function (ctx) {
         if (ctx && ctx.chart) {
-          ctx.chart.$labelsReady = true;
+          ctx.chart.$d02LabelsReady = true;
           ctx.chart.draw();
         }
       }
@@ -148,7 +149,7 @@
       config.plugins = (config.plugins || []).concat([barCountPlugin]);
     }
     var chart = new Chart(el.getContext('2d'), config);
-    chart.$labelsReady = false;
+    chart.$d02LabelsReady = false;
     charts[id] = chart;
     return chart;
   }
@@ -189,7 +190,7 @@
   function renderHire(d) {
     var max = maxOf(d.newbie, d.career) * 1.25;
     var opts = baseBarOpts();
-    createChart('chartHire', {
+    createChart('chart02Hire', {
       type: 'bar',
       data: {
         labels: d.labels,
@@ -208,7 +209,7 @@
     var max = maxOf(d.data) * 1.25;
     var opts = baseBarOpts();
     opts.plugins.legend.display = false;
-    createChart('chartCore', {
+    createChart('chart02Core', {
       type: 'bar',
       data: {
         labels: d.labels,
@@ -233,7 +234,7 @@
     }
     max = Math.max(max, 1) * 1.25;
     var opts = baseBarOpts();
-    createChart('chartSuccessor', {
+    createChart('chart02Successor', {
       type: 'bar',
       data: {
         labels: d.labels,
@@ -255,7 +256,7 @@
     var opts = baseBarOpts();
     opts.plugins.legend.display = false;
     opts.layout.padding = 4;
-    createChart('chartRetireRate', {
+    createChart('chart02RetireRate', {
       type: 'pie',
       data: {
         labels: ['퇴사', '잔여'],
@@ -285,7 +286,7 @@
     var max = maxOf(d.data) * 1.3;
     var opts = baseBarOpts();
     opts.plugins.legend.display = false;
-    createChart('chartGradeRetire', {
+    createChart('chart02GradeRetire', {
       type: 'bar',
       data: {
         labels: d.labels,
@@ -339,7 +340,7 @@
       }
     };
 
-    createChart('chartReason', {
+    createChart('chart02Reason', {
       type: 'doughnut',
       plugins: [centerPlugin],
       data: {
@@ -373,7 +374,7 @@
     var max = maxOf(d.data) * 1.3;
     var opts = baseBarOpts();
     opts.plugins.legend.display = false;
-    createChart('chartDeptRetire', {
+    createChart('chart02DeptRetire', {
       type: 'bar',
       data: {
         labels: d.labels,
@@ -404,7 +405,7 @@
       '#1d4ed8', /* 10~20년 blue-700 */
       '#1e3a8a'  /* 20년이상 blue-900 */
     ];
-    createChart('chartTenureRetire', {
+    createChart('chart02TenureRetire', {
       type: 'bar',
       data: {
         labels: d.labels,

@@ -1,10 +1,13 @@
 /**
- * HR Dashboard — Chart.js 4.x
- * e-HR DashBoardTab01 차트 패턴 + 샘플 데이터(스크린샷 기준)
+ * dashboard01 — 인력현황
+ * Chart.js 4.x + 샘플 데이터 (시안 스크린샷 기준)
+ * e-HR DashBoardTab01 차트 패턴 · API: HrDashboard01
  *
  * WORK LOG
  * [2026-10-02] 초기 작성 — KPI / 본부·직책·직급3개년·연령피라미드
  * [2026-10-06] SAMPLE을 시안 스크린샷 명칭·수치로 교체 (차트 형태는 기존 유지)
+ * [2026-10-13] 파일명 dashboard.js → dashboard01.js · API HrDashboard → HrDashboard01
+ * [2026-10-13] canvas/plugin id: chart01* · d01BarCount · d01GenderSplit
  */
 (function (window, $) {
   'use strict';
@@ -195,10 +198,10 @@
    * 직책자·성별연령: 막대 안 성별 수치 + 항목명 옆 총계(n) (총계는 barTotalSize bold)
    */
   var barCountPlugin = {
-    id: 'hrBarCount',
+    id: 'd01BarCount',
     afterDatasetsDraw: function (chart) {
-      var opt = chart.options.plugins && chart.options.plugins.hrBarCount;
-      if (!opt || !chart.$hrLabelsReady) return;
+      var opt = chart.options.plugins && chart.options.plugins.d01BarCount;
+      if (!opt || !chart.$d01LabelsReady) return;
       var ctx = chart.ctx;
       var horiz = chart.options.indexAxis === 'y';
       var n = chart.data.labels.length;
@@ -273,7 +276,7 @@
         });
       });
 
-      /* 콜아웃: 모든 구간 수치 (regular weight) */
+      /* 콜아웃: 임계값 이하로 모인 구간 수치만 (regular weight) */
       if (calloutOn) {
         var arm = 12;
         var stackGap = fontSize + 2;
@@ -438,7 +441,7 @@
       ctx.restore();
 
       if (!opt.total) return;
-      /* 양방향(남 음수) 차트: 합은 절대값, 총원은 중앙선 오른쪽에 표시 */
+      /* 총계(절대값 합): 가로=막대 끝(+8), 세로=막대 위. 양방향(남 음수)이면 끝점이 중앙선보다 왼쪽일 때 중앙선 기준으로 표시 */
       var xScale = chart.scales && chart.scales.x;
       var zeroX = (horiz && xScale) ? xScale.getPixelForValue(0) : null;
       for (var idx = 0; idx < n; idx++) {
@@ -528,7 +531,7 @@
       onComplete: function (ctx) {
         var c = ctx && ctx.chart;
         if (c) {
-          c.$hrLabelsReady = true;
+          c.$d01LabelsReady = true;
           c.draw();
         }
       }
@@ -540,7 +543,7 @@
     }
 
     var chart = new Chart(el.getContext('2d'), config);
-    chart.$hrLabelsReady = false;
+    chart.$d01LabelsReady = false;
     charts[id] = chart;
     return chart;
   }
@@ -583,7 +586,7 @@
     };
   }
 
-  /** 가로 누적 — 구간 수치는 막대 안(흰색), 총계는 막대 끝 (opt로 hrBarCount 덮어쓰기) */
+  /** 가로 누적 — 구간 수치는 막대 안(흰색), 총계는 막대 끝 (opt로 d01BarCount 덮어쓰기) */
   function stackedHorizontal(canvasId, labels, datasets, opt) {
     var xMax = maxStackedTotal(datasets);
     var ds = datasets.map(function (d) {
@@ -624,7 +627,7 @@
           legend: legendOpts(),
           tooltip: { mode: 'nearest', intersect: true, callbacks: stackedTooltipCallbacks() },
           datalabels: { display: false },
-          hrBarCount: $.extend({
+          d01BarCount: $.extend({
             total: true,
             color: '#475569',
             callout: false
@@ -634,7 +637,7 @@
     });
   }
 
-  /** 세로 누적 (본부별 — 오른쪽 위 대각선 콜아웃) */
+  /** 세로 누적 — 오른쪽 대각선 콜아웃 (현재 미사용 · 본부별은 stackedHorizontal) */
   function stackedVertical(canvasId, labels, datasets) {
     var yMax = maxStackedTotal(datasets);
     var ds = datasets.map(function (d) {
@@ -682,7 +685,7 @@
           legend: legendOpts(),
           tooltip: { mode: 'nearest', intersect: true, callbacks: stackedTooltipCallbacks() },
           datalabels: { display: false },
-          hrBarCount: {
+          d01BarCount: {
             total: true,
             color: '#475569',
             callout: true,
@@ -713,7 +716,7 @@
     var it = num(kpi.it);
     var cs = num(kpi.cs);
     var total = Math.max(it + cs, 1);
-    createChart('chartItCs', {
+    createChart('chart01ItCs', {
       type: 'pie',
       data: {
         labels: ['IT', 'CS'],
@@ -739,7 +742,7 @@
             }
           },
           datalabels: { display: false },
-          hrBarCount: false
+          d01BarCount: false
         },
         animation: { duration: 700, easing: 'easeOutQuart' }
       }
@@ -761,7 +764,7 @@
   /** 모바일: 본부별 차트 높이를 항목 수에 맞춤 (다른 카드와 동일 높이 강제 안 함) */
   function sizeHqChartBox(labelCount) {
     hqLabelCount = labelCount || hqLabelCount || 0;
-    var el = document.getElementById('chartHq');
+    var el = document.getElementById('chart01Hq');
     var box = el && el.parentElement;
     if (!box) return;
     var mobile = window.matchMedia('(max-width: 1100px)').matches;
@@ -779,11 +782,11 @@
   function renderHqChart(data) {
     /* 본부별 = 가로 누적 (좌→우), 구간 수치는 막대 안 */
     sizeHqChartBox((data.labels && data.labels.length) || 0);
-    stackedHorizontal('chartHq', data.labels, gradeDatasets(data.grades, data.labels));
+    stackedHorizontal('chart01Hq', data.labels, gradeDatasets(data.grades, data.labels));
   }
 
   function renderGradeYearChart(data) {
-    stackedHorizontal('chartGradeYear', data.labels, gradeDatasets(data.grades, data.labels));
+    stackedHorizontal('chart01GradeYear', data.labels, gradeDatasets(data.grades, data.labels));
   }
 
   /** 남(좌·음수) / 여(우·양수) 양방향 가로 막대 — 직책자·연령대 공통 */
@@ -805,7 +808,7 @@
     createChart(canvasId, {
       type: 'bar',
       plugins: [{
-        id: 'hrGenderSplit_' + canvasId,
+        id: 'd01GenderSplit_' + canvasId,
         afterDraw: function (chart) {
           var xScale = chart.scales.x;
           var yScale = chart.scales.y;
@@ -917,7 +920,7 @@
             }
           },
           datalabels: { display: false },
-          hrBarCount: { color: '#475569' }
+          d01BarCount: { color: '#475569' }
         }
       }
     });
@@ -926,7 +929,7 @@
 
   function renderJikchakChart(data) {
     /* 직책자 = 성별&연령대와 동일 좌(남)·우(여) 양방향 */
-    var sums = renderBidirectionalGenderChart('chartJikchak', data);
+    var sums = renderBidirectionalGenderChart('chart01Jikchak', data);
     var tot = sums.male + sums.female;
     var mRate = tot ? Math.round(sums.male / tot * 100) : 0;
     var fRate = tot ? 100 - mRate : 0;
@@ -937,7 +940,7 @@
   }
 
   function renderAgeChart(data) {
-    renderBidirectionalGenderChart('chartAge', data, function (lab) {
+    renderBidirectionalGenderChart('chart01Age', data, function (lab) {
       return String(lab).indexOf('이상') >= 0 ? lab : lab + '세';
     });
   }
@@ -984,7 +987,7 @@
     $(window).on('resize', onResize);
   });
 
-  window.HrDashboard = {
+  window.HrDashboard01 = {
     render: renderAll,
     sample: SAMPLE
   };
