@@ -7,12 +7,12 @@
   'use strict';
 
   var CHART_FONT = '"Pretendard GOV", "Malgun Gothic", sans-serif';
-  /* 메인: 블루 계열 베리에이션 / 포인트: 그레이(퇴사율) 1개 */
+  /* 메인: 블루 계열 베리에이션 / 포인트: 그린(퇴사율) 1개 */
   var ACCENT_A = '#1d4ed8'; /* blue-700 */
   var ACCENT_B = '#60a5fa'; /* blue-400 */
   var ACCENT_C = '#93c5fd'; /* blue-300 */
   var MUTED = '#e2e8f0';    /* slate-200 (잔여) */
-  var POINT = '#64748b';    /* slate-500 — 그레이 포인트 */
+  var POINT = '#22c55e';    /* green-500 — 퇴사율 포인트 */
   /* 직급별 퇴사 — dashboard01 직급 팔레트와 동일 (그린/블루/그레이) */
   var GRADE_RETIRE_COLORS = {
     '임원': '#16a34a', /* green-600 */
@@ -245,8 +245,8 @@
       data: {
         labels: d.labels,
         datasets: [
-          { label: '외부후보자', data: d.external, backgroundColor: ACCENT_A, borderWidth: 0, barPercentage: 1, categoryPercentage: 0.55 },
-          { label: '팀원우수', data: d.internal, backgroundColor: ACCENT_C, borderWidth: 0, barPercentage: 1, categoryPercentage: 0.55 }
+          { label: '본부장 후보', data: d.external, backgroundColor: ACCENT_A, borderWidth: 0, barPercentage: 1, categoryPercentage: 0.55 },
+          { label: '팀장 후보', data: d.internal, backgroundColor: ACCENT_C, borderWidth: 0, barPercentage: 1, categoryPercentage: 0.55 }
         ]
       },
       options: $.extend(true, opts, {
@@ -268,7 +268,7 @@
         labels: ['퇴사', '잔여'],
         datasets: [{
           data: [d.rate, Math.max(100 - d.rate, 0)],
-          backgroundColor: [POINT, MUTED], /* 포인트 그레이 + 잔여 */
+          backgroundColor: [POINT, MUTED], /* 포인트 그린 + 잔여 */
           borderWidth: 0
         }]
       },
