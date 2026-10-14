@@ -13,11 +13,11 @@
   var ACCENT_C = '#93c5fd'; /* blue-300 */
   var MUTED = '#e2e8f0';    /* slate-200 (잔여) */
   var POINT = '#8b5cf6';    /* violet-500 — 보라빛 포인트 */
-  /* 핵심기술인재·직급별/본부별 퇴사 — 블루 진함→옅음 교대 */
+  /* 핵심기술인재·직급별/본부별 퇴사 — 그린 / 블루 / 퍼플 (유사 채도·명도) */
   var MIX_COLORS = [
-    '#1d4ed8', /* blue-700 */
-    '#3b82f6', /* blue-500 */
-    '#93c5fd'  /* blue-300 */
+    '#34d399', /* emerald-400 */
+    '#60a5fa', /* blue-400 */
+    '#a78bfa'  /* violet-400 */
   ];
 
   function mixColors(n) {

@@ -13,7 +13,8 @@
   'use strict';
 
   /**
-   * 팔레트 — 메인: 블루 계열 베리에이션 / 포인트: 레드(여·강조) 1개
+   * 팔레트 — 직급: 퍼플(임원·부장) / 블루(차장~사원) / 그레이(계약직)
+   * 포인트: 레드(여·강조) 1개
    */
   var TW = {
     blue200: '#bfdbfe',
@@ -24,18 +25,27 @@
     blue700: '#1d4ed8',
     blue800: '#1e40af',
     blue900: '#1e3a8a',
+    purple300: '#d8b4fe',
+    purple400: '#c084fc',
+    purple500: '#a855f7',
+    purple600: '#9333ea',
+    purple700: '#7e22ce',
+    purple800: '#6b21a8',
+    slate300: '#cbd5e1',
+    slate400: '#94a3b8',
+    slate500: '#64748b',
     red400: '#f87171', /* 포인트 */
     blueHover: '#2563eb'
   };
-  /** 본부·직급 누적 — 블루만, 임원(진함) → 계약직(옅음) */
+  /** 본부·직급 누적 — 퍼플 / 블루 / 그레이 3분류 (그레이 제외 밝게) */
   var GRADE_PALETTE_DEFAULT = [
-    TW.blue900, /* 임원 */
-    TW.blue800, /* 부장 */
-    TW.blue700, /* 차장 */
-    TW.blue600, /* 과장 */
-    TW.blue500, /* 대리 */
-    TW.blue400, /* 사원 */
-    TW.blue300  /* 계약직(무기) */
+    TW.purple600, /* 임원 — 퍼플 */
+    TW.purple400, /* 부장 — 퍼플 */
+    TW.blue600, /* 차장 — 블루 */
+    TW.blue500, /* 과장 — 블루 */
+    TW.blue400, /* 대리 — 블루 */
+    TW.blue300, /* 사원 — 블루 */
+    TW.slate400  /* 계약직(무기) — 그레이 */
   ];
   var GRADE_PALETTE = GRADE_PALETTE_DEFAULT;
   var GRADE_ORDER = ['임원', '부장', '차장', '과장', '대리', '사원', '계약직(무기)'];
@@ -601,17 +611,19 @@
       options: {
         indexAxis: 'y',
         layout: {
-          padding: $.extend({}, CHART_UI.layout, {
+          /* 우측 패딩 최소화 → 범례를 카드 오른쪽 끝에 붙임 (총계 여백은 xMax로 확보) */
+          padding: {
             top: 18,
-            right: 48,
-            bottom: 8
-          })
+            right: 4,
+            bottom: 8,
+            left: 6
+          }
         },
         scales: {
           x: {
             stacked: true,
             min: 0,
-            max: xMax * 1.18,
+            max: xMax * 1.22,
             ticks: { display: false },
             grid: { display: false, drawTicks: false },
             border: { display: false }
@@ -624,7 +636,10 @@
           }
         },
         plugins: {
-          legend: legendOpts(),
+          legend: $.extend(true, {}, legendOpts(), {
+            align: 'end',
+            labels: { padding: 12 }
+          }),
           tooltip: { mode: 'nearest', intersect: true, callbacks: stackedTooltipCallbacks() },
           datalabels: { display: false },
           d01BarCount: $.extend({
@@ -866,7 +881,8 @@
       },
       options: {
         indexAxis: 'y',
-        layout: { padding: $.extend({}, CHART_UI.layout) },
+        /* 우측 패딩 축소 → 남/여 범례를 카드 오른쪽 끝에 맞춤 */
+        layout: { padding: { top: 4, right: 2, bottom: 6, left: 6 } },
         scales: {
           x: {
             stacked: true,
@@ -901,7 +917,10 @@
           }
         },
         plugins: {
-          legend: legendOpts(),
+          legend: $.extend(true, {}, legendOpts(), {
+            align: 'end',
+            labels: { padding: 12 }
+          }),
           tooltip: {
             mode: 'nearest',
             intersect: true,

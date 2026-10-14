@@ -405,6 +405,114 @@ body {
   grid-row: 2;
 }
 
+/* ----- 분리 세로막대 그리드 (dashboard01_) ----- */
+.hr-dash__grade-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.hr-dash__grade-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.hr-dash__grade-legend-item i {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex: 0 0 auto;
+}
+
+.hr-dash__mini-grid {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  align-content: stretch;
+}
+
+.hr-dash__mini-card {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: #f8fafc; /* slate-50 — 아주 밝은 그레이 */
+  border: 0;
+  border-radius: 6px;
+  padding: 16px 18px 14px;
+}
+
+.hr-dash__mini-card-title {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 2px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--hr-dash-label);
+  letter-spacing: -0.3px;
+  line-height: 1.25;
+}
+
+.hr-dash__mini-card-title .name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 16px; /* 본부별·직급별(연도) 작은 차트 제목 동일 */
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: #64748b; /* slate-500 — 블루 그레이 */
+}
+
+.hr-dash__mini-card-title .total {
+  flex: 0 0 auto;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  text-align: right;
+  color: var(--hr-dash-text);
+}
+
+.hr-dash__mini-card-title .total .num {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.hr-dash__mini-card-title .total .unit {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--hr-dash-muted);
+}
+
+.hr-dash__mini-chart {
+  flex: 1 1 0;
+  min-height: 72px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hr-dash__mini-chart canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
 /* ----- Card ----- */
 .hr-dash__card {
   background-color: var(--hr-dash-card-bg);
@@ -431,6 +539,14 @@ body {
   font-size: 0.72em;
   font-weight: 600;
   line-height: 1.35;
+}
+
+/* dashboard01_: 카드 제목·소제목 좌우 배치 */
+.hr-dash--inline-sub .hr-dash__title-sub {
+  display: inline;
+  margin-top: 0;
+  margin-left: 8px;
+  vertical-align: baseline;
 }
 
 .hr-dash__card-tag {
@@ -465,6 +581,12 @@ body {
   flex-wrap: wrap;
 }
 
+.hr-dash__card-head.hr-dash__card-head--stack {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
 .hr-dash__card-head .hr-dash__card-title {
   margin-bottom: 0;
 }
@@ -478,7 +600,7 @@ body {
 
 /* ----- KPI ----- */
 .hr-dash__kpi-num {
-  font-size: 42px;
+  font-size: 48px;
   font-weight: 800;
   color: var(--hr-dash-text);
   line-height: 1.1;
@@ -486,13 +608,13 @@ body {
 }
 
 .hr-dash__kpi-unit {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--hr-dash-muted);
   margin-left: 4px;
 }
 
-/* KPI 본문: 왼쪽 수치 + (재직자만) 오른쪽 파이·라벨 */
+/* KPI 본문: (재직자) 왼쪽 파이·라벨 + 오른쪽 수치 / (휴직·입사·퇴사) 오른쪽 수치 */
 .hr-dash__kpi-main {
   flex: 1 1 auto;
   display: flex;
@@ -507,6 +629,7 @@ body {
   min-width: 0;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
 }
 
 .hr-dash__kpi-main-side {
@@ -531,32 +654,34 @@ body {
 }
 
 .hr-dash__work-legend {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 8px;
-  text-align: right;
-  min-width: 44px;
+  display: grid;
+  grid-template-columns: auto minmax(2.5em, max-content);
+  column-gap: 6px;
+  row-gap: 8px;
+  align-content: center;
+  align-items: baseline;
+  justify-items: start;
 }
 
 .hr-dash__work-item {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  display: contents;
   line-height: 1.15;
 }
 
 .hr-dash__work-item .lab {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   color: #555;
 }
 
 .hr-dash__work-item .val {
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 800;
   color: var(--hr-dash-text);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  justify-self: end;
+  min-width: 2.5em;
 }
 
 .hr-dash__work-item--it .lab {
@@ -567,58 +692,68 @@ body {
   color: var(--hr-dash-cs);
 }
 
-/* 휴직/입사/퇴사: 수치만 */
+/* 휴직/입사/퇴사: 수치만 오른쪽 */
 .hr-dash__card--simple .hr-dash__kpi-main {
-  justify-content: flex-start;
+  justify-content: flex-end;
 }
 
-/* 인력 다양성 카드 — people.png 우측 하단(오른쪽 40px 여백) · 고정 폭 220px */
-.hr-dash__card--diversity {
-  background-color: var(--hr-dash-card-bg);
-  background-image: url("../images/people.png");
-  background-repeat: no-repeat;
-  background-position: calc(100% - 40px) 100%;
-  background-size: 220px auto;
-}
-
+/* 인력 다양성 카드 */
 .hr-dash__diversity-body {
   flex: 1 1 auto;
   display: flex;
   min-height: 0;
   align-items: stretch;
-  position: relative;
-  z-index: 1;
 }
 
 .hr-dash__div3 {
-  width: calc(100% - 300px);
+  width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 12px;
   text-align: center;
   min-width: 0;
-  align-content: center;
-  padding-top: 4px;
+  align-items: stretch;
 }
 
 .hr-dash__div3-item {
   background-color: #f1f5f9; /* slate-100 */
   border-radius: 8px;
-  padding: 10px 6px 8px;
+  padding: 10px 16px;
   min-width: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  text-align: left;
 }
 
 .hr-dash__div3 .lab {
   font-size: 15px;
   font-weight: 600;
   color: #64748b; /* slate-500 */
-  margin-bottom: 6px;
+  margin-bottom: 0;
+  flex: 0 0 auto;
+}
+
+.hr-dash__div3-val {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .hr-dash__div3 .num {
-  font-size: 26px;
+  font-size: 48px;
   font-weight: 800;
   color: var(--hr-dash-text);
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+.hr-dash__div3-item .hr-dash__kpi-unit {
+  font-size: 16px;
 }
 
 /* ----- Charts: 카드 안에서 남은 높이 채움 ----- */
@@ -698,8 +833,9 @@ body {
 }
 
 @media (max-width: 1400px) {
-  .hr-dash__kpi-num {
-    font-size: 34px;
+  .hr-dash__kpi-num,
+  .hr-dash__div3 .num {
+    font-size: 40px;
   }
 }
 
@@ -758,6 +894,16 @@ body {
     flex: 0 0 auto;
     min-height: 0;
     /* 높이는 JS에서 항목 수 기준으로 지정 */
+  }
+
+  .hr-dash__col--hq .hr-dash__mini-grid,
+  .hr-dash__col--grade .hr-dash__mini-grid {
+    flex: 0 0 auto;
+    min-height: 420px;
+  }
+
+  .hr-dash__mini-chart {
+    min-height: 100px;
   }
 
   .hr-dash__chart {
