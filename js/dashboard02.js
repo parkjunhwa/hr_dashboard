@@ -402,14 +402,14 @@
     var max = maxOf(d.data) * 1.25;
     var opts = baseBarOpts();
     opts.plugins.legend.display = false;
-    /* 근속기간↑ → 블루 진함 (옅음 → 진함) */
+    /* 근속기간↓ → 블루 진함 (짧을수록 진함) */
     var tenureColors = [
-      '#bfdbfe', /* 1년미만 blue-200 */
-      '#93c5fd', /* 1~3년 blue-300 */
-      '#60a5fa', /* 3~5년 blue-400 */
-      '#3b82f6', /* 5~10년 blue-500 */
-      '#1d4ed8', /* 10~20년 blue-700 */
-      '#1e3a8a'  /* 20년이상 blue-900 */
+      '#1e3a8a', /* 1년미만 blue-900 */
+      '#1d4ed8', /* 1~3년 blue-700 */
+      '#3b82f6', /* 3~5년 blue-500 */
+      '#60a5fa', /* 5~10년 blue-400 */
+      '#93c5fd', /* 10~20년 blue-300 */
+      '#bfdbfe'  /* 20년이상 blue-200 */
     ];
     createChart('chart02TenureRetire', {
       type: 'bar',
