@@ -335,22 +335,26 @@
           <td>퇴사율 / 직급별 퇴사자 수 / <strong>퇴사 사유</strong></td>
           <td>
             소제목 공통 <code>2026년 누적 기준</code><br>
-            퇴사율 포인트 green-500 · 직급별 퇴사 색=01 직급 팔레트<br>
+            퇴사율 포인트 slate-600(어두운 그레이) · 직급별 퇴사 색=01 직급 팔레트<br>
             직급 라벨: 임원~사원 · 유기 · 무기3급<br>
-            퇴사 사유: 오른쪽 열 2~3행 병합 · 도넛 최대 360px
+            퇴사 사유: 오른쪽 열 2~3행 병합 · 도넛 최대 360px<br>
+            주석: <code>※ 월 1회 업데이트, 퇴직의견조사서 퇴직사유 1순위만 포함</code>
           </td>
         </tr>
         <tr>
           <td>3행</td>
           <td>본부별 퇴사자 수 / 근속년수별 퇴사자 수</td>
-          <td>소제목 <code>2026년 누적 기준</code> · 본부별 퇴사 단색 slate-400</td>
+          <td>
+            소제목 <code>2026년 누적 기준</code> · 본부별 퇴사 단색 slate-400<br>
+            근속년수: 짧을수록 진한 블루 → 길수록 옅음
+          </td>
         </tr>
         <tr>
           <td>퇴사 사유 · 모바일</td>
           <td>도넛 좌 + 범례·주석 우</td>
           <td>
             좌우·상하 중앙 · 카드 높이 = 컨텐츠<br>
-            주석(※…)은 범례 아래 · 중앙 「연월」 14px
+            주석(<code>.hr-dash__card-note</code>)은 범례 아래 · 중앙 「연월」 14px
           </td>
         </tr>
       </tbody>
@@ -528,7 +532,7 @@ HrDashboard02.render({
     <h3>색상 체계</h3>
     <p>
       <strong>메인</strong>: 블루 계열 베리에이션(Blue 900~200) ·
-      <strong>포인트</strong>: 01 여 red-400(<code>#f87171</code>) · 02 퇴사율 green-500(<code>#22c55e</code>).
+      <strong>포인트</strong>: 01 여 red-400(<code>#f87171</code>) · 02 퇴사율 slate-600(<code>#475569</code>).
     </p>
     <table>
       <thead>
@@ -549,8 +553,8 @@ HrDashboard02.render({
         </tr>
         <tr>
           <td>01 직책자·성별&amp;연령 / 02 퇴사율</td>
-          <td>남 blue · 여 red-400 · 퇴사율 green-500</td>
-          <td>포인트: 여 레드 / 퇴사율 그린</td>
+          <td>남 blue · 여 red-400 · 퇴사율 slate-600</td>
+          <td>포인트: 여 레드 / 퇴사율 어두운 그레이</td>
         </tr>
         <tr>
           <td>02 핵심기술인재 · 본부별 퇴사</td>
@@ -602,7 +606,12 @@ HrDashboard02.render({
 
     <h3>02</h3>
     <ul>
-      <li>핵심기술인재·본부별 퇴사: slate-400 단색. 직급별 퇴사: 01 직급 색. 퇴사율 포인트 green-500(<code>#22c55e</code>).</li>
+      <li>
+        핵심기술인재·본부별 퇴사: slate-400 단색.
+        직급별 퇴사: 01 직급 색.
+        퇴사율 포인트 slate-600(<code>#475569</code>).
+        근속년수별: 짧을수록 진한 블루.
+      </li>
       <li>
         2시리즈 막대(신입/경력, 본부장 후보/팀장 후보): blue-700 + blue-300 ·
         비교 막대 간격 0 · 항목 간격 <code>categoryPercentage:0.55</code>.
@@ -614,6 +623,10 @@ HrDashboard02.render({
         (<code>#22c55e · #84cc16 · #2dd4bf · #38bdf8 · #7dd3fc</code>) ·
         부적응(lime)과 결혼·육아(teal) 구분 · 최대 360px · 모바일 좌우 배치.
         도넛·범례 간격 <code>.hr-dash__reason-wrap</code> gap 16px (모바일 32px).
+      </li>
+      <li>
+        퇴사 사유 주석(<code>.hr-dash__card-note</code>):
+        <code>※ 월 1회 업데이트, 퇴직의견조사서 퇴직사유 1순위만 포함</code>
       </li>
     </ul>
 
