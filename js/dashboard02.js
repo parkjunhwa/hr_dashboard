@@ -13,17 +13,23 @@
   var ACCENT_C = '#93c5fd'; /* blue-300 */
   var MUTED = '#e2e8f0';    /* slate-200 (잔여) */
   var POINT = '#64748b';    /* slate-500 — 그레이 포인트 */
-  /* 핵심기술인재·직급별/본부별 퇴사 — 그린 / 블루 / 그레이 (유사 채도·명도) */
-  var MIX_COLORS = [
-    '#34d399', /* emerald-400 */
-    '#60a5fa', /* blue-400 */
-    '#94a3b8'  /* slate-400 */
-  ];
+  /* 직급별 퇴사 — dashboard01 직급 팔레트와 동일 (그린/블루/그레이) */
+  var GRADE_RETIRE_COLORS = {
+    '임원': '#16a34a', /* green-600 */
+    '부장': '#4ade80', /* green-400 */
+    '차장': '#2563eb', /* blue-600 */
+    '과장': '#3b82f6', /* blue-500 */
+    '대리': '#60a5fa', /* blue-400 */
+    '사원': '#93c5fd', /* blue-300 */
+    '유기': '#bfdbfe', /* blue-200 */
+    '무기3급': '#94a3b8', /* slate-400 — 계약직同 */
+    '계약직(무기)': '#94a3b8'
+  };
 
-  function mixColors(n) {
-    var out = [];
-    for (var i = 0; i < n; i++) out.push(MIX_COLORS[i % MIX_COLORS.length]);
-    return out;
+  function gradeRetireColors(labels) {
+    return (labels || []).map(function (lab) {
+      return GRADE_RETIRE_COLORS[lab] || '#94a3b8';
+    });
   }
   /* 퇴사 사유 도넛 — 그린 → 스카이블루 그라데이션 톤
    * 2번째(부적응)는 lime으로 두어 3번째(결혼·육아 teal)와 구분 */
@@ -43,17 +49,17 @@
       career: [1, 4, 2, 4, 1, 0, 1, 2, 0, 0, 0, 0]
     },
     core: {
-      labels: ['BRP1', 'BRP2', 'BRP3', 'WRMS', '모빌리티', '클라우드', 'DT', 'VC', '엔터프라이즈', 'CEO직속'],
+      labels: ['ERP1', 'ERP2', 'ERP3', 'WRMS', '모빌리티', '클라우드', 'CIT', 'VC', '엔터프라이즈', 'CEO직속'],
       data: [7, 2, 10, 5, 4, 8, 1, 1, 3, 12]
     },
     successor: {
-      labels: ['BRP1', 'BRP2', 'BRP3', 'WRMS', '모빌리티', '클라우드', 'DT', 'VC', '엔터프라이즈', '경영지원'],
+      labels: ['ERP1', 'ERP2', 'ERP3', 'WRMS', '모빌리티', '클라우드', 'CIT', 'VC', '엔터프라이즈', '경영지원'],
       external: [3, 1, 1, 0, 2, 2, 1, 1, 3, 1],
       internal: [2, 2, 6, 1, 3, 2, 1, 2, 3, 2]
     },
     retireRate: { rate: 5, count: 21 },
     gradeRetire: {
-      labels: ['임원', '부장', '차장', '과장', '대리', '사원', '연구', '무기계약'],
+      labels: ['임원', '부장', '차장', '과장', '대리', '사원', '유기', '무기3급'],
       data: [2, 4, 2, 4, 9, 6, 3, 1]
     },
     reason: {
@@ -67,7 +73,7 @@
       ]
     },
     deptRetire: {
-      labels: ['BRP1', 'BRP2', 'BRP3', 'WRMS', '모빌리티', '클라우드', 'DT', '엔터프라이즈', 'CEO직속'],
+      labels: ['ERP1', 'ERP2', 'ERP3', 'WRMS', '모빌리티', '클라우드', 'CIT', '엔터프라이즈', 'CEO직속'],
       data: [6, 1, 2, 2, 1, 4, 6, 1, 3]
     },
     tenureRetire: {
@@ -215,7 +221,7 @@
         labels: d.labels,
         datasets: [{
           data: d.data,
-          backgroundColor: mixColors(d.labels.length),
+          backgroundColor: '#94a3b8', /* slate-400 — 단색 그레이 */
           borderWidth: 0,
           barPercentage: 0.65,
           categoryPercentage: 0.75
@@ -292,7 +298,7 @@
         labels: d.labels,
         datasets: [{
           data: d.data,
-          backgroundColor: mixColors(d.labels.length),
+          backgroundColor: gradeRetireColors(d.labels),
           borderWidth: 0,
           barPercentage: 0.6,
           categoryPercentage: 0.75
@@ -380,7 +386,7 @@
         labels: d.labels,
         datasets: [{
           data: d.data,
-          backgroundColor: mixColors(d.labels.length),
+          backgroundColor: '#94a3b8', /* slate-400 — 단색 그레이 */
           borderWidth: 0,
           barPercentage: 0.65,
           categoryPercentage: 0.75
