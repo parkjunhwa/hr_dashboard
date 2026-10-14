@@ -7,12 +7,12 @@
   'use strict';
 
   var CHART_FONT = '"Pretendard GOV", "Malgun Gothic", sans-serif';
-  /* 메인: 블루 계열 베리에이션 / 포인트: 그린(퇴사율) 1개 */
+  /* 메인: 블루 계열 베리에이션 / 포인트: 어두운 그레이(퇴사율) 1개 */
   var ACCENT_A = '#1d4ed8'; /* blue-700 */
   var ACCENT_B = '#60a5fa'; /* blue-400 */
   var ACCENT_C = '#93c5fd'; /* blue-300 */
   var MUTED = '#e2e8f0';    /* slate-200 (잔여) */
-  var POINT = '#22c55e';    /* green-500 — 퇴사율 포인트 */
+  var POINT = '#475569';    /* slate-600 — 퇴사율 포인트(어두운 그레이) */
   /* 직급별 퇴사 — dashboard01 직급 팔레트와 동일 (그린/블루/그레이) */
   var GRADE_RETIRE_COLORS = {
     '임원': '#16a34a', /* green-600 */
@@ -268,7 +268,7 @@
         labels: ['퇴사', '잔여'],
         datasets: [{
           data: [d.rate, Math.max(100 - d.rate, 0)],
-          backgroundColor: [POINT, MUTED], /* 포인트 그린 + 잔여 */
+          backgroundColor: [POINT, MUTED], /* 포인트 어두운 그레이 + 잔여 */
           borderWidth: 0
         }]
       },
