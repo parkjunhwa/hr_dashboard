@@ -7,17 +7,17 @@
   'use strict';
 
   var CHART_FONT = '"Pretendard GOV", "Malgun Gothic", sans-serif';
-  /* 메인: 블루 계열 베리에이션 / 포인트: 바이올렛(퇴사율) 1개 */
+  /* 메인: 블루 계열 베리에이션 / 포인트: 그레이(퇴사율) 1개 */
   var ACCENT_A = '#1d4ed8'; /* blue-700 */
   var ACCENT_B = '#60a5fa'; /* blue-400 */
   var ACCENT_C = '#93c5fd'; /* blue-300 */
   var MUTED = '#e2e8f0';    /* slate-200 (잔여) */
-  var POINT = '#8b5cf6';    /* violet-500 — 보라빛 포인트 */
-  /* 핵심기술인재·직급별/본부별 퇴사 — 그린 / 블루 / 퍼플 (유사 채도·명도) */
+  var POINT = '#64748b';    /* slate-500 — 그레이 포인트 */
+  /* 핵심기술인재·직급별/본부별 퇴사 — 그린 / 블루 / 그레이 (유사 채도·명도) */
   var MIX_COLORS = [
     '#34d399', /* emerald-400 */
     '#60a5fa', /* blue-400 */
-    '#a78bfa'  /* violet-400 */
+    '#94a3b8'  /* slate-400 */
   ];
 
   function mixColors(n) {
@@ -262,7 +262,7 @@
         labels: ['퇴사', '잔여'],
         datasets: [{
           data: [d.rate, Math.max(100 - d.rate, 0)],
-          backgroundColor: [POINT, MUTED], /* 포인트 바이올렛 + 잔여 */
+          backgroundColor: [POINT, MUTED], /* 포인트 그레이 + 잔여 */
           borderWidth: 0
         }]
       },
