@@ -580,17 +580,20 @@ body {
   flex: 0 0 auto;
 }
 
-/* dashboard01_: 데스크톱 — 가로 블록 배치(flex row) */
+/* dashboard01_: 데스크톱 — 제목 바로 옆에 소제목(가로 블록) */
 .hr-dash--inline-sub .hr-dash__card-title {
   flex-direction: row;
   align-items: baseline;
+  justify-content: flex-start;
   flex-wrap: wrap;
   gap: 8px;
 }
 
 .hr-dash--inline-sub .hr-dash__title-main {
-  flex: 1 1 auto;
+  /* grow 금지 → 소제목이 카드 우측으로 밀리지 않고 제목 옆에 붙음 */
+  flex: 0 1 auto;
   width: auto;
+  max-width: 100%;
 }
 
 .hr-dash__card-tag {
@@ -867,8 +870,15 @@ body {
   color: var(--hr-dash-female);
 }
 
+/* 1600~1799px: 재직·휴직·입사·퇴사 윗줄 / 인력 다양성 아랫줄 */
+@media (min-width: 1100px) and (max-width: 1799px) {
+  .hr-dash__kpi-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ≤1600px: 제목·소제목 세로 블록 배치 */
-@media (max-width: 1600px) {
+@media (max-width: 1100px) {
   .hr-dash--inline-sub .hr-dash__card-title {
     flex-direction: column;
     align-items: flex-start;
