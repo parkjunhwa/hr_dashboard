@@ -550,6 +550,19 @@ body {
   color: var(--hr-dash-label);
   letter-spacing: -0.5px;
   text-align: left;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* 큰제목: 단어(띄어쓰기) 단위 줄바꿈 */
+.hr-dash__title-main {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .hr-dash__title-sub {
@@ -560,18 +573,24 @@ body {
   font-weight: 600;
   line-height: 1.35;
   text-align: left;
-  white-space: nowrap;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 0 0 auto;
 }
 
 /* dashboard01_: 데스크톱 — 가로 블록 배치(flex row) */
 .hr-dash--inline-sub .hr-dash__card-title {
   flex-direction: row;
   align-items: baseline;
+  flex-wrap: wrap;
   gap: 8px;
+}
+
+.hr-dash--inline-sub .hr-dash__title-main {
+  flex: 1 1 auto;
+  width: auto;
 }
 
 .hr-dash__card-tag {
@@ -853,7 +872,13 @@ body {
   .hr-dash--inline-sub .hr-dash__card-title {
     flex-direction: column;
     align-items: flex-start;
+    flex-wrap: nowrap;
     gap: 2px;
+  }
+
+  .hr-dash--inline-sub .hr-dash__title-main {
+    flex: 0 1 auto;
+    width: 100%;
   }
 }
 
