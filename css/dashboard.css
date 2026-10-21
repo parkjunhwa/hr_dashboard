@@ -871,7 +871,7 @@ body {
 }
 
 /* 1600~1799px: 재직·휴직·입사·퇴사 윗줄 / 인력 다양성 아랫줄 */
-@media (min-width: 1100px) and (max-width: 1799px) {
+@media (min-width: 1100px) and (max-width: 1749px) {
   .hr-dash__kpi-row {
     grid-template-columns: 1fr;
   }
