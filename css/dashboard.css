@@ -337,7 +337,8 @@ body {
 
 .hr-dash__kpi-left {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1fr; /* 재직자 넓게 · 휴직·입사·퇴사 동일 */
+  /* 재직자: 최소 320px · 휴직·입사·퇴사: 나머지 균등 */
+  grid-template-columns: minmax(300px, 1.4fr) repeat(3, minmax(0, 1fr));
   gap: 12px;
   min-width: 0;
   align-items: stretch;
@@ -354,6 +355,10 @@ body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.hr-dash__card--work {
+  min-width: 300px;
 }
 
 .hr-dash__kpi-right > .hr-dash__card {
@@ -681,7 +686,7 @@ body {
   font-variant-numeric: tabular-nums;
   text-align: right;
   justify-self: end;
-  min-width: 2.5em;
+  min-width: 1.5em;
 }
 
 .hr-dash__work-item--it .lab {

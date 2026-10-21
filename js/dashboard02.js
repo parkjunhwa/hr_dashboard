@@ -108,7 +108,7 @@
           align: 'end',
           labels: { font: { size: 12, family: CHART_FONT }, boxWidth: 12, padding: 14 }
         },
-        datalabels: { display: false }
+        datalabels: { display: false } 
       }
     };
   }
