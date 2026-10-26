@@ -1,8 +1,9 @@
 /**
  * dashboard03 — 인재육성 및 조직문화
- * Chart.js 4.x · API: HrDashboard03
- * 상단 flex 1(교육시간 · 3개년 #8DBEF4 · 주제별 이수율) · 하단 flex 2(업무스타일 트리맵 간격 1px · 리더십)
+ * Chart.js 4.x · chartjs-chart-treemap · API: HrDashboard03
+ * 상단 flex 1(교육시간 · 3개년 #8DBEF4 · 주제별 이수율) · 하단 flex 2(업무스타일 트리맵 · 리더십)
  * 주제 도넛·업무스타일 회색은 퇴사 사유와 같은 값 큰 순 팔레트
+ * 업무스타일: Chart.js treemap — pct 변경 시 칸 면적 자동 재계산
  * 3개년·리더십 값은 막대 위 15px bold. 리더십은 소수 둘째 자리
  * 주제 도넛 지름은 영역보다 20px 작음. 툴팁은 「이름, n%」 한 줄, 시간이 있으면 (n시간)
  * 1100px 이하 교육시간 카드는 두 블록이 줄지 않고 내용 높이만큼 늘어남
@@ -45,8 +46,26 @@
       { label: '자격증', pct: 5 },
       { label: '기타', pct: 3 }
     ],
-    /* 트리맵 칸은 원본 이미지 배치. 색 있는 세 칸은 01·02 팔레트, 나머지는 회색 단계 */
-    style: null,
+    /* 업무스타일: label · pct(면적) · note(툴팁 선택) — 값만 바꾸면 트리맵 재배치 */
+    style: [
+      { label: '전문가형', pct: 15 },
+      { label: '프로모터형', pct: 13, note: '팀 협력적이고, 사교적이고, 사람 중심적인' },
+      { label: '이타주의지향', pct: 11 },
+      { label: '운영가형', pct: 9 },
+      { label: '개인주의형', pct: 8 },
+      { label: '협조가형', pct: 7 },
+      { label: '장인형', pct: 7 },
+      { label: '계획지향형', pct: 4 },
+      { label: '설득가형', pct: 4 },
+      { label: '가디언형', pct: 4 },
+      { label: '지도자형', pct: 3 },
+      { label: '적응형', pct: 3 },
+      { label: '모험형', pct: 3 },
+      { label: '학자형', pct: 3 },
+      { label: '통제형', pct: 2 },
+      { label: '분석형', pct: 2 },
+      { label: '전략가형', pct: 2 }
+    ],
     lead: {
       labels: ['소통', '혁신', '육성', '존경', '리더전반'],
       series: [
@@ -56,27 +75,6 @@
       ]
     }
   };
-
-  /* 원본 차트 박스 13,27–414,206 기준 칸 */
-  var STYLE_RECTS = [
-    { label: '전문가형', pct: 15, color: STYLE_MINT, x0: 13, y0: 27, x1: 122, y1: 121 },
-    { label: '프로모터형', pct: 13, color: STYLE_BLUE, note: '팀 협력적이고, 사교적이고, 사람 중심적인', x0: 13, y0: 122, x1: 122, y1: 206 },
-    { label: '이타주의지향', pct: 11, color: STYLE_PURPLE, x0: 123, y0: 27, x1: 204, y1: 126 },
-    { label: '운영가형', pct: 9, x0: 123, y0: 127, x1: 204, y1: 206 },
-    { label: '개인주의형', pct: 8, x0: 205, y0: 27, x1: 268, y1: 118 },
-    { label: '협조가형', pct: 7, x0: 205, y0: 119, x1: 268, y1: 206 },
-    { label: '장인형', pct: 7, x0: 270, y0: 27, x1: 358, y1: 82 },
-    { label: '계획지향형', pct: 4, x0: 359, y0: 27, x1: 414, y1: 82 },
-    { label: '설득가형', pct: 4, x0: 270, y0: 83, x1: 313, y1: 150 },
-    { label: '가디언형', pct: 4, x0: 270, y0: 151, x1: 313, y1: 206 },
-    { label: '지도자형', pct: 3, x0: 316, y0: 83, x1: 366, y1: 126 },
-    { label: '적응형', pct: 3, x0: 368, y0: 83, x1: 414, y1: 126 },
-    { label: '모험형', pct: 3, x0: 316, y0: 127, x1: 361, y1: 165 },
-    { label: '학자형', pct: 3, x0: 316, y0: 166, x1: 361, y1: 206 },
-    { label: '통제형', pct: 2, x0: 363, y0: 127, x1: 389, y1: 181 },
-    { label: '분석형', pct: 2, x0: 391, y0: 127, x1: 414, y1: 181 },
-    { label: '전략가형', pct: 2, x0: 363, y0: 182, x1: 414, y1: 206 }
-  ];
 
   function mixHex(a, b, t) {
     function part(hex) {
@@ -94,109 +92,6 @@
       return s.length < 2 ? '0' + s : s;
     }).join('');
   }
-
-  function snapStyleRects(rects) {
-    var items = rects.map(function (r) {
-      return { x0: r.x0, y0: r.y0, x1: r.x1, y1: r.y1, src: r };
-    });
-    var parent = [];
-    function make() {
-      parent.push(parent.length);
-      return parent.length - 1;
-    }
-    function find(a) {
-      while (parent[a] !== a) {
-        parent[a] = parent[parent[a]];
-        a = parent[a];
-      }
-      return a;
-    }
-    function union(a, b) {
-      a = find(a);
-      b = find(b);
-      if (a !== b) parent[b] = a;
-    }
-    var xEdges = [];
-    var yEdges = [];
-    items.forEach(function (it) {
-      it.ex0 = make();
-      it.ex1 = make();
-      it.ey0 = make();
-      it.ey1 = make();
-      xEdges.push({ id: it.ex0, v: it.x0, it: it, side: 'x0' });
-      xEdges.push({ id: it.ex1, v: it.x1, it: it, side: 'x1' });
-      yEdges.push({ id: it.ey0, v: it.y0, it: it, side: 'y0' });
-      yEdges.push({ id: it.ey1, v: it.y1, it: it, side: 'y1' });
-    });
-    var tol = 4;
-    items.forEach(function (a) {
-      items.forEach(function (b) {
-        if (a === b) return;
-        if (b.x0 - a.x1 >= 0 && b.x0 - a.x1 <= tol && Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0) > 1) {
-          union(a.ex1, b.ex0);
-        }
-        if (b.y0 - a.y1 >= 0 && b.y0 - a.y1 <= tol && Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0) > 1) {
-          union(a.ey1, b.ey0);
-        }
-      });
-    });
-    function apply(edges) {
-      var groups = {};
-      edges.forEach(function (e) {
-        var g = find(e.id);
-        if (!groups[g]) groups[g] = [];
-        groups[g].push(e);
-      });
-      Object.keys(groups).forEach(function (g) {
-        var sum = 0;
-        groups[g].forEach(function (e) { sum += e.v; });
-        var mid = sum / groups[g].length;
-        groups[g].forEach(function (e) { e.it[e.side] = mid; });
-      });
-    }
-    apply(xEdges);
-    apply(yEdges);
-    return items;
-  }
-
-  function styleItems() {
-    var grays = STYLE_RECTS.filter(function (it) { return !it.color; });
-    var last = Math.max(grays.length - 1, 1);
-    var gi = 0;
-    var snapped = snapStyleRects(STYLE_RECTS);
-    var minX = snapped[0].x0;
-    var minY = snapped[0].y0;
-    var maxX = snapped[0].x1;
-    var maxY = snapped[0].y1;
-    snapped.forEach(function (it) {
-      minX = Math.min(minX, it.x0);
-      minY = Math.min(minY, it.y0);
-      maxX = Math.max(maxX, it.x1);
-      maxY = Math.max(maxY, it.y1);
-    });
-    var W = maxX - minX;
-    var H = maxY - minY;
-    return snapped.map(function (it) {
-      var src = it.src;
-      var color = src.color;
-      if (!color) {
-        color = mixHex(GRAY_DARK, GRAY_LIGHT, gi / last);
-        gi += 1;
-      }
-      return {
-        label: src.label,
-        pct: src.pct,
-        note: src.note || '',
-        color: color,
-        x: (it.x0 - minX) / W * 100,
-        y: (it.y0 - minY) / H * 100,
-        w: (it.x1 - it.x0) / W * 100,
-        h: (it.y1 - it.y0) / H * 100
-      };
-    });
-  }
-
-  SAMPLE.style = styleItems();
 
   function fmt(n) {
     var v = Math.round(Number(n) || 0);
@@ -379,6 +274,7 @@
   }
 
   function textOn(hex) {
+    if (!hex || hex.charAt(0) !== '#' || hex.length < 7) return '#2f3338';
     var r = parseInt(hex.slice(1, 3), 16);
     var g = parseInt(hex.slice(3, 5), 16);
     var b = parseInt(hex.slice(5, 7), 16);
@@ -386,56 +282,96 @@
     return y > 0.82 ? '#2f3338' : '#ffffff';
   }
 
-  function renderStyle(items) {
-    var $map = $('#styleMap').empty();
-    var $tip = $('<div class="hr-dash__style-tip"></div>').appendTo($map);
-    (items || []).forEach(function (it) {
-      var $cell = $('<div class="hr-dash__style-cell"></div>');
-      if (it.w < 9) $cell.addClass('is-narrow');
-      $cell.css({
-        left: 'calc(' + it.x + '% + 0.5px)',
-        top: 'calc(' + it.y + '% + 0.5px)',
-        width: 'calc(' + it.w + '% - 1px)',
-        height: 'calc(' + it.h + '% - 1px)',
-        background: it.color,
-        color: textOn(it.color)
-      });
-      $cell.attr('data-label', it.label + ', ' + it.pct + '%');
-      $cell.attr('data-pct', it.pct);
-      $cell.text(it.label + ', ' + it.pct + '%');
-      $cell.on('mouseenter', function (e) {
-        var lines = it.label + ', ' + it.pct + '%';
-        if (it.note) lines += '<br>' + it.note;
-        $tip.html(lines).show();
-        placeTip(e);
-      });
-      $cell.on('mousemove', placeTip);
-      $cell.on('mouseleave', function () { $tip.hide(); });
-      $map.append($cell);
+  /** 값 큰 순: 1~3위 mint/blue/purple · 나머지 회색 단계 */
+  function styleColorMap(items) {
+    var sorted = (items || []).slice().sort(function (a, b) {
+      return (Number(b.pct) || 0) - (Number(a.pct) || 0);
     });
-
-    function placeTip(e) {
-      var box = $map[0].getBoundingClientRect();
-      var x = e.clientX - box.left + 12;
-      var y = e.clientY - box.top + 14;
-      var tw = $tip.outerWidth();
-      var th = $tip.outerHeight();
-      if (x + tw > box.width - 4) x = e.clientX - box.left - tw - 12;
-      if (y + th > box.height - 4) y = e.clientY - box.top - th - 10;
-      x = Math.max(4, x);
-      y = Math.max(4, y);
-      $tip.css({ left: x, top: y });
-    }
-    fitStyleLabels();
+    var map = {};
+    var grayN = Math.max(sorted.length - 3, 1);
+    sorted.forEach(function (it, i) {
+      if (i === 0) map[it.label] = STYLE_MINT;
+      else if (i === 1) map[it.label] = STYLE_BLUE;
+      else if (i === 2) map[it.label] = STYLE_PURPLE;
+      else map[it.label] = mixHex(GRAY_DARK, GRAY_LIGHT, (i - 3) / grayN);
+    });
+    return map;
   }
 
-  function fitStyleLabels() {
-    $('#styleMap .hr-dash__style-cell').each(function () {
-      var el = this;
-      el.textContent = el.getAttribute('data-label');
-      el.classList.toggle('is-narrow', el.clientWidth < 78);
-      if (el.scrollWidth > el.clientWidth + 2 || el.scrollHeight > el.clientHeight + 2) {
-        el.textContent = el.getAttribute('data-pct') + '%';
+  function renderStyle(items) {
+    var list = (items || []).filter(function (it) {
+      return it && it.label && (Number(it.pct) || 0) > 0;
+    });
+    var colors = styleColorMap(list);
+    var notes = {};
+    var tree = list.map(function (it) {
+      notes[it.label] = it.note || '';
+      return {
+        label: it.label,
+        value: Number(it.pct) || 0,
+        note: it.note || ''
+      };
+    });
+
+    createChart('chart03Style', {
+      type: 'treemap',
+      data: {
+        datasets: [{
+          tree: tree,
+          key: 'value',
+          groups: ['label'],
+          spacing: 1,
+          borderWidth: 0,
+          backgroundColor: function (ctx) {
+            if (ctx.type !== 'data' || !ctx.raw || ctx.raw.g == null) return 'transparent';
+            return colors[ctx.raw.g] || GRAY_DARK;
+          },
+          captions: { display: false },
+          labels: {
+            display: true,
+            align: 'left',
+            position: 'bottom',
+            padding: 6,
+            overflow: 'fit',
+            color: function (ctx) {
+              if (ctx.type !== 'data' || !ctx.raw || ctx.raw.g == null) return '#fff';
+              return textOn(colors[ctx.raw.g] || GRAY_DARK);
+            },
+            font: {
+              size: 12,
+              weight: '700',
+              family: CHART_FONT
+            },
+            formatter: function (ctx) {
+              if (ctx.type !== 'data' || !ctx.raw || ctx.raw.g == null) return '';
+              var area = (ctx.raw.w || 0) * (ctx.raw.h || 0);
+              if (area < 2800) return String(ctx.raw.v) + '%';
+              return ctx.raw.g + ', ' + ctx.raw.v + '%';
+            }
+          }
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: 0 },
+        plugins: {
+          legend: { display: false },
+          datalabels: { display: false },
+          tooltip: {
+            displayColors: false,
+            callbacks: {
+              title: function () { return ''; },
+              label: function (ctx) {
+                var raw = ctx.raw || {};
+                var name = raw.g || '';
+                var lines = [name + ', ' + raw.v + '%'];
+                if (notes[name]) lines.push(notes[name]);
+                return lines;
+              }
+            }
+          }
+        }
       }
     });
   }
@@ -513,7 +449,6 @@
       if (el) fitCanvas(el);
       try { c.resize(); } catch (e) {}
     });
-    fitStyleLabels();
   }
 
   var resizeTimer = null;

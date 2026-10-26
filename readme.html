@@ -119,7 +119,7 @@
       <span class="chip">탭: 01~04</span>
       <span class="chip">진입: index.html → dashboard01</span>
       <span class="chip">기존 e-HR 라이브러리 재사용</span>
-      <span class="chip">갱신 26.10.23</span>
+      <span class="chip">갱신 26.10.26</span>
     </div>
 
     <div class="card toc">
@@ -167,10 +167,12 @@
     ├── fontawesome-all.css · webfonts/
     ├── jquery-1.11.2.min.js · jquery-migrate-1.4.1.min.js
     ├── chartjs-4.5.0.js
-    └── chartjs-plugin-datalabels.js</code></pre>
+    ├── chartjs-plugin-datalabels.js
+    └── chartjs-chart-treemap.min.js   03 업무스타일(Chart.js treemap)</code></pre>
     <div class="warn">
       jQuery, Chart.js, Font Awesome, AdminLTE는 기존 e-HR 자산을 그대로 씁니다.
       CDN이나 새 패키지로 바꾸지 않고, 운영에 같은 버전이 있으면 <code>e-HR_files/</code> 대신 그 경로를 HTML에 적습니다.
+      <code>chartjs-chart-treemap</code>은 03 페이지만 Chart.js 다음에 로드합니다.
     </div>
 
     <h3>2-2. 버전</h3>
@@ -184,11 +186,12 @@
         <tr><td>Font Awesome</td><td>Free 5.3.1</td><td>AdminLTE보다 먼저 로드</td></tr>
         <tr><td>Chart.js</td><td>4.5.x</td><td>가로 막대는 <code>type:'bar'</code>와 <code>indexAxis:'y'</code></td></tr>
         <tr><td>chartjs-plugin-datalabels</td><td>2.2.0</td><td>안전교육 도넛의 % 라벨. 막대 숫자는 페이지별 커스텀 plugin</td></tr>
+        <tr><td>chartjs-chart-treemap</td><td>3.1.0</td><td>03 업무스타일. <code>pct</code>로 칸 면적 재계산. Chart.js 다음·dashboard03.js 전에 로드</td></tr>
       </tbody>
     </table>
 
     <h3>2-3. 로드 순서</h3>
-    <p>CSS 다음에 JS를 읽고, 마지막에 그 페이지의 dashboard JS 하나만 붙입니다.</p>
+    <p>CSS 다음에 JS를 읽고, 마지막에 그 페이지의 dashboard JS 하나만 붙입니다. 03만 treemap 스크립트를 추가합니다.</p>
     <pre><code>&lt;!-- CSS --&gt;
 ./e-HR_files/fontawesome-all.css
 ./e-HR_files/adminlte.min.css
@@ -199,6 +202,7 @@
 ./e-HR_files/jquery-migrate-1.4.1.min.js
 ./e-HR_files/chartjs-4.5.0.js
 ./e-HR_files/chartjs-plugin-datalabels.js
+./e-HR_files/chartjs-chart-treemap.min.js   &lt;!-- 03만 --&gt;
 ./js/dashboard01.js    02·03·04 페이지는 해당 번호의 js</code></pre>
 
     <h2 id="common">3. 공통 규칙</h2>
@@ -211,6 +215,14 @@
         <tr>
           <td>골격</td>
           <td>루트 <code>&lt;div class="hr-dash" id="hrDashRoot"&gt;</code> · 상단 탭 <code>.hr-dash__nav</code> · 가이드 링크는 <code>readme.html</code></td>
+        </tr>
+        <tr>
+          <td>차트</td>
+          <td>
+            시각화는 Chart.js만 사용. <code>HrDashboard0N.render(data)</code>로 값이 바뀌면 다시 그려짐.
+            고정 좌표·고정 면적 DOM 차트는 쓰지 않음.
+            KPI 숫자·사내 고충 표처럼 차트가 아닌 UI만 HTML로 갱신
+          </td>
         </tr>
         <tr>
           <td>제목</td>
@@ -371,7 +383,7 @@
         <tr>
           <td>업무스타일</td>
           <td>소제목 <code>PI검사 결과 참고(입사자 발생 시 수시 업데이트)</code></td>
-          <td>트리맵 · 칸 간격 1px · 강조 세 칸 뒤는 회색 단계</td>
+          <td>Chart.js treemap(<code>chartjs-chart-treemap</code>) · <code>pct</code>로 면적 재계산 · 칸 간격 1px · 값 큰 순 1~3위 mint/blue/purple · 나머지는 회색 단계</td>
         </tr>
         <tr>
           <td>리더십(신뢰도)</td>
@@ -469,7 +481,11 @@
   style: [{ label, pct, note }],
   lead: { labels, series: [{ label, data }] }
 });</code></pre>
-    <p><code>topic.hours</code>와 <code>style.note</code>는 있는 항목만 툴팁에 붙습니다. 트리맵 칸 배치는 스크립트의 기준 좌표를 씁니다.</p>
+    <p>
+      <code>topic.hours</code>와 <code>style.note</code>는 있는 항목만 툴팁에 붙습니다.
+      업무스타일(<code>chart03Style</code>)은 Chart.js treemap이라 <code>style[].pct</code>만 바꿔도 칸 면적·배치가 다시 계산됩니다.
+      값 큰 순 1~3위는 mint/blue/purple, 나머지는 회색 단계입니다.
+    </p>
 
     <h3>5-4. HrDashboard04</h3>
     <pre><code>HrDashboard04.render({
@@ -502,7 +518,7 @@
         <tr>
           <td>03</td>
           <td><code>dashboard03.js</code><br><code>HrDashboard03</code></td>
-          <td><code>chart03Year</code> · <code>chart03Topic</code> · <code>topicLegend</code> · <code>styleMap</code> · <code>chart03Lead</code></td>
+          <td><code>chart03Year</code> · <code>chart03Topic</code> · <code>topicLegend</code> · <code>chart03Style</code> · <code>chart03Lead</code></td>
           <td><code>d03BarCount</code></td>
         </tr>
         <tr>
@@ -598,10 +614,13 @@
       <ul>
         <li>□ 공통 라이브러리를 새로 넣지 않고 기존 e-HR 경로에 연결했는가</li>
         <li>□ jQuery, Chart.js, Font Awesome, AdminLTE 버전이 운영과 같은가</li>
+        <li>□ 03에 <code>chartjs-chart-treemap.min.js</code>를 Chart.js 다음에 로드했는가</li>
         <li>□ Font Awesome <code>webfonts</code>가 404가 아닌가</li>
         <li>□ 탭 01~04 링크와 활성(<code>.on</code>)이 맞는가</li>
+        <li>□ 시각화가 Chart.js 기반이며 <code>render(data)</code>로 값이 바뀌는가 (고정 좌표 차트 없음)</li>
         <li>□ 01: W01~W10이 <code>HrDashboard01.render</code>에 매핑되었는가</li>
         <li>□ 02·03·04: 각 <code>render</code> 필드가 5장과 맞는가</li>
+        <li>□ 03 업무스타일 <code>style[].pct</code> 변경 시 트리맵 면적이 바뀌는가</li>
         <li>□ 카드 소제목(<code>.hr-dash__title-sub</code>)이 4장과 맞는가</li>
         <li>□ <code>GRADE_ORDER</code> 직급명에 계약직(무기)가 들어 있는가</li>
         <li>□ iframe 높이와 리사이즈 뒤에 차트가 유지되는가</li>
