@@ -24,11 +24,10 @@ body {
   --hr-dash-muted: #888888;
   --hr-dash-label: #4a4f57;
   --hr-dash-text: #2f3338;
-  /* 차트 메인: 블루 · 포인트: 레드(여) 1개 · 재직자 IT/CS: 그린·밝은 그레이 */
-  --hr-dash-it: #22c55e;      /* green-500 */
-  --hr-dash-cs: #94a3b8;      /* slate-400 (라벨 가독성) */
-  --hr-dash-male: #60a5fa;    /* blue-400 */
-  --hr-dash-female: #f87171;  /* red-400 — 포인트 */
+  /* 차트 메인: 블루 · 직책·연령 남녀: 그레이 · 재직자 IT/CS 라벨 */
+  --hr-dash-cs: #94a3b8;      /* slate-400 */
+  --hr-dash-male: #A8B0B9;
+  --hr-dash-female: #C6CAD1;
 
   box-sizing: border-box;
   height: 100%;
@@ -42,7 +41,7 @@ body {
   font-family: "Pretendard GOV", "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
 }
 
-/* ----- 상단 탭 (임시 네비) ----- */
+/* ----- 상단 탭 ----- */
 .hr-dash__nav {
   flex: 0 0 auto;
   display: flex;
@@ -120,10 +119,11 @@ body {
   padding: 4px 8px 8px;
 }
 
+/* 퇴사율 원 160px */
 .hr-dash__rate-chart {
   flex: 0 0 auto;
-  width: 140px;
-  height: 140px;
+  width: 160px;
+  height: 160px;
   max-width: 70%;
   max-height: calc(100% - 48px);
   min-height: 0;
@@ -263,7 +263,7 @@ body {
   color: #aaa;
 }
 
-/* ----- 03~05 임시 구조 그리드 ----- */
+/* ----- 03·04 카드 그리드. 03은 상단 flex 1 · 하단 flex 2. 04는 3열 위 + 전체 폭 아래 ----- */
 .hr-dash__grid-stub {
   flex: 1 1 0;
   min-height: 0;
@@ -272,18 +272,24 @@ body {
 }
 
 .hr-dash__grid-stub--3 {
+  flex: 1 1 0;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-template-rows: 1fr;
 }
 
 .hr-dash__grid-stub--2 {
+  flex: 2 1 0;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-rows: 1fr;
 }
 
-.hr-dash__grid-stub--2x2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: repeat(2, minmax(0, 1fr));
+.hr-dash__grid-stub--3-1 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: 1fr 1fr;
+}
+
+.hr-dash__grid-stub--3-1 > .hr-dash__card:last-child {
+  grid-column: 1 / -1;
 }
 
 .hr-dash__grid-stub > .hr-dash__card {
@@ -294,30 +300,390 @@ body {
   flex-direction: column;
 }
 
-.hr-dash__chart-placeholder {
+/* 03 교육시간 — 01 다양성 블록과 같은 옅은 칸, 제목 좌상 / 수치 우하.
+   1100px 이하는 두 칸이 줄지 않고 카드 높이가 내용만큼 늘어남 */
+.hr-dash__edu-hours {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 0 0;
+}
+
+.hr-dash__edu-row {
   flex: 1 1 0;
-  min-height: 160px;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 8px;
+  background-color: #f1f5f9;
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.hr-dash__edu-lab {
+  align-self: flex-start;
+  font-size: 15px;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: -0.3px;
+}
+
+.hr-dash__edu-val {
+  align-self: flex-end;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.hr-dash__edu-val .num {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1;
+  color: var(--hr-dash-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.hr-dash__edu-val .unit {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--hr-dash-muted);
+}
+
+/* 03 교육주제별 이수율 — 도넛 왼쪽, 범례는 오른쪽 1열. 지름은 영역보다 20px 작음 */
+.hr-dash__topic {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.hr-dash__topic-chart {
+  flex: 0 1 auto;
+  align-self: center;
+  height: calc(100% - 20px);
+  width: auto;
+  max-width: calc(52% - 20px);
+  aspect-ratio: 1 / 1;
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+}
+
+.hr-dash__topic-chart canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.hr-dash__topic-legend {
+  flex: 0 0 auto;
+  width: fit-content;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  margin: 0;
+  padding: 0 2px 4px;
+  font-size: 12px;
+  color: #444;
+}
+
+.hr-dash__topic-legend .item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+  line-height: 1.35;
+}
+
+.hr-dash__topic-legend .dot {
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  margin-top: 3px;
+  border-radius: 50%;
+}
+
+.hr-dash__topic-legend .name {
+  min-width: 0;
+  word-break: keep-all;
+}
+
+/* 03 업무스타일 트리맵 */
+.hr-dash__style {
+  flex: 1 1 0;
+  min-height: 0;
+  position: relative;
+  margin-top: 2px;
+}
+
+.hr-dash__style-cell {
+  position: absolute;
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-end;
+  padding: 5px 6px;
+  overflow: hidden;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.4px;
+  word-break: keep-all;
+}
+
+.hr-dash__style-cell.is-narrow {
+  padding: 2px 3px;
+}
+
+.hr-dash__style-tip {
+  position: absolute;
+  z-index: 4;
+  display: none;
+  max-width: 220px;
+  padding: 8px 10px;
+  background: #2b2b2b;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.3px;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+
+/* 04 안전교육 이수율 — 도넛 둘. 지름은 칸보다 20px 작음 */
+.hr-dash__safe {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 4px;
+}
+
+.hr-dash__safe-item {
+  container-type: size;
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  margin-top: 4px;
-  border-radius: 8px;
-  background: #f8fafc;
-  border: 1px dashed #cbd5e1;
-  color: #94a3b8;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: -0.3px;
-  text-align: center;
-  padding: 16px;
 }
 
-.hr-dash__chart-placeholder small {
+.hr-dash__safe-chart {
+  position: relative;
+  width: min(calc(100cqw - 20px), calc(100cqh - 84px));
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.hr-dash__safe-chart canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.hr-dash__safe-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.4px;
+  text-align: center;
+  color: var(--hr-dash-text);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 안전교육 툴팁 — HTML. 가운데 상반기·하반기 글자 위, 항목 좌우 14px */
+.hr-dash__safe-tip {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: calc(50% + 14px);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-family: "Pretendard GOV", "Malgun Gothic", sans-serif;
   font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.hr-dash__safe-tip strong {
+  font-weight: 700;
+}
+
+.hr-dash__safe-tip .line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+.hr-dash__safe-tip i {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+}
+
+.hr-dash__safe-tip::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.8);
+  border-bottom: 0;
+}
+
+/* 막대 차트 범례와 같은 줄. top 30 · right 20은 Chart.js 상단 범례 글자 위치에 맞춤 */
+.hr-dash__safe-legend {
+  position: absolute;
+  top: 30px;
+  right: 20px;
+  left: auto;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin: 0;
+  font-family: "Pretendard GOV", "Malgun Gothic", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #666;
+}
+
+.hr-dash__safe-legend .item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6.5px;
+}
+
+.hr-dash__safe-legend i {
+  width: 14px;
+  height: 14px;
+  border-radius: 0;
+}
+
+/* 04 사내 고충 표 — 넓은 화면은 남는 높이를 채우고, 넘치면 머리·합계 고정 후 본문만 스크롤.
+   1100px 이하는 표 안 스크롤 없이 카드가 내용 높이만큼 늘어남 */
+.hr-dash__griev-wrap {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: auto;
+}
+
+.hr-dash__griev {
+  width: 100%;
+  height: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+  color: var(--hr-dash-text);
+  --griev-head1: 34px;
+}
+
+.hr-dash__griev th,
+.hr-dash__griev td {
+  border-right: 1px solid #d5dbe3;
+  border-bottom: 1px solid #d5dbe3;
+  padding: 7px 8px;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.4;
+  background-clip: padding-box;
+}
+
+.hr-dash__griev thead th {
+  position: sticky;
+  z-index: 3;
+  background: #669BE2;
+  color: #fff;
+  font-weight: 700;
+  white-space: nowrap;
+  border-top: 1px solid #669BE2;
+}
+
+.hr-dash__griev thead tr:first-child th:first-child {
+  border-left: 1px solid #5589cf;
+}
+
+.hr-dash__griev thead tr:first-child th {
+  top: 0;
+}
+
+.hr-dash__griev thead tr:last-child th {
+  top: var(--griev-head1);
+}
+
+.hr-dash__griev tbody th {
+  background: #fff;
+  font-weight: 700;
+  white-space: nowrap;
+  text-align: center;
+  border-left: 1px solid #d5dbe3;
+}
+
+.hr-dash__griev td.detail {
+  text-align: left;
   font-weight: 500;
-  color: #cbd5e1;
+  background: #fff;
+}
+
+.hr-dash__griev tbody td {
+  background: #fff;
+}
+
+.hr-dash__griev thead,
+.hr-dash__griev tfoot {
+  height: 1px;
+}
+
+.hr-dash__griev tfoot td {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  background: #eef1f4;
+  font-weight: 700;
+  border-left: 1px solid #d5dbe3;
+  box-shadow: 0 -1px 0 #d5dbe3;
 }
 
 .hr-dash *,
@@ -337,8 +703,7 @@ body {
 
 .hr-dash__kpi-left {
   display: grid;
-  /* 재직자: 최소 280px · 휴직·입사·퇴사: 나머지 균등 */
-  grid-template-columns: minmax(280px, 1.4fr) repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   min-width: 0;
   align-items: stretch;
@@ -355,10 +720,6 @@ body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-}
-
-.hr-dash__card--work {
-  min-width: 280px;
 }
 
 .hr-dash__kpi-right > .hr-dash__card {
@@ -408,114 +769,6 @@ body {
 .hr-dash__col--grade {
   grid-column: 1 / span 2;
   grid-row: 2;
-}
-
-/* ----- 분리 세로막대 그리드 (dashboard01_) ----- */
-.hr-dash__grade-legend {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  width: 100%;
-  gap: 6px 12px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #64748b;
-}
-
-.hr-dash__grade-legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
-}
-
-.hr-dash__grade-legend-item i {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 2px;
-  flex: 0 0 auto;
-}
-
-.hr-dash__mini-grid {
-  flex: 1 1 0;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  align-content: stretch;
-}
-
-.hr-dash__mini-card {
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  background: #f8fafc; /* slate-50 — 아주 밝은 그레이 */
-  border: 0;
-  border-radius: 6px;
-  padding: 16px 18px 14px;
-}
-
-.hr-dash__mini-card-title {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 6px;
-  margin-bottom: 2px;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--hr-dash-label);
-  letter-spacing: -0.3px;
-  line-height: 1.25;
-}
-
-.hr-dash__mini-card-title .name {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 16px; /* 본부별·직급별(연도) 작은 차트 제목 동일 */
-  font-weight: 700;
-  letter-spacing: -0.3px;
-  color: #64748b; /* slate-500 — 블루 그레이 */
-}
-
-.hr-dash__mini-card-title .total {
-  flex: 0 0 auto;
-  margin-left: auto;
-  display: inline-flex;
-  align-items: baseline;
-  gap: 2px;
-  text-align: right;
-  color: var(--hr-dash-text);
-}
-
-.hr-dash__mini-card-title .total .num {
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  line-height: 1.1;
-}
-
-.hr-dash__mini-card-title .total .unit {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--hr-dash-muted);
-}
-
-.hr-dash__mini-chart {
-  flex: 1 1 0;
-  min-height: 72px;
-  position: relative;
-  overflow: hidden;
-}
-
-.hr-dash__mini-chart canvas {
-  display: block;
-  width: 100% !important;
-  height: 100% !important;
 }
 
 /* ----- Card ----- */
@@ -580,35 +833,6 @@ body {
   flex: 0 0 auto;
 }
 
-/* dashboard01_: 데스크톱 — 제목 바로 옆에 소제목(가로 블록) */
-.hr-dash--inline-sub .hr-dash__card-title {
-  flex-direction: row;
-  align-items: baseline;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.hr-dash--inline-sub .hr-dash__title-main {
-  /* grow 금지 → 소제목이 카드 우측으로 밀리지 않고 제목 옆에 붙음 */
-  flex: 0 1 auto;
-  width: auto;
-  max-width: 100%;
-}
-
-.hr-dash__card-tag {
-  display: inline-block;
-  margin-left: 6px;
-  padding: 2px 8px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0;
-  color: #c60c70;
-  background: rgba(198, 12, 112, 0.08);
-  border-radius: 999px;
-  vertical-align: middle;
-}
-
 .hr-dash__card-head {
   display: flex;
   align-items: baseline;
@@ -619,21 +843,8 @@ body {
   flex-wrap: wrap;
 }
 
-.hr-dash__card-head.hr-dash__card-head--stack {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 6px;
-}
-
 .hr-dash__card-head .hr-dash__card-title {
   margin-bottom: 0;
-}
-
-.hr-dash__unit {
-  font-weight: 400;
-  font-size: 12px;
-  color: var(--hr-dash-muted);
-  margin-left: 4px;
 }
 
 /* ----- KPI ----- */
@@ -652,7 +863,7 @@ body {
   margin-left: 4px;
 }
 
-/* KPI 본문: (재직자) 왼쪽 파이·라벨 + 오른쪽 수치 / (휴직·입사·퇴사) 오른쪽 수치 */
+/* KPI 본문: (재직자) 왼쪽 총원 + 오른쪽 IT/CS 상하 / (휴직·입사·퇴사) 오른쪽 수치 */
 .hr-dash__kpi-main {
   flex: 1 1 auto;
   display: flex;
@@ -670,40 +881,37 @@ body {
   justify-content: flex-end;
 }
 
-.hr-dash__kpi-main-side {
-  flex: 0 0 auto;
-  display: flex;
+.hr-dash__card--work .hr-dash__kpi-main {
   align-items: center;
-  gap: 10px;
-  height: 72px;
+  justify-content: flex-start;
+  gap: 16px;
 }
 
-.hr-dash__work-chart {
-  width: 64px;
-  min-width: 64px;
-  height: 64px;
-  position: relative;
+.hr-dash__card--work .hr-dash__kpi-main-num {
+  justify-content: flex-start;
+  flex: 0 0 auto;
 }
 
-.hr-dash__work-chart canvas {
-  display: block;
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.hr-dash__work-legend {
-  display: grid;
-  grid-template-columns: auto minmax(2.5em, max-content);
-  column-gap: 2px;
-  row-gap: 4px;
-  align-content: center;
-  align-items: baseline;
-  justify-items: start;
+.hr-dash__work-split {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .hr-dash__work-item {
-  display: contents;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
   line-height: 1.15;
+  white-space: nowrap;
+}
+
+.hr-dash__work-item + .hr-dash__work-item {
+  border-top: 1px solid #c5cad3;
 }
 
 .hr-dash__work-item .lab {
@@ -718,12 +926,17 @@ body {
   color: var(--hr-dash-text);
   font-variant-numeric: tabular-nums;
   text-align: right;
-  justify-self: end;
-  min-width: 1.5em;
+}
+
+.hr-dash__work-item .unit {
+  margin-left: 2px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--hr-dash-muted);
 }
 
 .hr-dash__work-item--it .lab {
-  color: var(--hr-dash-it);
+  color: var(--hr-dash-cs);
 }
 
 .hr-dash__work-item--cs .lab {
@@ -826,7 +1039,7 @@ body {
   min-height: 0;
 }
 
-/* 위: 큰 아이콘 / 아래: 인원수(%) */
+/* 위: 남성/여성 텍스트 / 아래: 인원수(%) */
 .hr-dash__gender-item {
   display: flex;
   flex-direction: column;
@@ -835,9 +1048,13 @@ body {
   text-align: center;
 }
 
-.hr-dash__gender-item > i {
-  font-size: 42px;
+.hr-dash__gender-mark {
+  font-size: 28px;
+  font-weight: 700;
   line-height: 1;
+  color: #A8B0B9;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
 }
 
 .hr-dash__gender-meta {
@@ -862,33 +1079,21 @@ body {
   line-height: 1.2;
 }
 
-.hr-dash__gender-item--m > i {
-  color: var(--hr-dash-male);
+/* 1750px 이상: 재직자만 조금 넓게 (최소 280px · 1.4fr) */
+@media (min-width: 1750px) {
+  .hr-dash__kpi-left {
+    grid-template-columns: minmax(280px, 1.4fr) repeat(3, minmax(0, 1fr));
+  }
+
+  .hr-dash__card--work {
+    min-width: 280px;
+  }
 }
 
-.hr-dash__gender-item--f > i {
-  color: var(--hr-dash-female);
-}
-
-/* 1600~1799px: 재직·휴직·입사·퇴사 윗줄 / 인력 다양성 아랫줄 */
+/* 1100~1749px: 재직·휴직·입사·퇴사 윗줄 / 인력 다양성 아랫줄 */
 @media (min-width: 1100px) and (max-width: 1749px) {
   .hr-dash__kpi-row {
     grid-template-columns: 1fr;
-  }
-}
-
-/* ≤1600px: 제목·소제목 세로 블록 배치 */
-@media (max-width: 1100px) {
-  .hr-dash--inline-sub .hr-dash__card-title {
-    flex-direction: column;
-    align-items: flex-start;
-    flex-wrap: nowrap;
-    gap: 2px;
-  }
-
-  .hr-dash--inline-sub .hr-dash__title-main {
-    flex: 0 1 auto;
-    width: 100%;
   }
 }
 
@@ -956,16 +1161,6 @@ body {
     /* 높이는 JS에서 항목 수 기준으로 지정 */
   }
 
-  .hr-dash__col--hq .hr-dash__mini-grid,
-  .hr-dash__col--grade .hr-dash__mini-grid {
-    flex: 0 0 auto;
-    min-height: 420px;
-  }
-
-  .hr-dash__mini-chart {
-    min-height: 100px;
-  }
-
   .hr-dash__chart {
     min-height: 220px;
   }
@@ -998,7 +1193,7 @@ body {
   .hr-dash__grid-stub,
   .hr-dash__grid-stub--3,
   .hr-dash__grid-stub--2,
-  .hr-dash__grid-stub--2x2 {
+  .hr-dash__grid-stub--3-1 {
     display: flex;
     flex-direction: column;
     flex: none;
@@ -1008,10 +1203,98 @@ body {
 
   .hr-dash__grid-stub > .hr-dash__card {
     min-height: 240px;
+    height: auto;
   }
 
-  .hr-dash__chart-placeholder {
-    min-height: 180px;
+  .hr-dash__edu-hours {
+    flex: 0 0 auto;
+    min-height: auto;
+    height: auto;
+  }
+
+  .hr-dash__edu-row {
+    flex: 0 0 auto;
+    min-height: auto;
+  }
+
+  .hr-dash__edu-val {
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .hr-dash__griev-wrap {
+    flex: 0 0 auto;
+    min-height: auto;
+    height: auto;
+    overflow: visible;
+  }
+
+  .hr-dash__griev {
+    height: auto;
+    table-layout: fixed;
+  }
+
+  .hr-dash__griev thead th,
+  .hr-dash__griev tfoot td {
+    position: static;
+  }
+
+  .hr-dash__griev thead th,
+  .hr-dash__griev tbody th {
+    white-space: normal;
+  }
+
+  .hr-dash__griev thead tr:first-child th:first-child {
+    width: 20%;
+  }
+
+  .hr-dash__griev thead tr:first-child th:nth-child(2) {
+    width: 38%;
+  }
+
+  .hr-dash__griev tbody th,
+  .hr-dash__griev td.detail {
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+
+  .hr-dash__topic-chart {
+    flex: 0 0 auto;
+    width: min(calc(42vw - 20px), 130px);
+    height: min(calc(42vw - 20px), 130px);
+    max-width: 130px;
+    max-height: 130px;
+    aspect-ratio: auto;
+  }
+
+  .hr-dash__style {
+    flex: 0 0 auto;
+    height: 300px;
+    min-height: 300px;
+  }
+
+  .hr-dash__safe {
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+  }
+
+  .hr-dash__safe-item {
+    container-type: normal;
+    height: auto;
+  }
+
+  .hr-dash__safe-chart {
+    width: calc(100% - 20px);
+    height: auto;
+  }
+
+  .hr-dash__safe-legend {
+    position: static;
+    top: auto;
+    right: auto;
+    flex: 1 0 100%;
+    justify-content: flex-end;
+    margin-bottom: 8px;
   }
 
   /* 퇴사 사유 — 모바일: 좌우 배치, 카드 높이 = 컨텐츠 높이 */
@@ -1060,5 +1343,42 @@ body {
 
   .hr-dash__card--reason .hr-dash__card-note {
     text-align: left;
+  }
+}
+
+/* 좁은 화면: 재직자 카드 폭은 동일하게 두고, 내용만 줄여 잘림을 막음 */
+@media (max-width: 460px) {
+  .hr-dash__card--work {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .hr-dash__card--work .hr-dash__kpi-main {
+    gap: 8px;
+  }
+
+  .hr-dash__card--work .hr-dash__kpi-num {
+    font-size: 32px;
+  }
+
+  .hr-dash__card--work .hr-dash__kpi-unit {
+    font-size: 13px;
+  }
+
+  .hr-dash__work-item {
+    gap: 6px;
+    padding: 3px 0;
+  }
+
+  .hr-dash__work-item .lab {
+    font-size: 13px;
+  }
+
+  .hr-dash__work-item .val {
+    font-size: 15px;
+  }
+
+  .hr-dash__work-item .unit {
+    font-size: 11px;
   }
 }

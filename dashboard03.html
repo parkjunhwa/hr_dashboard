@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>인재육성 - e-HR Dashboard</title>
+  <title>인재육성 및 조직문화 - e-HR Dashboard</title>
   <link rel="stylesheet" type="text/css" media="screen" href="./e-HR_files/fontawesome-all.css" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="./e-HR_files/adminlte.min.css">
   <link rel="stylesheet" type="text/css" href="./css/dashboard.css">
@@ -12,23 +12,27 @@
   <div class="hr-dash" id="hrDashRoot">
     <nav class="hr-dash__nav" aria-label="대시보드 탭">
       <a href="./dashboard01.html">인력현황</a>
-      <a href="./dashboard01_.html">인력현황(다른안)</a>
       <a href="./dashboard02.html">인력확보 및 유지</a>
-      <a href="./dashboard03.html" class="on">인재육성</a>
-      <a href="./dashboard04.html">조직문화</a>
-      <a href="./dashboard05.html">조직건강 및 리스크 관리</a>
+      <a href="./dashboard03.html" class="on">인재육성 및 조직문화</a>
+      <a href="./dashboard04.html">조직건강 및 리스크 관리</a>
       <a href="./readme.html" class="hr-dash__nav-guide" target="_blank" rel="noopener">*개발자 작업가이드</a>
     </nav>
 
-    <!-- 임시 구조: 제목·소제목만 · 차트 연동 전 -->
+    <!-- 상단: 인재육성 3열 -->
     <div class="hr-dash__grid-stub hr-dash__grid-stub--3">
       <div class="hr-dash__card">
         <div class="hr-dash__card-head">
           <h2 class="hr-dash__card-title"><span class="hr-dash__title-main">교육시간</span> <span class="hr-dash__title-sub">2026년 누적 기준(분기별 업데이트)</span></h2>
         </div>
-        <div class="hr-dash__chart-placeholder">
-          차트 영역
-          <small>임시 구조 · 데이터 연동 전</small>
+        <div class="hr-dash__edu-hours">
+          <div class="hr-dash__edu-row">
+            <span class="hr-dash__edu-lab">전체 교육 시간</span>
+            <span class="hr-dash__edu-val"><span class="num" id="eduTotal">0</span><span class="unit">시간</span></span>
+          </div>
+          <div class="hr-dash__edu-row">
+            <span class="hr-dash__edu-lab">인당 교육 시간</span>
+            <span class="hr-dash__edu-val"><span class="num" id="eduPer">0</span><span class="unit">시간</span></span>
+          </div>
         </div>
       </div>
 
@@ -36,22 +40,42 @@
         <div class="hr-dash__card-head">
           <h2 class="hr-dash__card-title"><span class="hr-dash__title-main">인당 교육시간 3개년 추이</span> <span class="hr-dash__title-sub">과거 2개년은 12월말 기준, 당해년도는 분기별 업데이트</span></h2>
         </div>
-        <div class="hr-dash__chart-placeholder">
-          차트 영역
-          <small>임시 구조 · 데이터 연동 전</small>
-        </div>
+        <div class="hr-dash__chart"><canvas id="chart03Year"></canvas></div>
       </div>
 
       <div class="hr-dash__card">
         <div class="hr-dash__card-head">
           <h2 class="hr-dash__card-title"><span class="hr-dash__title-main">교육주제별 이수율</span> <span class="hr-dash__title-sub">2026년 누적 기준(분기별 업데이트)</span></h2>
         </div>
-        <div class="hr-dash__chart-placeholder">
-          차트 영역
-          <small>임시 구조 · 데이터 연동 전</small>
+        <div class="hr-dash__topic">
+          <div class="hr-dash__topic-chart"><canvas id="chart03Topic"></canvas></div>
+          <div class="hr-dash__topic-legend" id="topicLegend"></div>
         </div>
       </div>
     </div>
+
+    <!-- 하단: 조직문화 2열 -->
+    <div class="hr-dash__grid-stub hr-dash__grid-stub--2">
+      <div class="hr-dash__card">
+        <div class="hr-dash__card-head">
+          <h2 class="hr-dash__card-title"><span class="hr-dash__title-main">업무스타일</span> <span class="hr-dash__title-sub">PI검사 결과 참고(입사자 발생 시 수시 업데이트)</span></h2>
+        </div>
+        <div class="hr-dash__style" id="styleMap"></div>
+      </div>
+
+      <div class="hr-dash__card">
+        <div class="hr-dash__card-head">
+          <h2 class="hr-dash__card-title"><span class="hr-dash__title-main">리더십(신뢰도)</span> <span class="hr-dash__title-sub">그룹리더십진단 결과 참고(연 1회 업데이트)</span></h2>
+        </div>
+        <div class="hr-dash__chart"><canvas id="chart03Lead"></canvas></div>
+      </div>
+    </div>
   </div>
+
+  <script src="./e-HR_files/jquery-1.11.2.min.js"></script>
+  <script src="./e-HR_files/jquery-migrate-1.4.1.min.js"></script>
+  <script src="./e-HR_files/chartjs-4.5.0.js"></script>
+  <script src="./e-HR_files/chartjs-plugin-datalabels.js"></script>
+  <script src="./js/dashboard03.js"></script>
 </body>
 </html>

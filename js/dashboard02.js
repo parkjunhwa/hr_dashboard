@@ -2,43 +2,25 @@
  * dashboard02 — 인력확보 및 유지
  * Chart.js 4.x + 샘플 데이터 (첨부 시안 기준)
  * canvas/plugin id: chart02* · d02BarCount · d02ReasonCenter · API: HrDashboard02
+ * 퇴사율 원 160px. 퇴사율·퇴사 사유 툴팁은 「이름, n%」 한 줄(제목·색 칩 없음)
  */
 (function (window, $) {
   'use strict';
 
   var CHART_FONT = '"Pretendard GOV", "Malgun Gothic", sans-serif';
-  /* 메인: 블루 계열 베리에이션 / 포인트: 어두운 그레이(퇴사율) 1개 */
-  var ACCENT_A = '#1d4ed8'; /* blue-700 */
-  var ACCENT_B = '#60a5fa'; /* blue-400 */
-  var ACCENT_C = '#93c5fd'; /* blue-300 */
-  var MUTED = '#e2e8f0';    /* slate-200 (잔여) */
-  var POINT = '#475569';    /* slate-600 — 퇴사율 포인트(어두운 그레이) */
-  /* 직급별 퇴사 — dashboard01 직급 팔레트와 동일 (그린/블루/그레이) */
-  var GRADE_RETIRE_COLORS = {
-    '임원': '#16a34a', /* green-600 */
-    '부장': '#4ade80', /* green-400 */
-    '차장': '#2563eb', /* blue-600 */
-    '과장': '#3b82f6', /* blue-500 */
-    '대리': '#60a5fa', /* blue-400 */
-    '사원': '#93c5fd', /* blue-300 */
-    '유기': '#bfdbfe', /* blue-200 */
-    '무기3급': '#94a3b8', /* slate-400 — 계약직同 */
-    '계약직(무기)': '#94a3b8'
-  };
-
-  function gradeRetireColors(labels) {
-    return (labels || []).map(function (lab) {
-      return GRADE_RETIRE_COLORS[lab] || '#94a3b8';
-    });
-  }
-  /* 퇴사 사유 도넛 — 그린 → 스카이블루 그라데이션 톤
-   * 2번째(부적응)는 lime으로 두어 3번째(결혼·육아 teal)와 구분 */
+  /* 퇴사율: 퇴사 / 잔여 · 직급·본부·근속 퇴사 막대 */
+  var RETIRE_RATE_COLOR = '#F7E190';
+  var RETIRE_REST_COLOR = '#C6CAD1';
+  var RETIRE_BAR_COLOR = '#C6CAD1';
+  /* 퇴사 사유 — 값이 큰 순서. 7색 이후는 #C6CAD1보다 점점 옅은 그레이 */
   var REASON_COLORS = [
-    '#22c55e', /* green-500 — [개인사정] 가정사… */
-    '#84cc16', /* lime-500  — [직무관계] 부적응 */
-    '#2dd4bf', /* teal-400  — [개인사정] 결혼 출산 및 육아 */
-    '#38bdf8', /* sky-400 */
-    '#7dd3fc'  /* sky-300 */
+    '#99D5BD',
+    '#8DBEF4',
+    '#C0B3EE',
+    '#ECC1ED',
+    '#F7E190',
+    '#A8B0B9',
+    '#C6CAD1'
   ];
   var charts = {};
 
@@ -65,11 +47,16 @@
     reason: {
       center: '2026년 9월',
       items: [
-        { pct: 36, label: '[개인사정] 가정사 질병 및 개인 경력개발' },
-        { pct: 21, label: '[직무관계] 부적응' },
-        { pct: 14, label: '[개인사정] 결혼 출산 및 육아' },
-        { pct: 14, label: '[직무관계] 업무 스트레스 과다' },
-        { pct: 14, label: '[개인사정] 학업/취업준비' }
+        { pct: 22, label: '[개인사정] 가정사 질병 및 개인 경력개발' },
+        { pct: 16, label: '[직무관계] 부적응' },
+        { pct: 12, label: '[개인사정] 결혼 출산 및 육아' },
+        { pct: 11, label: '[직무관계] 업무 스트레스 과다' },
+        { pct: 10, label: '[개인사정] 학업/취업준비' },
+        { pct: 8, label: '[처우] 급여 및 복리후생' },
+        { pct: 7, label: '[조직문화] 비전 및 성장 불일치' },
+        { pct: 6, label: '[직무관계] 상사·동료와의 갈등' },
+        { pct: 5, label: '[개인사정] 건강' },
+        { pct: 3, label: '[기타] 계약만료' }
       ]
     },
     deptRetire: {
@@ -201,8 +188,8 @@
       data: {
         labels: d.labels,
         datasets: [
-          { label: '신입', data: d.newbie, backgroundColor: ACCENT_A, borderWidth: 0, barPercentage: 1, categoryPercentage: 0.55 },
-          { label: '경력', data: d.career, backgroundColor: ACCENT_C, borderWidth: 0, barPercentage: 1, categoryPercentage: 0.55 }
+          { label: '신입', data: d.newbie, backgroundColor: '#8DBEF4', borderWidth: 0, barPercentage: 1, categoryPercentage: 0.55 },
+          { label: '경력', data: d.career, backgroundColor: '#669BE2', borderWidth: 0, barPercentage: 1, categoryPercentage: 0.55 }
         ]
       },
       options: $.extend(true, opts, {
@@ -221,7 +208,7 @@
         labels: d.labels,
         datasets: [{
           data: d.data,
-          backgroundColor: '#94a3b8', /* slate-400 — 단색 그레이 */
+          backgroundColor: '#8DBEF4',
           borderWidth: 0,
           barPercentage: 0.65,
           categoryPercentage: 0.75
@@ -245,8 +232,8 @@
       data: {
         labels: d.labels,
         datasets: [
-          { label: '본부장 후보', data: d.external, backgroundColor: ACCENT_A, borderWidth: 0, barPercentage: 1, categoryPercentage: 0.55 },
-          { label: '팀장 후보', data: d.internal, backgroundColor: ACCENT_C, borderWidth: 0, barPercentage: 1, categoryPercentage: 0.55 }
+          { label: '본부장 후보', data: d.external, backgroundColor: '#8DBEF4', borderWidth: 0, barPercentage: 1, categoryPercentage: 0.55 },
+          { label: '팀장 후보', data: d.internal, backgroundColor: '#669BE2', borderWidth: 0, barPercentage: 1, categoryPercentage: 0.55 }
         ]
       },
       options: $.extend(true, opts, {
@@ -268,7 +255,7 @@
         labels: ['퇴사', '잔여'],
         datasets: [{
           data: [d.rate, Math.max(100 - d.rate, 0)],
-          backgroundColor: [POINT, MUTED], /* 포인트 어두운 그레이 + 잔여 */
+          backgroundColor: [RETIRE_RATE_COLOR, RETIRE_REST_COLOR],
           borderWidth: 0
         }]
       },
@@ -277,9 +264,11 @@
           legend: { display: false },
           datalabels: { display: false },
           tooltip: {
+            displayColors: false,
             callbacks: {
+              title: function () { return ''; },
               label: function (ctx) {
-                return ctx.label + ' ' + ctx.raw + '%';
+                return (ctx.label || '') + ', ' + ctx.raw + '%';
               }
             }
           }
@@ -298,7 +287,7 @@
         labels: d.labels,
         datasets: [{
           data: d.data,
-          backgroundColor: gradeRetireColors(d.labels),
+          backgroundColor: RETIRE_BAR_COLOR,
           borderWidth: 0,
           barPercentage: 0.6,
           categoryPercentage: 0.75
@@ -310,16 +299,59 @@
     });
   }
 
+  function hexToRgb(hex) {
+    var n = parseInt(String(hex).replace('#', ''), 16);
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
+
+  function rgbToHex(r, g, b) {
+    function h(v) {
+      var s = Math.max(0, Math.min(255, Math.round(v))).toString(16);
+      return s.length < 2 ? '0' + s : s;
+    }
+    return '#' + h(r) + h(g) + h(b);
+  }
+
+  /** 지정 7색 다음부터 #C6CAD1을 흰색 쪽으로 단계적으로 옅게 */
+  function reasonColorAt(rank) {
+    if (rank < REASON_COLORS.length) return REASON_COLORS[rank];
+    var base = hexToRgb(REASON_COLORS[REASON_COLORS.length - 1]);
+    var step = rank - (REASON_COLORS.length - 1);
+    var t = Math.min(0.88, step * 0.22);
+    return rgbToHex(
+      base.r + (255 - base.r) * t,
+      base.g + (255 - base.g) * t,
+      base.b + (255 - base.b) * t
+    );
+  }
+
+  /** 값이 큰 항목일수록 앞선 색. 동률이면 원래 순서를 유지 */
+  function reasonColors(items) {
+    var order = (items || []).map(function (it, i) {
+      return { i: i, pct: Number(it.pct) || 0 };
+    });
+    order.sort(function (a, b) {
+      if (b.pct !== a.pct) return b.pct - a.pct;
+      return a.i - b.i;
+    });
+    var colors = [];
+    order.forEach(function (row, rank) {
+      colors[row.i] = reasonColorAt(rank);
+    });
+    return colors;
+  }
+
   function renderReason(d) {
     var $leg = $('#reasonLegend').empty();
     var values = [];
     var labels = [];
+    var colors = reasonColors(d.items);
     d.items.forEach(function (it, i) {
       values.push(it.pct);
       labels.push(it.label);
       $leg.append(
         '<div class="item">' +
-          '<span class="dot" style="background:' + REASON_COLORS[i % REASON_COLORS.length] + '"></span>' +
+          '<span class="dot" style="background:' + colors[i] + '"></span>' +
           '<span class="pct">' + it.pct + '%</span>' +
           '<span>' + it.label + '</span>' +
         '</div>'
@@ -353,7 +385,7 @@
         labels: labels,
         datasets: [{
           data: values,
-          backgroundColor: REASON_COLORS.slice(0, values.length),
+          backgroundColor: colors,
           borderWidth: 0
         }]
       },
@@ -365,9 +397,11 @@
           legend: { display: false },
           datalabels: { display: false },
           tooltip: {
+            displayColors: false,
             callbacks: {
+              title: function () { return ''; },
               label: function (ctx) {
-                return ctx.label + ' ' + ctx.raw + '%';
+                return (ctx.label || '') + ', ' + ctx.raw + '%';
               }
             }
           }
@@ -386,7 +420,7 @@
         labels: d.labels,
         datasets: [{
           data: d.data,
-          backgroundColor: '#94a3b8', /* slate-400 — 단색 그레이 */
+          backgroundColor: RETIRE_BAR_COLOR, /* 단색 */
           borderWidth: 0,
           barPercentage: 0.65,
           categoryPercentage: 0.75
@@ -402,22 +436,13 @@
     var max = maxOf(d.data) * 1.25;
     var opts = baseBarOpts();
     opts.plugins.legend.display = false;
-    /* 근속기간↓ → 블루 진함 (짧을수록 진함) */
-    var tenureColors = [
-      '#1e3a8a', /* 1년미만 blue-900 */
-      '#1d4ed8', /* 1~3년 blue-700 */
-      '#3b82f6', /* 3~5년 blue-500 */
-      '#60a5fa', /* 5~10년 blue-400 */
-      '#93c5fd', /* 10~20년 blue-300 */
-      '#bfdbfe'  /* 20년이상 blue-200 */
-    ];
     createChart('chart02TenureRetire', {
       type: 'bar',
       data: {
         labels: d.labels,
         datasets: [{
           data: d.data,
-          backgroundColor: tenureColors.slice(0, d.labels.length),
+          backgroundColor: RETIRE_BAR_COLOR,
           borderWidth: 0,
           barPercentage: 0.55,
           categoryPercentage: 0.75

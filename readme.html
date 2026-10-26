@@ -112,87 +112,83 @@
   <div class="wrap">
     <h1>e-HR Dashboard — 적용 가이드</h1>
     <p class="lead">
-      <strong>hr_dashboard</strong> 시안을 웅진 e-HR(기존 MAINFW / DashBoard)에
-      이식할 때 참조하는 적용 가이드입니다.
+      hr_dashboard 시안을 웅진 e-HR(기존 MAINFW / DashBoard)에 이식할 때 보는 적용 가이드입니다.
+      아래 순서대로 읽으면 파일, 공통 규칙, 화면, 데이터, 식별자, 색, 적용까지 이어집니다.
     </p>
     <div class="meta">
-      <span class="chip">탭: 01 · 02~05</span>
+      <span class="chip">탭: 01~04</span>
       <span class="chip">진입: index.html → dashboard01</span>
       <span class="chip">기존 e-HR 라이브러리 재사용</span>
-      <span class="chip">갱신 26.10.13</span>
+      <span class="chip">갱신 26.10.23</span>
     </div>
 
     <div class="card toc">
       <strong>목차</strong>
       <ol>
         <li><a href="#overview">개요</a></li>
-        <li><a href="#structure">폴더 구조</a></li>
-        <li><a href="#libs">라이브러리 버전</a></li>
-        <li><a href="#pages">화면 구성</a></li>
-        <li><a href="#data">데이터 모델 · API 연동</a></li>
-        <li><a href="#apply">기존 시스템 적용 절차</a></li>
-        <li><a href="#style">스타일 · 색상 · 차트 규칙</a></li>
+        <li><a href="#files">파일과 라이브러리</a></li>
+        <li><a href="#common">공통 규칙</a></li>
+        <li><a href="#pages">화면</a></li>
+        <li><a href="#data">데이터</a></li>
+        <li><a href="#ids">식별자</a></li>
+        <li><a href="#color">색</a></li>
+        <li><a href="#apply">적용 절차</a></li>
         <li><a href="#checklist">체크리스트</a></li>
       </ol>
     </div>
 
     <h2 id="overview">1. 개요</h2>
-    <ul>
-      <li>인력현황·확보·육성·조직문화·조직건강 등 탭으로 구성된 정적 시안입니다.</li>
-      <li>선택자는 <code>.hr-dash</code>로 격리합니다.</li>
-      <li>
-        <strong>구현 완료</strong>
-        <ul>
-          <li><code>dashboard01.html</code> — 인력현황</li>
-          <li><code>dashboard02.html</code> — 인력확보 및 유지</li>
-        </ul>
-      </li>
-      <li><strong>임시 구조:</strong> <code>dashboard03~05.html</code> (제목·소제목 카드 · 차트 연동 전)</li>
-      <li>시안은 각 페이지 JS의 <code>SAMPLE</code>로 렌더링합니다. 운영 시 XFWebService / 패키지 조회로 교체합니다.</li>
-      <li>jQuery / Chart.js / Font Awesome은 <strong>신규 추가가 아닙니다.</strong> 기존 e-HR 자산·버전과 일치해야 합니다.</li>
-    </ul>
+    <p>정적 시안 네 탭입니다. 화면은 각 페이지 JS의 <code>SAMPLE</code>로 그리고, 운영에서는 <code>render(data)</code>에 실데이터를 넣습니다. 스타일은 <code>.hr-dash</code> 안에만 둡니다.</p>
+    <table>
+      <thead>
+        <tr><th>탭</th><th>파일</th><th>API</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>인력현황</td><td><code>dashboard01.html</code></td><td><code>HrDashboard01</code></td></tr>
+        <tr><td>인력확보 및 유지</td><td><code>dashboard02.html</code></td><td><code>HrDashboard02</code></td></tr>
+        <tr><td>인재육성 및 조직문화</td><td><code>dashboard03.html</code></td><td><code>HrDashboard03</code></td></tr>
+        <tr><td>조직건강 및 리스크 관리</td><td><code>dashboard04.html</code></td><td><code>HrDashboard04</code></td></tr>
+      </tbody>
+    </table>
 
-    <h2 id="structure">2. 폴더 구조</h2>
+    <h2 id="files">2. 파일과 라이브러리</h2>
+    <h3>2-1. 폴더</h3>
     <pre><code>hr_dashboard/
-├── readme.html                 ← 본 가이드
-├── index.html                  ← 진입점 → dashboard01
-├── dashboard01.html            ← 인력현황
-├── dashboard01_.html           ← 인력현황(다른안) · 본부/직급 분리 세로막대
-├── dashboard02.html            ← 인력확보 및 유지
-├── dashboard03.html ~ 05.html  ← 임시 구조(제목·소제목)
-├── css/dashboard.css           ← 공통 스타일 (.hr-dash*)
-├── js/
-│   ├── dashboard01.js          ← 01 Chart · SAMPLE · HrDashboard01
-│   ├── dashboard01_.js         ← 01 다른안 · HrDashboard01_
-│   └── dashboard02.js          ← 02 Chart · SAMPLE · HrDashboard02
-└── e-HR_files/                 ← 시안용 기존 라이브러리 연결
+├── readme.html                 본 가이드
+├── index.html                  진입점 → dashboard01
+├── dashboard01.html            인력현황
+├── dashboard02.html            인력확보 및 유지
+├── dashboard03.html            인재육성 및 조직문화
+├── dashboard04.html            조직건강 및 리스크 관리
+├── css/dashboard.css           공통 스타일 (.hr-dash*)
+├── js/dashboard01.js … 04.js   차트 · SAMPLE · HrDashboard0N
+└── e-HR_files/                 시안용 기존 라이브러리
     ├── adminlte.min.css
     ├── fontawesome-all.css · webfonts/
     ├── jquery-1.11.2.min.js · jquery-migrate-1.4.1.min.js
     ├── chartjs-4.5.0.js
     └── chartjs-plugin-datalabels.js</code></pre>
-
     <div class="warn">
-      <strong>중요:</strong> 공통 라이브러리는 기존 시스템 자산을 재사용합니다.
-      CDN·신규 패키지로 교체하지 말고, 아래 표 버전과 운영 파일이 일치하는지 확인하세요.
-      운영에 동일 버전이 있으면 <code>e-HR_files/</code>는 생략하고 HTML 경로만 교체하면 됩니다.
+      jQuery, Chart.js, Font Awesome, AdminLTE는 기존 e-HR 자산을 그대로 씁니다.
+      CDN이나 새 패키지로 바꾸지 않고, 운영에 같은 버전이 있으면 <code>e-HR_files/</code> 대신 그 경로를 HTML에 적습니다.
     </div>
 
-    <h2 id="libs">3. 라이브러리 버전</h2>
+    <h3>2-2. 버전</h3>
     <table>
       <thead>
-        <tr><th>라이브러리</th><th>버전</th><th>비고</th></tr>
+        <tr><th>라이브러리</th><th>버전</th><th>역할</th></tr>
       </thead>
       <tbody>
-        <tr><td>jQuery</td><td>1.11.2</td><td>Migrate 1.4.1 병행</td></tr>
+        <tr><td>jQuery</td><td>1.11.2</td><td>Migrate 1.4.1과 함께 로드</td></tr>
         <tr><td>Bootstrap</td><td>4.6.1</td><td>AdminLTE 3.2 CSS에 포함</td></tr>
-        <tr><td>Font Awesome</td><td>Free 5.3.1</td><td>AdminLTE보다 <strong>먼저</strong> 로드</td></tr>
-        <tr><td>Chart.js</td><td>4.5.x</td><td>가로 막대: <code>type:'bar' + indexAxis:'y'</code></td></tr>
-        <tr><td>chartjs-plugin-datalabels</td><td>2.x</td><td>로드만 함 · 막대 숫자는 커스텀 plugin</td></tr>
+        <tr><td>Font Awesome</td><td>Free 5.3.1</td><td>AdminLTE보다 먼저 로드</td></tr>
+        <tr><td>Chart.js</td><td>4.5.x</td><td>가로 막대는 <code>type:'bar'</code>와 <code>indexAxis:'y'</code></td></tr>
+        <tr><td>chartjs-plugin-datalabels</td><td>2.2.0</td><td>안전교육 도넛의 % 라벨. 막대 숫자는 페이지별 커스텀 plugin</td></tr>
       </tbody>
     </table>
 
-    <h3>권장 로드 순서</h3>
+    <h3>2-3. 로드 순서</h3>
+    <p>CSS 다음에 JS를 읽고, 마지막에 그 페이지의 dashboard JS 하나만 붙입니다.</p>
     <pre><code>&lt;!-- CSS --&gt;
 ./e-HR_files/fontawesome-all.css
 ./e-HR_files/adminlte.min.css
@@ -203,108 +199,54 @@
 ./e-HR_files/jquery-migrate-1.4.1.min.js
 ./e-HR_files/chartjs-4.5.0.js
 ./e-HR_files/chartjs-plugin-datalabels.js
-./js/dashboard01.js        ※ 02 → dashboard02.js · 01_ → dashboard01_.js
+./js/dashboard01.js    02·03·04 페이지는 해당 번호의 js</code></pre>
 
-※ 운영: ./e-HR_files/... → 기존 서버 동일 버전 경로</code></pre>
-
-    <h2 id="pages">4. 화면 구성</h2>
-    <p>
-      공통: 상단 탭 <code>.hr-dash__nav</code> + 루트 <code>&lt;div class="hr-dash" id="hrDashRoot"&gt;</code><br>
-      탭: 인력현황 · <strong>인력현황(다른안)</strong> · 02~05 · 오른쪽 <code>*개발자 작업가이드</code> → <code>readme.html</code>
-    </p>
-
-    <h3>4-1. dashboard01 — 인력현황</h3>
+    <h2 id="common">3. 공통 규칙</h2>
+    <p>네 화면이 같이 지키는 규칙입니다. 화면별 차이는 4장의 비고에만 적습니다.</p>
     <table>
       <thead>
-        <tr><th>영역</th><th>구성</th><th>비고</th></tr>
+        <tr><th>항목</th><th>규칙</th></tr>
       </thead>
       <tbody>
         <tr>
-          <td>상단 KPI</td>
-          <td>좌50%: 재직·휴직·입사·퇴사 / 우50%: 인력 다양성</td>
-          <td>좌측 그리드 <code>1.4fr 1fr 1fr 1fr</code> (재직자 넓게)</td>
+          <td>골격</td>
+          <td>루트 <code>&lt;div class="hr-dash" id="hrDashRoot"&gt;</code> · 상단 탭 <code>.hr-dash__nav</code> · 가이드 링크는 <code>readme.html</code></td>
         </tr>
         <tr>
-          <td>재직자</td>
-          <td>왼쪽 IT/CS 파이·라벨 · 오른쪽 총원 · 소제목 <code>실시간 기준</code></td>
+          <td>제목</td>
+          <td>카드 제목 <code>.hr-dash__title-main</code> 아래 소제목 <code>.hr-dash__title-sub</code></td>
+        </tr>
+        <tr>
+          <td>글자</td>
+          <td>Pretendard GOV. 막대 위 값 15px bold <code>#475569</code>. 축 항목 13px · weight 500 · <code>#64748b</code></td>
+        </tr>
+        <tr>
+          <td>범례</td>
+          <td>Chart.js 범례는 차트 오른쪽 위. 13px · weight 600 · <code>#666</code> · 색 칸 14px. 04 안전교육만 HTML 범례 하나(수료·미수료)로 같은 크기·위치</td>
+        </tr>
+        <tr>
+          <td>툴팁</td>
           <td>
-            <code>#chart01ItCs</code> · IT green-500 · CS slate-300<br>
-            라벨 <code>IT 513</code> 한 줄 · 숫자 열 세로 정렬
+            퇴사율 · 퇴사 사유 · 교육주제별 이수율: 「이름, n%」 한 줄. 교육주제는 시간이 있으면 (n시간)<br>
+            안전교육 이수율: HTML 툴팁. 제목은 「상반기」 또는 「하반기」, 아래는 색 칸과 값, 항목 좌우 14px, 가운데 글자 위
           </td>
         </tr>
         <tr>
-          <td>휴직·입사·퇴사</td>
-          <td>수치만 오른쪽 정렬 · 소제목 휴직 <code>실시간 기준</code> / 입·퇴사 <code>2026년 누적 기준</code></td>
-          <td>숫자 48px · 「명」 16px</td>
-        </tr>
-        <tr>
-          <td>인력 다양성</td>
-          <td>장애인 · 보훈 · 외국인 3칸 · 소제목 <code>실시간 기준</code></td>
+          <td>너비</td>
           <td>
-            배경 이미지 없음 · 3칸 전체 폭 · 제목·수치 좌우 배치 · KPI와 동일 숫자 크기
-          </td>
-        </tr>
-        <tr>
-          <td>하단 좌 (50%)</td>
-          <td>본부별 인원수(가로 누적 좌→우) · <code>실시간 기준</code></td>
-          <td>
-            구간 수치 막대 안(흰색) · 총계 막대 끝 · Chart.js 범례 오른쪽 끝<br>
-            모바일(≤1100): 항목 수만큼 차트 높이 증가(<code>sizeHqChartBox</code>)
-          </td>
-        </tr>
-        <tr>
-          <td>하단 우상 (각 25%)</td>
-          <td>직책자 | 성별&amp;연령대 · 각 <code>실시간 기준</code></td>
-          <td>양방향 · 항목명 옆 총계 <code>(n)</code> · 남/여 범례 오른쪽 끝</td>
-        </tr>
-        <tr>
-          <td>하단 우하 (50%)</td>
-          <td>직급별 인원수 (3개년 가로 누적)</td>
-          <td>
-            소제목 <code>과거 2개년은 12월말 기준, 최신년도는 실시간 기준</code><br>
-            범례 오른쪽 끝 · 구간 수치 막대 안(흰색)
+            1750px 이상: 재직자 <code>minmax(280px, 1.4fr)</code>, 최소 280px<br>
+            1100~1749px: 재직·휴직·입사·퇴사 윗줄, 인력 다양성 아랫줄<br>
+            1100px 이하: 페이지가 늘어나며 스크롤. KPI 왼쪽은 2열, 차트는 1열
           </td>
         </tr>
       </tbody>
     </table>
-    <div class="ok">
-      API: <code>HrDashboard01.render(data)</code> · 샘플: <code>HrDashboard01.sample</code>
-    </div>
 
-    <h3>4-1b. dashboard01_ — 인력현황(다른안)</h3>
-    <p>
-      KPI·직책자·성별연령은 01과 동일. <strong>본부별·직급별만</strong> 항목별 세로 막대로 분리.
-      루트에 <code>.hr-dash--inline-sub</code> (제목·소제목 좌우 배치).
-    </p>
-    <table>
-      <thead>
-        <tr><th>영역</th><th>구성</th><th>비고</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>본부별 인원수</td>
-          <td>본부 10개 → 미니 세로막대 10개 · 3열 그리드(4행)</td>
-          <td>
-            <code>#hqChartGrid</code> · 직급별 색 막대 · 바 위 수치(총계 스타일)<br>
-            하단 직급 라벨 없음(상단 HTML 범례) · 밝은 그레이 배경 · 테두리 없음
-          </td>
-        </tr>
-        <tr>
-          <td>직급별 인원수</td>
-          <td>연도 3개 → 미니 세로막대 3개 · 3열</td>
-          <td><code>#gradeYearChartGrid</code> · 제목(연도) 16px · 인원수 오른쪽 26px+「명」14px</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="ok">
-      API: <code>HrDashboard01_.render(data)</code> · 샘플: <code>HrDashboard01_.sample</code>
-    </div>
+    <h2 id="pages">4. 화면</h2>
+    <p>각 화면은 같은 표입니다. 영역, 구성, 비고 다음에 API를 적습니다.</p>
 
-    <h3>4-2. dashboard02 — 인력확보 및 유지</h3>
-    <p class="warn" style="margin-top:0;">
-      용어: 화면·차트 라벨은 <strong>퇴직 → 퇴사</strong>로 통일
-      (퇴사율 · 직급별/본부별/근속년수별 퇴사자 수 · 퇴사 사유).
-    </p>
+    <h3>4-1. 인력현황</h3>
+    <p><code>dashboard01.html</code> · <code>js/dashboard01.js</code></p>
     <table>
       <thead>
         <tr><th>영역</th><th>구성</th><th>비고</th></tr>
@@ -312,132 +254,186 @@
       <tbody>
         <tr>
           <td>전체</td>
-          <td>3열 × 3행 그리드</td>
-          <td><code>repeat(3, minmax(0, 1fr))</code></td>
+          <td>상단 KPI 좌우 50% · 하단 차트 좌우 50%</td>
+          <td>KPI 왼쪽 4칸은 같은 폭. 1750px 이상에서만 재직자가 넓어짐</td>
         </tr>
         <tr>
-          <td>1행</td>
-          <td>
-            신규채용 <code>실시간 기준</code> /
-            핵심기술인재 <code>연 1회 업데이트(9월)</code> /
-            Successor <code>연 1회 업데이트(4월)</code>
-          </td>
-          <td>
-            막대 수치 15px bold<br>
-            신규채용·Successor: 비교 막대 간격 0(<code>barPercentage:1</code>) ·
-            항목 간격 넓게(<code>categoryPercentage:0.55</code>)<br>
-            Successor 범례: <code>본부장 후보</code> · <code>팀장 후보</code><br>
-            핵심기술인재·본부 라벨: ERP1~3 · CIT (BRP/DT 아님)
-          </td>
+          <td>재직자</td>
+          <td>왼쪽 총원 · 오른쪽 IT/CS 상하 · 구분선 · 소제목 <code>실시간 기준</code></td>
+          <td>라벨 왼쪽, 수치 오른쪽. IT·CS 라벨 <code>#94a3b8</code></td>
         </tr>
         <tr>
-          <td>2~3행</td>
-          <td>퇴사율 / 직급별 퇴사자 수 / <strong>퇴사 사유</strong></td>
-          <td>
-            소제목 공통 <code>2026년 누적 기준</code><br>
-            퇴사율 포인트 slate-600(어두운 그레이) · 직급별 퇴사 색=01 직급 팔레트<br>
-            직급 라벨: 임원~사원 · 유기 · 무기3급<br>
-            퇴사 사유: 오른쪽 열 2~3행 병합 · 도넛 최대 360px<br>
-            주석: <code>※ 월 1회 업데이트, 퇴직의견조사서 퇴직사유 1순위만 포함</code>
-          </td>
+          <td>휴직·입사·퇴사</td>
+          <td>수치만 오른쪽 · 휴직 <code>실시간 기준</code> · 입사·퇴사 <code>2026년 누적 기준</code></td>
+          <td>숫자 48px · 「명」 16px. 1400px 이하 숫자 40px</td>
         </tr>
         <tr>
-          <td>3행</td>
-          <td>본부별 퇴사자 수 / 근속년수별 퇴사자 수</td>
-          <td>
-            소제목 <code>2026년 누적 기준</code> · 본부별 퇴사 단색 slate-400<br>
-            근속년수: 짧을수록 진한 블루 → 길수록 옅음
-          </td>
+          <td>인력 다양성</td>
+          <td>장애인 · 보훈 · 외국인 · 소제목 <code>실시간 기준</code></td>
+          <td>옅은 칸 3개 · 제목과 수치 좌우 배치 · 숫자 크기는 KPI와 같음</td>
         </tr>
         <tr>
-          <td>퇴사 사유 · 모바일</td>
-          <td>도넛 좌 + 범례·주석 우</td>
-          <td>
-            좌우·상하 중앙 · 카드 높이 = 컨텐츠<br>
-            주석(<code>.hr-dash__card-note</code>)은 범례 아래 · 중앙 「연월」 14px
-          </td>
+          <td>본부별 인원수</td>
+          <td>가로 누적 · 소제목 <code>실시간 기준</code></td>
+          <td>구간 수치는 막대 안 흰색 · 총계는 막대 끝 15px bold. 1100px 이하 높이는 항목 수(<code>sizeHqChartBox</code>)</td>
+        </tr>
+        <tr>
+          <td>직책자 · 성별&amp;연령</td>
+          <td>양방향 가로 막대 · 각 소제목 <code>실시간 기준</code></td>
+          <td>큰 글자 「남성」「여성」 <code>#A8B0B9</code> · 인원수 <code>#2f3338</code> · 막대 남 <code>#A8B0B9</code> · 여 <code>#C6CAD1</code> · 항목명 옆 총계 <code>(n)</code></td>
+        </tr>
+        <tr>
+          <td>직급별 인원수</td>
+          <td>3개년 가로 누적 · 소제목 <code>과거 2개년은 12월말 기준, 최신년도는 실시간 기준</code></td>
+          <td>구간 수치는 막대 안 흰색 · 총계는 막대 끝. 직급 색은 7장</td>
         </tr>
       </tbody>
     </table>
-    <div class="ok">
-      API: <code>HrDashboard02.render(data)</code> · 샘플: <code>HrDashboard02.sample</code>
-    </div>
+    <div class="ok">API: <code>HrDashboard01.render(data)</code> · 샘플: <code>HrDashboard01.sample</code></div>
 
-    <h3>4-3. dashboard03 ~ 05 — 임시 구조</h3>
-    <p>차트/데이터 연동 전. 기준표 제목·소제목만 카드로 배치(<code>.hr-dash__grid-stub</code>).</p>
+    <h3>4-2. 인력확보 및 유지</h3>
+    <p><code>dashboard02.html</code> · <code>js/dashboard02.js</code>. 화면 라벨은 퇴사율, 퇴사자 수, 퇴사 사유로 통일합니다.</p>
     <table>
       <thead>
-        <tr><th>페이지</th><th>카드(제목)</th><th>소제목</th><th>그리드</th></tr>
+        <tr><th>영역</th><th>구성</th><th>비고</th></tr>
       </thead>
       <tbody>
         <tr>
-          <td>03 인재육성</td>
-          <td>교육시간</td>
-          <td><code>2026년 누적 기준(분기별 업데이트)</code></td>
-          <td rowspan="3"><code>--3</code> (1행 3열)</td>
+          <td>전체</td>
+          <td>3열 × 3행</td>
+          <td><code>repeat(3, minmax(0, 1fr))</code>. 퇴사 사유는 오른쪽 열 2~3행</td>
         </tr>
         <tr>
-          <td></td>
-          <td>인당 교육시간 3개년 추이</td>
-          <td><code>과거 2개년은 12월말 기준, 당해년도는 분기별 업데이트</code></td>
+          <td>신규채용</td>
+          <td>신입 · 경력 · 소제목 <code>실시간 기준</code></td>
+          <td>신입 <code>#8DBEF4</code> · 경력 <code>#669BE2</code> · 같은 항목 막대 간격 0(<code>barPercentage:1</code>) · 항목 간격 <code>categoryPercentage:0.55</code> · 값 15px bold</td>
         </tr>
         <tr>
-          <td></td>
-          <td>교육주제별 이수율</td>
-          <td><code>2026년 누적 기준(분기별 업데이트)</code></td>
+          <td>핵심기술인재</td>
+          <td>소제목 <code>연 1회 업데이트(9월)</code></td>
+          <td>단색 <code>#8DBEF4</code> · 값 15px bold · 라벨 ERP1~3, CIT, WRMS</td>
         </tr>
         <tr>
-          <td>04 조직문화</td>
-          <td>업무스타일</td>
-          <td><code>PI검사 결과 참고(입사자 발생 시 수시 업데이트)</code></td>
-          <td rowspan="2"><code>--2</code> (1행 2열)</td>
+          <td>Successor</td>
+          <td>본부장 후보 · 팀장 후보 · 소제목 <code>연 1회 업데이트(4월)</code></td>
+          <td>본부장 후보 <code>#8DBEF4</code> · 팀장 후보 <code>#669BE2</code> · 간격은 신규채용과 같음</td>
         </tr>
         <tr>
-          <td></td>
-          <td>리더십(신뢰도)</td>
-          <td><code>그룹리더십진단 결과 참고(연 1회 업데이트)</code></td>
+          <td>퇴사율</td>
+          <td>퇴사 · 잔여 · 소제목 <code>2026년 누적 기준</code></td>
+          <td>퇴사 <code>#F7E190</code> · 잔여 <code>#C6CAD1</code> · 원 160px · 툴팁 「이름, n%」</td>
         </tr>
         <tr>
-          <td>05 조직건강·리스크</td>
-          <td>산업재해 건수</td>
-          <td><code>2026년 누적 기준(반기별 업데이트)</code></td>
-          <td rowspan="4"><code>--2x2</code></td>
+          <td>직급·본부·근속 퇴사자 수</td>
+          <td>각 소제목 <code>2026년 누적 기준</code></td>
+          <td>단색 <code>#C6CAD1</code> · 값 15px bold · 직급 라벨 임원~사원, 유기, 무기3급</td>
         </tr>
         <tr>
-          <td></td>
-          <td>안전교육 이수율</td>
-          <td><code>2026년 누적 기준(반기별 업데이트)</code></td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>건강검진 수검율</td>
-          <td><code>2026년 누적 기준(연 1회 업데이트)</code></td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>사내 고충 접수(조치) 건수</td>
-          <td><code>과거 2개년은 12월말 기준, 최신년도는 분기별 업데이트</code></td>
+          <td>퇴사 사유</td>
+          <td>도넛 · 범례 · 주석 · 소제목 <code>2026년 누적 기준</code></td>
+          <td>
+            값이 큰 순 7색, 이후 <code>#C6CAD1</code>보다 옅은 그레이 · 도넛 최대 360px<br>
+            툴팁 「이름, n%」 · 주석 <code>※ 월 1회 업데이트, 퇴직의견조사서 퇴직사유 1순위만 포함</code><br>
+            1100px 이하: 도넛 왼쪽, 범례·주석 오른쪽, 카드 높이는 내용만큼. 가운데 연월 14px
+          </td>
         </tr>
       </tbody>
     </table>
+    <div class="ok">API: <code>HrDashboard02.render(data)</code> · 샘플: <code>HrDashboard02.sample</code></div>
 
-    <h2 id="data">5. 데이터 모델 · API 연동</h2>
-    <h3>01 — HrDashboard01</h3>
-    <pre><code>HrDashboard01.render(HrDashboard01.sample);
-
-HrDashboard01.render({
-  kpi: { work, it, cs, leave, join, retire, disabil, bohun, foreign },
-  gender: { male, female },
-  hq: { labels: [...], grades: { '임원':[...], ..., '계약직(무기)':[...] } },
-  jikchak: { labels: [...], male: [...], female: [...] },
-  gradeYear: { labels: ['2026','2025','2024'], grades: { ... } },
-  age: { labels: ['50이상','40~49','30~39','20~29'], male: [...], female: [...] }
-});</code></pre>
-
-    <h3>01 — 기존 패키지 Gubun 참고</h3>
+    <h3>4-3. 인재육성 및 조직문화</h3>
+    <p><code>dashboard03.html</code> · <code>js/dashboard03.js</code></p>
     <table>
       <thead>
-        <tr><th>Gubun</th><th>용도</th><th>시안 필드</th></tr>
+        <tr><th>영역</th><th>구성</th><th>비고</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>전체</td>
+          <td>상단 3열 · 하단 2열</td>
+          <td>상단 <code>--3</code> <code>flex: 1</code>(약 1/3) · 하단 <code>--2</code> <code>flex: 2</code>(약 2/3)</td>
+        </tr>
+        <tr>
+          <td>교육시간</td>
+          <td>전체 교육 시간 · 인당 교육 시간 · 소제목 <code>2026년 누적 기준(분기별 업데이트)</code></td>
+          <td>옅은 칸 두 개. 제목은 왼쪽 위, 시간은 오른쪽 아래. 1100px 이하는 칸이 줄지 않고 카드가 내용만큼 늘어남</td>
+        </tr>
+        <tr>
+          <td>인당 교육시간 3개년 추이</td>
+          <td>소제목 <code>과거 2개년은 12월말 기준, 당해년도는 분기별 업데이트</code></td>
+          <td>막대 <code>#8DBEF4</code> · 값은 막대 위 15px bold</td>
+        </tr>
+        <tr>
+          <td>교육주제별 이수율</td>
+          <td>소제목 <code>2026년 누적 기준(분기별 업데이트)</code></td>
+          <td>값이 큰 순 도넛 · 범례는 오른쪽 한 열 · 지름은 영역보다 20px 작음 · 툴팁 「이름, n%」, 시간이 있으면 (n시간)</td>
+        </tr>
+        <tr>
+          <td>업무스타일</td>
+          <td>소제목 <code>PI검사 결과 참고(입사자 발생 시 수시 업데이트)</code></td>
+          <td>트리맵 · 칸 간격 1px · 강조 세 칸 뒤는 회색 단계</td>
+        </tr>
+        <tr>
+          <td>리더십(신뢰도)</td>
+          <td>소제목 <code>그룹리더십진단 결과 참고(연 1회 업데이트)</code></td>
+          <td>2023 <code>#C6CAD1</code> · 2024 <code>#A8B0B9</code> · 2025 <code>#8DBEF4</code> · 값은 막대 위 소수 둘째 자리 · 간격 <code>barPercentage:0.85</code> · <code>categoryPercentage:0.55</code></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="ok">API: <code>HrDashboard03.render(data)</code> · 샘플: <code>HrDashboard03.sample</code></div>
+
+    <h3>4-4. 조직건강 및 리스크 관리</h3>
+    <p><code>dashboard04.html</code> · <code>js/dashboard04.js</code></p>
+    <table>
+      <thead>
+        <tr><th>영역</th><th>구성</th><th>비고</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>전체</td>
+          <td>상단 3열 · 하단 전체 폭 1열</td>
+          <td><code>--3-1</code>. 위 세 카드 범례는 3장의 공통 범례 규칙</td>
+        </tr>
+        <tr>
+          <td>산업재해 건수</td>
+          <td>본사 · 콜센터 · 소제목 <code>2026년 누적 기준(반기별 업데이트)</code></td>
+          <td>본사 <code>#8DBEF4</code> · 콜센터 <code>#669BE2</code> · 값은 막대 위 정수(0 포함) · 간격은 리더십과 같음</td>
+        </tr>
+        <tr>
+          <td>안전교육 이수율</td>
+          <td>상반기 · 하반기 도넛 · 소제목 <code>2026년 누적 기준(반기별 업데이트)</code></td>
+          <td>수료 <code>#C6CAD1</code> · 미수료 <code>#F7E190</code> · 가운데 글자 16px · 지름은 칸보다 20px 작음 · % 라벨은 datalabels · 범례는 한 번 · 툴팁 형식은 3장</td>
+        </tr>
+        <tr>
+          <td>건강검진 수검율</td>
+          <td>수검 · 미수검 · 소제목 <code>2026년 누적 기준(연 1회 업데이트)</code></td>
+          <td>수검 <code>#8DBEF4</code> · 미수검 <code>#669BE2</code> · 10% 초과는 막대 안 흰색 15px · 10% 이하는 오른쪽 선 · 범례는 그 여백과 따로 오른쪽 끝</td>
+        </tr>
+        <tr>
+          <td>사내 고충 접수(조치) 건수</td>
+          <td>구분 · 내용 · 연도별 접수/조치 · 소제목 <code>과거 2개년은 12월말 기준, 최신년도는 분기별 업데이트</code></td>
+          <td>넓은 화면은 남는 높이를 채우고, 부족하면 <code>thead</code>·<code>tfoot</code>을 고정한 채 <code>tbody</code>만 스크롤. 1100px 이하는 표 안 스크롤 없이 카드가 내용만큼 늘어남</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="ok">API: <code>HrDashboard04.render(data)</code> · 샘플: <code>HrDashboard04.sample</code></div>
+
+    <h2 id="data">5. 데이터</h2>
+    <p>각 페이지는 <code>HrDashboard0N.render(data)</code>입니다. 인자가 없으면 그 파일의 <code>sample</code>을 그립니다. 필드는 아래와 같습니다.</p>
+
+    <h3>5-1. HrDashboard01</h3>
+    <pre><code>HrDashboard01.render({
+  kpi: { work, it, cs, leave, join, retire, disabil, bohun, foreign },
+  gender: { male, female },
+  hq: { labels, grades: { '임원':[], '부장':[], '차장':[], '과장':[], '대리':[], '사원':[], '계약직(무기)':[] } },
+  jikchak: { labels, male, female },
+  gradeYear: { labels, grades },
+  age: { labels, male, female }
+});</code></pre>
+    <p>기존 패키지 Gubun과 시안 필드의 대응입니다.</p>
+    <table>
+      <thead>
+        <tr><th>Gubun</th><th>용도</th><th>필드</th></tr>
       </thead>
       <tbody>
         <tr><td>W01</td><td>재직합 / IT / CS</td><td><code>kpi.work, it, cs</code></td></tr>
@@ -453,214 +449,163 @@ HrDashboard01.render({
       </tbody>
     </table>
 
-    <h3>02 — HrDashboard02</h3>
-    <pre><code>HrDashboard02.render(HrDashboard02.sample);
-
-HrDashboard02.render({
+    <h3>5-2. HrDashboard02</h3>
+    <pre><code>HrDashboard02.render({
   hire: { labels, newbie, career },
   core: { labels, data },
   successor: { labels, external, internal },
   retireRate: { rate, count },
   gradeRetire: { labels, data },
-  reason: { center, items: [{ pct, label }, ...] },
+  reason: { center, items: [{ pct, label }] },
   deptRetire: { labels, data },
   tenureRetire: { labels, data }
 });</code></pre>
 
-    <h2 id="apply">6. 기존 시스템 적용 절차</h2>
-    <ol>
-      <li>
-        <strong>파일 배치</strong> —
-        HTML / <code>css/</code> / <code>js/</code>를 서버 정적 경로에 복사
-      </li>
-      <li>
-        <strong>라이브러리 경로</strong> —
-        <code>./e-HR_files/...</code> → 운영 기존 경로로 교체
-      </li>
-      <li>
-        <strong>탭 연결</strong> —
-        DashBoard 탭 <code>src</code>를 본 패키지 URL로 교체 (기본: <code>index.html</code> 또는 <code>dashboard01.html</code>)
-      </li>
-      <li>
-        <strong>데이터</strong> —
-        01: <code>HrDashboard01.render(data)</code> ·
-        02: <code>HrDashboard02.render(data)</code>
-        (<code>$(function(){...})</code>에서 SAMPLE 대신 실데이터)
-      </li>
-      <li>
-        <strong>리사이즈</strong> —
-        각 페이지가 <code>window.resize</code>에서 <code>chart.resize()</code> 호출.
-        iframe 높이 변경 시 resize 이벤트 전달 확인
-      </li>
-    </ol>
+    <h3>5-3. HrDashboard03</h3>
+    <pre><code>HrDashboard03.render({
+  hours: { total, per },
+  year: { labels, data },
+  topic: [{ label, pct, hours }],
+  style: [{ label, pct, note }],
+  lead: { labels, series: [{ label, data }] }
+});</code></pre>
+    <p><code>topic.hours</code>와 <code>style.note</code>는 있는 항목만 툴팁에 붙습니다. 트리맵 칸 배치는 스크립트의 기준 좌표를 씁니다.</p>
 
-    <h2 id="style">7. 스타일 · 색상 · 차트 규칙</h2>
+    <h3>5-4. HrDashboard04</h3>
+    <pre><code>HrDashboard04.render({
+  accident: { labels, series: [{ label, data }] },
+  safety: [{ done, miss }],
+  checkup: { labels, done, miss },
+  grievance: { years, rows: [{ group, detail, cells }] }
+});</code></pre>
+    <p><code>safety</code>는 상반기, 하반기 순입니다. 가운데 글자는 HTML에 있습니다. <code>grievance.cells</code>는 연도마다 접수, 조치 순입니다.</p>
 
-    <h3>이름 체계 (페이지 번호 접두)</h3>
+    <h2 id="ids">6. 식별자</h2>
+    <p>파일 번호가 canvas id와 plugin id 앞에 붙습니다.</p>
     <table>
       <thead>
-        <tr><th>구분</th><th>01 인력현황</th><th>02 확보·유지</th></tr>
+        <tr><th>페이지</th><th>파일 · API</th><th>canvas / 영역</th><th>plugin</th></tr>
       </thead>
       <tbody>
         <tr>
-          <td>파일 / API</td>
-          <td><code>dashboard01.js</code> · <code>HrDashboard01</code></td>
-          <td><code>dashboard02.js</code> · <code>HrDashboard02</code></td>
-        </tr>
-        <tr>
-          <td>canvas id</td>
-          <td>
-            <code>chart01ItCs</code> · <code>chart01Hq</code> ·
-            <code>chart01Jikchak</code> · <code>chart01Age</code> ·
-            <code>chart01GradeYear</code>
-          </td>
-          <td>
-            <code>chart02Hire</code> · <code>chart02Core</code> ·
-            <code>chart02Successor</code> · <code>chart02RetireRate</code> ·
-            <code>chart02GradeRetire</code> · <code>chart02Reason</code> ·
-            <code>chart02DeptRetire</code> · <code>chart02TenureRetire</code>
-          </td>
-        </tr>
-        <tr>
-          <td>Chart plugin id</td>
+          <td>01</td>
+          <td><code>dashboard01.js</code><br><code>HrDashboard01</code></td>
+          <td><code>chart01Hq</code> · <code>chart01Jikchak</code> · <code>chart01Age</code> · <code>chart01GradeYear</code></td>
           <td><code>d01BarCount</code> · <code>d01GenderSplit_*</code></td>
+        </tr>
+        <tr>
+          <td>02</td>
+          <td><code>dashboard02.js</code><br><code>HrDashboard02</code></td>
+          <td><code>chart02Hire</code> · <code>chart02Core</code> · <code>chart02Successor</code> · <code>chart02RetireRate</code> · <code>chart02GradeRetire</code> · <code>chart02Reason</code> · <code>chart02DeptRetire</code> · <code>chart02TenureRetire</code></td>
           <td><code>d02BarCount</code> · <code>d02ReasonCenter</code></td>
+        </tr>
+        <tr>
+          <td>03</td>
+          <td><code>dashboard03.js</code><br><code>HrDashboard03</code></td>
+          <td><code>chart03Year</code> · <code>chart03Topic</code> · <code>topicLegend</code> · <code>styleMap</code> · <code>chart03Lead</code></td>
+          <td><code>d03BarCount</code></td>
+        </tr>
+        <tr>
+          <td>04</td>
+          <td><code>dashboard04.js</code><br><code>HrDashboard04</code></td>
+          <td><code>chart04Accident</code> · <code>chart04Safe1</code> · <code>chart04Safe2</code> · <code>safeLegend</code> · <code>chart04Checkup</code> · <code>grievTable</code></td>
+          <td><code>d04BarCount</code> · <code>d04LegendEnd</code></td>
         </tr>
       </tbody>
     </table>
 
-    <h3>색상 체계</h3>
-    <p>
-      <strong>메인</strong>: 블루 계열 베리에이션(Blue 900~200) ·
-      <strong>포인트</strong>: 01 여 red-400(<code>#f87171</code>) · 02 퇴사율 slate-600(<code>#475569</code>).
-    </p>
+    <h2 id="color">7. 색</h2>
+    <p>화면 표에 적은 색을 한곳에 모았습니다. 직급 키 <code>GRADE_ORDER</code>는 <code>임원, 부장, 차장, 과장, 대리, 사원, 계약직(무기)</code>입니다.</p>
     <table>
       <thead>
-        <tr><th>영역</th><th>톤</th><th>비고</th></tr>
+        <tr><th>페이지</th><th>항목</th><th>색</th></tr>
       </thead>
       <tbody>
         <tr>
-          <td>01 본부·직급 (01_ 동일)</td>
-          <td>그린 / 블루 / 그레이</td>
-          <td>
-            임원·부장 green(재직자 IT同계열) · 차장~사원 blue · 계약직 slate-400
-          </td>
+          <td>01</td>
+          <td>직급 임원~계약직(무기)</td>
+          <td><code>#669BE2</code> · <code>#8DBEF4</code> · <code>#6FC6C6</code> · <code>#99D5BD</code> · <code>#9491E5</code> · <code>#C0B3EE</code> · <code>#C4C8CF</code></td>
         </tr>
         <tr>
-          <td>01 재직자 IT/CS</td>
-          <td>Green-500 · Slate-300</td>
-          <td>IT <code>#22c55e</code> · CS <code>#cbd5e1</code></td>
-        </tr>
-        <tr>
-          <td>01 직책자·성별&amp;연령 / 02 퇴사율</td>
-          <td>남 blue · 여 red-400 · 퇴사율 slate-600</td>
-          <td>포인트: 여 레드 / 퇴사율 어두운 그레이</td>
-        </tr>
-        <tr>
-          <td>02 핵심기술인재 · 본부별 퇴사</td>
-          <td>slate-400 단색</td>
+          <td>01</td>
+          <td>재직자 IT·CS 라벨</td>
           <td><code>#94a3b8</code></td>
         </tr>
         <tr>
-          <td>02 직급별 퇴사</td>
-          <td>01 직급 팔레트</td>
-          <td>
-            <code>GRADE_RETIRE_COLORS</code> · 유기 blue-200 · 무기3급 slate-400
-          </td>
+          <td>01</td>
+          <td>남성 · 여성 막대</td>
+          <td><code>#A8B0B9</code> · <code>#C6CAD1</code>. 큰 글자도 <code>#A8B0B9</code>, 인원수는 <code>#2f3338</code></td>
+        </tr>
+        <tr>
+          <td>02</td>
+          <td>신입·본부장 후보 / 경력·팀장 후보</td>
+          <td><code>#8DBEF4</code> / <code>#669BE2</code></td>
+        </tr>
+        <tr>
+          <td>02</td>
+          <td>핵심기술인재</td>
+          <td><code>#8DBEF4</code></td>
+        </tr>
+        <tr>
+          <td>02</td>
+          <td>퇴사 / 잔여</td>
+          <td><code>#F7E190</code> / <code>#C6CAD1</code></td>
+        </tr>
+        <tr>
+          <td>02</td>
+          <td>직급·본부·근속 퇴사</td>
+          <td><code>#C6CAD1</code></td>
+        </tr>
+        <tr>
+          <td>02 · 03</td>
+          <td>값이 큰 순 (퇴사 사유, 교육주제, 트리맵 강조 다음 회색)</td>
+          <td><code>#99D5BD</code> · <code>#8DBEF4</code> · <code>#C0B3EE</code> · <code>#ECC1ED</code> · <code>#F7E190</code> · <code>#A8B0B9</code> · <code>#C6CAD1</code> · 이후 더 옅은 그레이</td>
+        </tr>
+        <tr>
+          <td>03</td>
+          <td>3개년 막대 · 리더십 2023/2024/2025 · 트리맵 강조</td>
+          <td><code>#8DBEF4</code> · <code>#C6CAD1</code> / <code>#A8B0B9</code> / <code>#8DBEF4</code> · <code>#99D5BD</code> · <code>#8DBEF4</code> · <code>#C0B3EE</code></td>
+        </tr>
+        <tr>
+          <td>04</td>
+          <td>본사·수검 / 콜센터·미수검</td>
+          <td><code>#8DBEF4</code> / <code>#669BE2</code></td>
+        </tr>
+        <tr>
+          <td>04</td>
+          <td>수료 / 미수료</td>
+          <td><code>#C6CAD1</code> / <code>#F7E190</code></td>
+        </tr>
+        <tr>
+          <td>공통</td>
+          <td>Chart.js 범례 글자</td>
+          <td><code>#666</code> · 13px · weight 600 · 색 칸 14px</td>
         </tr>
       </tbody>
     </table>
-    <p>
-      직급 키(<code>GRADE_ORDER</code>):
-      <code>임원, 부장, 차장, 과장, 대리, 사원, 계약직(무기)</code>
-    </p>
 
-    <h3>01 차트 라벨</h3>
-    <ul>
-      <li>
-        <strong>본부·직급 라벨</strong>:
-        가로 누적(좌→우) · 구간 수치는 막대 안(흰색) · 총계는 막대 끝 · 범례 오른쪽 끝.
-      </li>
-      <li>
-        <strong>총계</strong>: 본부·직급은 막대 끝 · 15px bold.
-        직책자·성별연령은 항목명 옆 <code>(n)</code> · 15px bold · <code>#333333</code>.
-      </li>
-      <li>
-        <strong>IT/CS</strong>: IT green-500 · CS slate-300 · <code>IT n</code> 한 줄 표기
-      </li>
-      <li>
-        <strong>인력 다양성</strong>:
-        장애인 · 보훈 · 외국인 3칸이 카드 전체 폭 · 제목·수치 좌우 배치 (이미지 폴더 없음)
-      </li>
-      <li>
-        <strong>직책자 라벨</strong>:
-        본부장 · 법인장 · 담당 · 팀장 · 센터장 · 전문위원
-        (남 7·1·3·30·0·9 / 여 1·0·3·8·2·0)
-      </li>
-      <li>
-        <strong>01_ 미니 차트</strong>:
-        바 위 수치 · 하단 직급 라벨 생략 · HTML 범례(<code>.hr-dash__grade-legend</code>) 오른쪽 정렬 ·
-        제목 slate-500 · 막대 <code>barPercentage:0.92</code>
-      </li>
-    </ul>
+    <h2 id="apply">8. 적용 절차</h2>
+    <ol>
+      <li><strong>파일 배치</strong> — HTML, <code>css/</code>, <code>js/</code>를 서버 정적 경로에 복사합니다.</li>
+      <li><strong>라이브러리 경로</strong> — <code>./e-HR_files/...</code>를 운영의 같은 버전 경로로 바꿉니다.</li>
+      <li><strong>탭 연결</strong> — DashBoard 탭 <code>src</code>를 이 패키지 주소로 바꿉니다. 기본 진입은 <code>index.html</code> 또는 <code>dashboard01.html</code>입니다.</li>
+      <li><strong>데이터</strong> — 각 페이지 <code>$(function(){...})</code>에서 SAMPLE 대신 <code>HrDashboard01</code>~<code>HrDashboard04</code>의 <code>render(data)</code>를 호출합니다. 필드 모양은 5장입니다.</li>
+      <li><strong>리사이즈</strong> — 각 페이지는 <code>window.resize</code>에서 <code>chart.resize()</code>를 호출합니다. iframe 높이가 바뀌면 resize 이벤트가 전달되는지 확인합니다.</li>
+    </ol>
 
-    <h3>02</h3>
-    <ul>
-      <li>
-        핵심기술인재·본부별 퇴사: slate-400 단색.
-        직급별 퇴사: 01 직급 색.
-        퇴사율 포인트 slate-600(<code>#475569</code>).
-        근속년수별: 짧을수록 진한 블루.
-      </li>
-      <li>
-        2시리즈 막대(신입/경력, 본부장 후보/팀장 후보): blue-700 + blue-300 ·
-        비교 막대 간격 0 · 항목 간격 <code>categoryPercentage:0.55</code>.
-      </li>
-      <li>본부 라벨: ERP1~3 · CIT · WRMS 등 (BRP/DT 표기 안 함).</li>
-      <li>막대 수치: 15px bold (막대 위).</li>
-      <li>
-        퇴사 사유 도넛: 그린→라임→틸→스카이 5단
-        (<code>#22c55e · #84cc16 · #2dd4bf · #38bdf8 · #7dd3fc</code>) ·
-        부적응(lime)과 결혼·육아(teal) 구분 · 최대 360px · 모바일 좌우 배치.
-        도넛·범례 간격 <code>.hr-dash__reason-wrap</code> gap 16px (모바일 32px).
-      </li>
-      <li>
-        퇴사 사유 주석(<code>.hr-dash__card-note</code>):
-        <code>※ 월 1회 업데이트, 퇴직의견조사서 퇴직사유 1순위만 포함</code>
-      </li>
-    </ul>
-
-    <h3>공통 UI</h3>
-    <ul>
-      <li>커스텀 CSS는 <code>.hr-dash</code> 하위로만 작성.</li>
-      <li>휴직·입사·퇴사 KPI: 아이콘 없음 · 수치만 표시.</li>
-      <li>
-        제목 보조 <code>.hr-dash__title-sub</code> —
-        기본: 카드 제목 <strong>아래</strong>(상하).
-        <code>dashboard01_</code>: <code>.hr-dash--inline-sub</code>로 제목 옆(좌우).
-      </li>
-      <li>모바일 분기: <code>@media (max-width: 1100px)</code>.</li>
-      <li>
-        모바일 본부별 카드(<code>.hr-dash__col--hq</code>):
-        <code>min-height</code> 강제 해제 · <code>align-self: start</code> ·
-        차트 박스 높이는 라벨 수 기준 JS 계산.
-      </li>
-    </ul>
-
-    <h2 id="checklist">8. 적용 체크리스트</h2>
+    <h2 id="checklist">9. 체크리스트</h2>
     <div class="card">
       <ul>
-        <li>□ 공통 라이브러리를 신규 추가하지 않고 기존 e-HR 경로로 연결했는가</li>
-        <li>□ jQuery / Chart.js / FA / AdminLTE 버전이 운영과 일치하는가</li>
-        <li>□ FA <code>webfonts</code> 404가 아닌가</li>
-        <li>□ 탭 네비(01 · 01_ 다른안 · 02~05) 링크·활성(<code>.on</code>)이 올바른가</li>
-        <li>□ 01: W01~W10 → <code>HrDashboard01.render</code> 매핑 완료</li>
-        <li>□ 01_: 본부 10·연도 3 미니차트 → <code>HrDashboard01_.render</code></li>
-        <li>□ 02: 채용·퇴사 등 → <code>HrDashboard02.render</code> 매핑 완료</li>
-        <li>□ 카드 소제목(<code>.hr-dash__title-sub</code>)이 기준표와 일치하는가</li>
-        <li>□ <code>GRADE_ORDER</code> 직급명(계약직(무기) 포함)이 마스터와 일치하는가</li>
-        <li>□ iframe 높이·리사이즈 후 차트 깨짐이 없는가</li>
-        <li>□ <code>.hr-dash</code>와 글로벌 CSS 충돌이 없는가</li>
+        <li>□ 공통 라이브러리를 새로 넣지 않고 기존 e-HR 경로에 연결했는가</li>
+        <li>□ jQuery, Chart.js, Font Awesome, AdminLTE 버전이 운영과 같은가</li>
+        <li>□ Font Awesome <code>webfonts</code>가 404가 아닌가</li>
+        <li>□ 탭 01~04 링크와 활성(<code>.on</code>)이 맞는가</li>
+        <li>□ 01: W01~W10이 <code>HrDashboard01.render</code>에 매핑되었는가</li>
+        <li>□ 02·03·04: 각 <code>render</code> 필드가 5장과 맞는가</li>
+        <li>□ 카드 소제목(<code>.hr-dash__title-sub</code>)이 4장과 맞는가</li>
+        <li>□ <code>GRADE_ORDER</code> 직급명에 계약직(무기)가 들어 있는가</li>
+        <li>□ iframe 높이와 리사이즈 뒤에 차트가 유지되는가</li>
+        <li>□ <code>.hr-dash</code> 밖 전역 CSS와 충돌이 없는가</li>
       </ul>
     </div>
 

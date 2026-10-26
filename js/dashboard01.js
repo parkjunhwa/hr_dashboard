@@ -8,49 +8,31 @@
  * [2026-10-06] SAMPLE을 시안 스크린샷 명칭·수치로 교체 (차트 형태는 기존 유지)
  * [2026-10-13] 파일명 dashboard.js → dashboard01.js · API HrDashboard → HrDashboard01
  * [2026-10-13] canvas/plugin id: chart01* · d01BarCount · d01GenderSplit
+ * [2026-10-23] 직급 차트 색 지정값으로 변경
+ * [2026-10-23] 재직자 파이 제거 — 총원 좌 / IT·CS 상하+구분선
+ * [2026-10-23] 직책·연령 남녀 색 변경 · 아이콘을 남/여 텍스트로 교체
+ * [2026-10-23] 직책·연령 표시를 「남성」「여성」으로 변경 · 큰 글자 #A8B0B9
  */
 (function (window, $) {
   'use strict';
 
   /**
-   * 팔레트 — 직급: 그린(임원·부장, 재직자 IT同계열) / 블루(차장~사원) / 그레이(계약직)
-   * 포인트: 레드(여·강조) 1개
+   * 팔레트 — 직급: 지정 색 (임원~계약직)
+   * 직책·연령 남녀: #A8B0B9 / #C6CAD1
    */
-  var TW = {
-    blue200: '#bfdbfe',
-    blue300: '#93c5fd',
-    blue400: '#60a5fa',
-    blue500: '#3b82f6',
-    blue600: '#2563eb',
-    blue700: '#1d4ed8',
-    blue800: '#1e40af',
-    blue900: '#1e3a8a',
-    green400: '#4ade80',
-    green500: '#22c55e', /* 재직자 IT */
-    green600: '#16a34a',
-    slate300: '#cbd5e1',
-    slate400: '#94a3b8',
-    slate500: '#64748b',
-    red400: '#f87171', /* 포인트 */
-    blueHover: '#2563eb'
-  };
-  /** 본부·직급 누적 — 그린 / 블루 / 그레이 3분류 (그레이 제외 밝게) */
   var GRADE_PALETTE_DEFAULT = [
-    TW.green600, /* 임원 — 그린 */
-    TW.green400, /* 부장 — 그린 */
-    TW.blue600, /* 차장 — 블루 */
-    TW.blue500, /* 과장 — 블루 */
-    TW.blue400, /* 대리 — 블루 */
-    TW.blue300, /* 사원 — 블루 */
-    TW.slate400  /* 계약직(무기) — 그레이 */
+    '#669BE2', /* 임원 */
+    '#8DBEF4', /* 부장 */
+    '#6FC6C6', /* 차장 */
+    '#99D5BD', /* 과장 */
+    '#9491E5', /* 대리 */
+    '#C0B3EE', /* 사원 */
+    '#C4C8CF'  /* 계약직(무기) */
   ];
   var GRADE_PALETTE = GRADE_PALETTE_DEFAULT;
   var GRADE_ORDER = ['임원', '부장', '차장', '과장', '대리', '사원', '계약직(무기)'];
-  var COLOR_MALE = TW.blue400;
-  var COLOR_FEMALE = TW.red400; /* 포인트 */
-  /* 재직자 파이: 그린 + 밝은 그레이 */
-  var COLOR_IT = '#22c55e'; /* green-500 */
-  var COLOR_CS = '#cbd5e1'; /* slate-300 */
+  var COLOR_MALE = '#A8B0B9';
+  var COLOR_FEMALE = '#C6CAD1';
   var CHART_FONT = '"Pretendard GOV", "Malgun Gothic", sans-serif';
   var AXIS_LINE = { display: true, color: '#e2e8f0', width: 1 }; /* slate-200 */
   /** 차트 UI 공통 — 항목 글자/범례/간격 일관 */
@@ -63,8 +45,7 @@
     legendPad: 18,
     tickPad: 12, /* 항목 라벨 ↔ 막대 간격 */
     barPct: 0.62,
-    catPct: 0.78,
-    layout: { top: 10, right: 28, bottom: 6, left: 6 }
+    catPct: 0.78
   };
   var charts = {};
 
@@ -170,38 +151,8 @@
     return { x: bar.x, y: bar.y, base: bar.base, width: bar.width, height: bar.height };
   }
 
-  /** 배경 명도에 따라 안쪽 라벨 색 — 어두우면 흰색 */
-  function contrastLabelColor(bg, light, dark) {
-    light = light || '#ffffff';
-    dark = dark || '#475569';
-    if (!bg || typeof bg !== 'string') return dark;
-    var h = bg.replace('#', '');
-    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
-    if (h.length !== 6) return dark;
-    var n = parseInt(h, 16);
-    if (!isFinite(n)) return dark;
-    var r = (n >> 16) & 255;
-    var g = (n >> 8) & 255;
-    var b = n & 255;
-    function lin(c) {
-      c = c / 255;
-      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-    }
-    var L = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
-    return L < 0.55 ? light : dark;
-  }
-
-  function datasetFillAt(ds, idx) {
-    var bg = ds && ds.backgroundColor;
-    if ($.isArray(bg)) return bg[idx];
-    return bg;
-  }
-
   /**
    * Chart.js afterDatasetsDraw — 막대 안 건수 / 행 총원
-   * opt.callout: 구간 수치를 선으로 밖으로 빼서 표시 (세로·가로 누적)
-   * opt.calloutMaxValue: 절대 수치 이하만 콜아웃 (우선)
-   * opt.calloutMaxRatio: 해당 막대 합 대비 이 비율 이하만 콜아웃 (calloutMaxValue 없을 때)
    * 직책자·성별연령: 막대 안 성별 수치 + 항목명 옆 총계(n) (총계는 barTotalSize bold)
    */
   var barCountPlugin = {
@@ -212,28 +163,7 @@
       var ctx = chart.ctx;
       var horiz = chart.options.indexAxis === 'y';
       var n = chart.data.labels.length;
-      var labelColor = opt.color || '#475569';
-      var lineColor = opt.lineColor || '#cbd5e1'; /* slate-300 — 흐린 콜아웃 선 */
       var fontSize = CHART_UI.barLabelSize;
-      var calloutOn = !!opt.callout;
-      var calloutMaxValue = opt.calloutMaxValue != null ? Number(opt.calloutMaxValue) : null;
-      var calloutMaxRatio = opt.calloutMaxRatio != null ? Number(opt.calloutMaxRatio) : null;
-      var useAbsThreshold = calloutMaxValue != null && isFinite(calloutMaxValue);
-      var useRatioThreshold = !useAbsThreshold && calloutMaxRatio != null && isFinite(calloutMaxRatio);
-      var calloutsByIdx = {};
-      var colTotals = null;
-
-      if (calloutOn && useRatioThreshold) {
-        colTotals = [];
-        for (var ci = 0; ci < n; ci++) {
-          var sum = 0;
-          chart.data.datasets.forEach(function (ds, di) {
-            if (!chart.isDatasetVisible(di)) return;
-            sum += Math.abs(num(ds.data[ci]));
-          });
-          colTotals[ci] = sum;
-        }
-      }
 
       ctx.save();
       ctx.font = 'bold ' + fontSize + 'px ' + CHART_FONT;
@@ -245,37 +175,8 @@
           var val = Math.abs(num(ds.data[idx]));
           if (val <= 0 || !bar) return;
           var p = barProps(bar);
-          var seg = horiz ? Math.abs(p.x - p.base) : Math.abs(p.y - p.base);
           var x = horiz ? (p.x + p.base) / 2 : p.x;
           var y = horiz ? p.y : (p.y + p.base) / 2;
-          var halfThick = horiz
-            ? ((p.height != null ? p.height : 20) / 2)
-            : ((p.width != null ? p.width : 24) / 2);
-
-          if (calloutOn) {
-            var useCallout = true;
-            if (useAbsThreshold) {
-              useCallout = val <= calloutMaxValue;
-            } else if (useRatioThreshold && colTotals && colTotals[idx] > 0) {
-              useCallout = val / colTotals[idx] <= calloutMaxRatio;
-            }
-            if (useCallout) {
-              if (!calloutsByIdx[idx]) calloutsByIdx[idx] = [];
-              calloutsByIdx[idx].push({
-                val: val,
-                seg: seg,
-                cx: x,
-                cy: y,
-                halfThick: halfThick,
-                /* 세로 막대: 오른쪽(1) / 가로 막대: 아래(1) 로 통일 */
-                side: 1
-              });
-              return;
-            }
-            /* 임계값 초과 → 막대 안 표시로 진행 */
-          }
-
-          /* 막대 안: 흰색 */
           ctx.fillStyle = '#ffffff';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
@@ -283,169 +184,8 @@
         });
       });
 
-      /* 콜아웃: 임계값 이하로 모인 구간 수치만 (regular weight) */
-      if (calloutOn) {
-        var arm = 12;
-        var stackGap = fontSize + 2;
-        ctx.font = fontSize + 'px ' + CHART_FONT;
-        Object.keys(calloutsByIdx).forEach(function (key) {
-          var list = calloutsByIdx[key];
-          if (!list || !list.length) return;
-
-          if (horiz) {
-            /* 가로 막대: 하단 콜아웃 — 숫자는 같은 높이(가로선)에 정렬 */
-            var hDiag = opt.calloutStyle === 'diagonal';
-            var minGapX = Math.max(stackGap + 4, 18);
-            var ca = chart.chartArea || {};
-            var maxY = (ca.bottom != null ? ca.bottom : chart.height) - 2;
-            var maxX = (ca.right != null ? ca.right : chart.width) - 4;
-            var minX = (ca.left != null ? ca.left : 0) + 4;
-
-            list.sort(function (a, b) { return a.cx - b.cx; });
-
-            /* 공통 baseline Y (막대 아래, 차트 영역 안) */
-            var deepest = -Infinity;
-            list.forEach(function (it) {
-              var ey = it.cy + it.halfThick;
-              if (ey > deepest) deepest = ey;
-            });
-            var rowY = deepest + arm + 4;
-            if (rowY > maxY - fontSize) rowY = maxY - fontSize;
-
-            /* 왼쪽부터 밀기 → 오른쪽에 안 들어가면 가용 폭에 균등 분배 (겹침 방지) */
-            var prevLabelX = -Infinity;
-            var overflow = false;
-            list.forEach(function (item) {
-              item.labelX = item.cx;
-              var tw = ctx.measureText(String(item.val)).width + 4;
-              if (item.labelX - prevLabelX < minGapX) {
-                item.labelX = prevLabelX + minGapX;
-              }
-              if (item.labelX + tw / 2 > maxX) overflow = true;
-              if (item.labelX < minX) item.labelX = minX;
-              prevLabelX = item.labelX;
-            });
-            if (overflow && list.length > 1) {
-              var span = Math.max(maxX - minX, minGapX);
-              var step = span / (list.length - 1);
-              list.forEach(function (item, i) {
-                item.labelX = minX + step * i;
-              });
-            } else {
-              list.forEach(function (item) {
-                var tw = ctx.measureText(String(item.val)).width + 4;
-                if (item.labelX + tw / 2 > maxX) item.labelX = maxX - tw / 2;
-                if (item.labelX < minX) item.labelX = minX;
-              });
-            }
-
-            list.forEach(function (item) {
-              var dir = item.side; /* 1 = 아래 */
-              var edgeY = item.cy + dir * item.halfThick;
-              var textX = item.labelX;
-              var textY = rowY;
-
-              ctx.strokeStyle = lineColor;
-              ctx.lineWidth = 1;
-              ctx.beginPath();
-              ctx.moveTo(item.cx, edgeY);
-              if (hDiag) {
-                ctx.lineTo(textX, textY);
-              } else {
-                var elbowY = Math.min(edgeY + dir * arm, textY);
-                ctx.lineTo(item.cx, elbowY);
-                if (Math.abs(textX - item.cx) > 0.5) {
-                  ctx.lineTo(textX, elbowY);
-                }
-                ctx.lineTo(textX, textY);
-              }
-              ctx.stroke();
-
-              ctx.beginPath();
-              ctx.fillStyle = lineColor;
-              ctx.arc(item.cx, edgeY, 1.4, 0, Math.PI * 2);
-              ctx.fill();
-
-              ctx.fillStyle = labelColor;
-              ctx.textAlign = 'center';
-              ctx.textBaseline = 'top';
-              ctx.fillText(String(item.val), textX, textY + 1);
-            });
-          } else {
-            /* 세로 막대: 오른쪽 콜아웃 (diagonal=대각선·위쪽, 숫자는 세로 한 줄 정렬) */
-            var diag = opt.calloutStyle === 'diagonal';
-            var areaTop = (chart.chartArea && chart.chartArea.top != null)
-              ? chart.chartArea.top + fontSize
-              : fontSize;
-            var colX = -Infinity;
-            list.forEach(function (item) {
-              var ex = item.cx + item.side * item.halfThick;
-              if (ex > colX) colX = ex;
-            });
-            colX = colX + arm + 6; /* 모든 수치 공통 X (세로 정렬) */
-
-            if (diag) {
-              /* 아래 구간부터 배치 → 겹치면 위로 밀어 항목명 영역 침범 방지 */
-              list.sort(function (a, b) { return b.cy - a.cy; });
-              var prevUp = Infinity;
-              list.forEach(function (item) {
-                item.labelY = item.cy;
-                if (prevUp - item.labelY < stackGap) {
-                  item.labelY = prevUp - stackGap;
-                }
-                if (item.labelY < areaTop) item.labelY = areaTop;
-                prevUp = item.labelY;
-              });
-            } else {
-              list.sort(function (a, b) { return a.cy - b.cy; });
-              var prevLabelY = -Infinity;
-              list.forEach(function (item) {
-                item.labelY = item.cy;
-                if (item.labelY - prevLabelY < stackGap) {
-                  item.labelY = prevLabelY + stackGap;
-                }
-                prevLabelY = item.labelY;
-              });
-            }
-
-            list.forEach(function (item) {
-              var dir = item.side;
-              var edgeX = item.cx + dir * item.halfThick;
-              var textX = colX;
-
-              ctx.strokeStyle = lineColor;
-              ctx.lineWidth = 1;
-              ctx.beginPath();
-              ctx.moveTo(edgeX, item.cy);
-              if (diag) {
-                /* 대각선 → 세로 정렬된 숫자 열 */
-                ctx.lineTo(textX, item.labelY);
-                ctx.lineTo(textX + dir * 4, item.labelY);
-              } else {
-                var elbowX = edgeX + dir * arm;
-                ctx.lineTo(elbowX, item.cy);
-                if (Math.abs(item.labelY - item.cy) > 0.5) {
-                  ctx.lineTo(elbowX, item.labelY);
-                }
-                ctx.lineTo(textX, item.labelY);
-              }
-              ctx.stroke();
-
-              ctx.beginPath();
-              ctx.fillStyle = lineColor;
-              ctx.arc(edgeX, item.cy, 1.4, 0, Math.PI * 2);
-              ctx.fill();
-
-              ctx.fillStyle = labelColor;
-              ctx.textAlign = dir > 0 ? 'left' : 'right';
-              ctx.textBaseline = 'middle';
-              ctx.fillText(String(item.val), textX + dir * 6, item.labelY);
-            });
-          }
-        });
-      }
-
       ctx.restore();
+
 
       if (!opt.total) return;
       /* 총계(절대값 합): 가로=막대 끝(+8), 세로=막대 위. 양방향(남 음수)이면 끝점이 중앙선보다 왼쪽일 때 중앙선 기준으로 표시 */
@@ -640,71 +380,8 @@
           tooltip: { mode: 'nearest', intersect: true, callbacks: stackedTooltipCallbacks() },
           datalabels: { display: false },
           d01BarCount: $.extend({
-            total: true,
-            color: '#475569',
-            callout: false
+            total: true
           }, opt || {})
-        }
-      }
-    });
-  }
-
-  /** 세로 누적 — 오른쪽 대각선 콜아웃 (현재 미사용 · 본부별은 stackedHorizontal) */
-  function stackedVertical(canvasId, labels, datasets) {
-    var yMax = maxStackedTotal(datasets);
-    var ds = datasets.map(function (d) {
-      return $.extend({}, d, {
-        barPercentage: 0.42,
-        categoryPercentage: 0.62
-      });
-    });
-    createChart(canvasId, {
-      type: 'bar',
-      data: { labels: labels, datasets: ds },
-      options: {
-        layout: {
-          padding: $.extend({}, CHART_UI.layout, {
-            top: 28,
-            left: 16,
-            right: 52
-          })
-        },
-        scales: {
-          x: {
-            stacked: true,
-            ticks: {
-              font: tickFont(),
-              padding: CHART_UI.tickPad,
-              autoSkip: false,
-              maxRotation: 0,
-              minRotation: 0,
-              align: 'center',
-              crossAlign: 'center'
-            },
-            grid: { display: false, drawTicks: false },
-            border: AXIS_LINE
-          },
-          y: {
-            stacked: true,
-            min: 0,
-            max: yMax * 1.18,
-            ticks: { display: false },
-            grid: { display: false, drawTicks: false },
-            border: { display: false }
-          }
-        },
-        plugins: {
-          legend: legendOpts(),
-          tooltip: { mode: 'nearest', intersect: true, callbacks: stackedTooltipCallbacks() },
-          datalabels: { display: false },
-          d01BarCount: {
-            total: true,
-            color: '#475569',
-            callout: true,
-            calloutMaxValue: 9, /* 9 이하만 밖, 10 이상은 안 */
-            lineColor: '#cbd5e1',
-            calloutStyle: 'diagonal'
-          }
         }
       }
     });
@@ -720,45 +397,6 @@
     $('#cntDisabil').text(fmt(kpi.disabil));
     $('#cntBohun').text(fmt(kpi.bohun));
     $('#cntForeign').text(fmt(kpi.foreign));
-    renderItCsChart(kpi);
-  }
-
-  /** 재직자 IT/CS — 원형 솔리드(파이), 라벨·수치는 우측 텍스트 */
-  function renderItCsChart(kpi) {
-    var it = num(kpi.it);
-    var cs = num(kpi.cs);
-    var total = Math.max(it + cs, 1);
-    createChart('chart01ItCs', {
-      type: 'pie',
-      data: {
-        labels: ['IT', 'CS'],
-        datasets: [{
-          data: [it, cs],
-          backgroundColor: [COLOR_IT, COLOR_CS],
-          hoverBackgroundColor: ['#16a34a', '#94a3b8'], /* green-600 / slate-400 */
-          borderWidth: 0
-        }]
-      },
-      options: {
-        layout: { padding: 0 },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              title: function () { return '재직자'; },
-              label: function (ctx) {
-                var val = num(ctx.raw);
-                var pct = Math.round(val / total * 100);
-                return (ctx.label || '') + ' ' + fmt(val) + '명 (' + pct + '%)';
-              }
-            }
-          },
-          datalabels: { display: false },
-          d01BarCount: false
-        },
-        animation: { duration: 700, easing: 'easeOutQuart' }
-      }
-    });
   }
 
   function renderGender(g) {
@@ -801,7 +439,7 @@
     stackedHorizontal('chart01GradeYear', data.labels, gradeDatasets(data.grades, data.labels));
   }
 
-  /** 남(좌·음수) / 여(우·양수) 양방향 가로 막대 — 직책자·연령대 공통 */
+  /** 남성(좌·음수) / 여성(우·양수) 양방향 가로 막대 — 직책자·연령대 공통 */
   function renderBidirectionalGenderChart(canvasId, data, tooltipTitleFn) {
     var maxVal = 1;
     var mSum = 0;
@@ -865,12 +503,12 @@
         labels: data.labels,
         datasets: [
           barGap({
-            label: '남',
+            label: '남성',
             backgroundColor: COLOR_MALE,
             data: $.map(data.male, function (v) { return -num(v); })
           }),
           barGap({
-            label: '여',
+            label: '여성',
             backgroundColor: COLOR_FEMALE,
             data: data.female
           })
@@ -878,7 +516,7 @@
       },
       options: {
         indexAxis: 'y',
-        /* 우측 패딩 축소 → 남/여 범례를 카드 오른쪽 끝에 맞춤 */
+        /* 우측 패딩 축소 → 남성/여성 범례를 카드 오른쪽 끝에 맞춤 */
         layout: { padding: { top: 4, right: 2, bottom: 6, left: 6 } },
         scales: {
           x: {
@@ -930,8 +568,7 @@
               },
               label: function (ctx) {
                 var val = Math.abs(num(ctx.raw));
-                var gender = ctx.dataset.label === '남' ? '남성' : '여성';
-                return gender + ' ' + val + '명';
+                return ctx.dataset.label + ' ' + val + '명';
               }
             }
           },
@@ -944,7 +581,7 @@
   }
 
   function renderJikchakChart(data) {
-    /* 직책자 = 성별&연령대와 동일 좌(남)·우(여) 양방향 */
+    /* 직책자 = 성별&연령대와 동일 좌(남성)·우(여성) 양방향 */
     var sums = renderBidirectionalGenderChart('chart01Jikchak', data);
     var tot = sums.male + sums.female;
     var mRate = tot ? Math.round(sums.male / tot * 100) : 0;
