@@ -246,7 +246,7 @@
           hours: hours,
           backgroundColor: colors,
           borderWidth: 0,
-          hoverOffset: 4
+          hoverOffset: 0
         }]
       },
       options: {
